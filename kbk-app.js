@@ -66,6 +66,7 @@
   const MAX_MERGE_RANK = 6;
 
   /** Historia (visual novel): prólogo multipágina; encuentro con recluta con elecciones; capítulos por piso. */
+  const STORY_LIN_PORTRAIT = "Char/Lawliet.png";
   const STORY_CHAPTERS = [
     {
       id: "prologo",
@@ -76,26 +77,57 @@
       pages: [
         {
           vnMood: "calm",
+          speaker: "Narración",
+          expression: "noche húmeda, farolas anaranjadas en el cristal",
           text:
-            "La radio del vehículo corta el silencio con estática, como si la ciudad respirara al otro lado del cristal empañado. No es humo lo que ves: es una capa de ‘permanencia’, un velo que el manual de campo no nombra. Tu jefe de unidad repite el protocolo, pero tú ya sabes que los protocolos nacieron para un mundo que ya no existe.",
+            "La radio del vehículo corta el silencio con estática, como si la ciudad respirara al otro lado del cristal empañado. No es humo lo que ves: es una capa de ‘permanencia’, un velo que el manual de campo no nombra. Tu jefe de unidad repite el protocolo por el auricular; tú asientes, pero ya sabes que los protocolos nacieron para un mundo que ya no existe.",
         },
         {
           vnMood: "calm",
+          speaker: "Tú (doctor)",
+          expression: "manos firmes en el volante, mente en modo triaje",
           text:
             "Te llaman por tu título —médico— como si fuera un escudo. Lo es, hasta que el primer herido te mira y no pregunta por la herida, sino si tú también oyes el zumbido. El zumbido no figura en ningún electrocardiograma. Late en los muros, en las tuberías, en los pasillos que el GPS marca como ‘cerrados por mantenimiento eterno’.",
         },
         {
-          vnMood: "tension",
+          vnMood: "calm",
+          speaker: "Narración",
+          expression: "cola de ambulancias, murmullo de radios ajenas",
           text:
-            "El informe oficial habla de ‘Nudos de permanencia’: zonas donde el tiempo, el dolor y el miedo quedan atrapados en bucle. Los civiles atrapados en el centro comercial no son solo rehenes del fuego ni del derrumbe; son rehenes de un eco que repite el mismo minuto hasta desgastar el alma. Tu juramento no menciona ecos. Aun así, tu mano aprieta el estetoscopio.",
+            "Un interno te envía una foto borrosa del perímetro: sombras demasiado rectas, humo que no sube del todo. Alguien en los comentarios escribe ‘parece un set de cine’ y borra el mensaje antes de que puedas archivarlo. El humor nervioso de la gente normal huele a miedo disfrazado de ironía.",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Tú (doctor)",
+          expression: "voz baja, casi un juramento interior",
+          text:
+            "Repasas mentalmente el bolso: vendas, suero, atropina por si acaso, y esa manía tuya de llevar un boli extra porque la burocracia siempre te pide firmar algo en el peor momento. No es heroísmo; es hábito. Los hábitos son lo último que se rompe cuando el pánico llama a la puerta.",
         },
         {
           vnMood: "tension",
+          speaker: "Narración",
+          expression: "informe sellado, tinta demasiado negra",
+          text:
+            "El informe oficial habla de ‘Nudos de permanencia’: zonas donde el tiempo, el dolor y el miedo quedan atrapados en bucle. Los civiles atrapados en el centro comercial no son solo rehenes del fuego ni del derrumbe; son rehenes de un eco que repite el mismo minuto hasta desgastar el alma. Tu juramento no menciona ecos. Aun así, tu mano aprieta el estetoscopio hasta que el metal te deja marca en la palma.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Narración",
+          expression: "puerta de servicio, bisagra que suena a advertencia",
           text:
             "Antes de cruzar el perímetro, guardas una foto que no es tuya en el bolsillo —una polaroid arrugada que alguien dejó en la ambulancia— y una dosis de analgésico que sí es tuya. La puerta de servicio gime. Del otro lado, el aire sabe a metal frío y a recuerdos ajenos. Una voz lejana, quizá la tuya, pide evacuación por el altavoz. Tú no has tocado el micrófono.",
         },
         {
+          vnMood: "tension",
+          speaker: "Eco en el pasillo",
+          expression: "voz distorsionada, casi familiar",
+          text:
+            "—…repito, se necesita médico en pasillo B…—\n\nLa frase se corta en un chasquido seco, como si alguien hubiera arrancado el cable del mundo. Un vigilante te dice que no hay pasillo B en ese ala. El mapa en su mano dice otra cosa. Nadie discute en voz alta: solo intercambian miradas de ‘tú tampoco lo viste, ¿verdad?’.",
+        },
+        {
           vnMood: "serious",
+          speaker: "Narración",
+          expression: "primer umbral del Nudo",
           text:
             "El primer paso dentro del Nudo es siempre el más fácil: todavía crees que el dolor se puede medir, que la muerte respeta turnos. Más adelante entenderás que aquí el combate no es solo contra carne corrupta, sino contra la insistencia del lugar en recordarte cosas que no viviste. Por ahora, avanzas. La ciudad te observa. Tú observas de vuelta, como buen médico: con atención, con miedo contenido, con la promesa de no abandonar a quien todavía late.",
         },
@@ -107,20 +139,61 @@
       title: "Interludio — Quien camina contigo",
       type: "choice",
       requiresRosterMin: 1,
-      /** Unidad fija del diálogo (arte y nombre del catálogo gacha). Si no está en el roster, igual aparece en la VN. */
       partnerUnitName: "Aozora Lin",
       bg: 1,
       vnMood: "calm",
       pages: [
         {
           vnMood: "calm",
+          speaker: "Narración",
+          expression: "pasillo ‘nuevo’ en un hospital que ya no confías en sus planos",
           text:
-            "El pasillo que no figuraba en el croquis termina en una sala de espera demasiado limpia. Las sillas de plástico están alineadas como dientes; la única luz viva es un letrero de ‘SILENCIO’ parpadeando sin apagarse nunca.",
+            "El pasillo que no figuraba en el croquis termina en una sala de espera demasiado limpia. Las sillas de plástico están alineadas como dientes; la única luz viva es un letrero de ‘SILENCIO’ parpadeando sin apagarse nunca. Huele a producto de limpieza barato y a tormenta lejana, ese olor a ozono que la precede antes que su voz.",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Tú (doctor)",
+          expression: "cuello rígido, instinto de no dar la espalda a las puertas",
+          text:
+            "Apoyas la palma en la pared: fría, demasiado lisa, como si el edificio te estuviera tomando pulso al revés. Piensas en el roster, en los reclutas que firmaron sabiendo que ‘anomalía’ era una palabra bonita para ‘impredecible’. ¿Cuántos de ellos fingen calma con la misma cara que tú pones ante los pacientes?",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Aozora Lin",
+          expression: "mirada aguda, hombros bajos — cansancio de quien mide riesgos en silencio",
+          portrait: STORY_LIN_PORTRAIT,
+          text:
+            "—He estado esperando a alguien que no corriera al primer crujido en el techo. —Su voz es baja, casi un murmullo de laboratorio; cada sílaba parece pesada, como si el aire resistiera al sonido del trueno contenido en su tono.— Si vas a serme útil, necesito que dejes de tratarme como ‘civil con suerte’. Llevo tres turnos seguidos mapeando interferencias aquí dentro.",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Aozora Lin",
+          expression: "sonrisa mínima, ironía seca",
+          portrait: STORY_LIN_PORTRAIT,
+          text:
+            "—Y antes de que lo digas: no, no soy ‘la chica del trueno’ de los memes del cuartel. Soy la que te va a recordar dónde pisa el equipo cuando el suelo miente. —Levanta una ceja.— ¿Todavía tienes café, doctor, o ya lo cambiaste por adrenalina pura?",
         },
         {
           vnMood: "tension",
+          speaker: "Narración",
+          expression: "luces que tiemblan un instante, sombra alargada",
           text:
-            "Oyes pasos que no corresponden a ningún paciente: son el ritmo de alguien que ya aprendió a caminar entre anomalías sin romperse el tobillo moral. Cuando giras, la reconoces antes que a ti mismo: es la misma cara del informe de reclutamiento, pero con el cansancio de quien lleva semanas sin dormir bien.",
+            "Oyes pasos que no corresponden a ningún paciente: son el ritmo medido de alguien que ya aprendió a caminar entre anomalías sin romperse el tobillo moral. Cuando giras del todo, el retrato del informe de reclutamiento cobra volumen real: misma mandíbula tensa, mismos ojos que parecen leer frecuencias en lugar de emociones.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Aozora Lin",
+          expression: "postura cerrada, mano cerca del pecho — gesto de quien protege un cable interno",
+          portrait: STORY_LIN_PORTRAIT,
+          text:
+            "—El Nudo nos está escuchando. No metafóricamente: hay patrones en el zumbido que coinciden con nuestras palabras. —Traga saliva.— Si me vas a ordenar algo, que sea claro. Si me vas a consolar… que sea breve. No soporto el dramatismo cuando hay trabajo que hacer.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Tú (doctor)",
+          expression: "voz contenida, tono profesional",
+          text:
+            "Asientes. No prometes milagros; no sueltas discursos. Eso, paradójicamente, parece tranquilizarla más que cualquier frase hecha de ‘va a estar bien’. Porque aquí nadie sabe si va a estar bien. Lo que sabes es que puedes elegir cómo fallar si llega el momento.",
         },
       ],
     },
@@ -128,37 +201,191 @@
       id: "cap1",
       unlockFloor: 5,
       title: "Capítulo 1 — Primer informe",
-      vnMood: "tension",
-      text:
-        "Los monitores del hospital parpadean con lecturas imposibles. Alguien grabó tu voz pidiendo evacuación… pero no fuiste tú. El Nudo distorsiona identidades: cada superviviente describe una versión distinta de lo que vio en el pasillo B.",
       bg: 0,
+      vnMood: "tension",
+      pages: [
+        {
+          vnMood: "calm",
+          speaker: "Narración",
+          expression: "UCI, 03:12, monitor con reflejo verdoso",
+          text:
+            "El hospital duerme de un modo extraño: con una oreja abierta. Enfermeras cruzan pasillos sin charlar; los zapatos suenan igual que en una película muda. Tú revisas un informe que alguien imprimió ‘por si falla el sistema’. El papel parece más confiable que las pantallas. Hasta que no lo es.",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Tú (doctor)",
+          expression: "ceño fruncido, ojos en cifras que no cuadran",
+          text:
+            "Las lecturas deberían ser aburridas: presiones, saturaciones, ritmos. Hoy son un acertijo. Un paciente estable muestra picos como si corriera una maratón en el techo. Otro, grave, tiene una curva tan plana que parece burlarse del sentido común. Anotas, tachas, anotas otra vez.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Narración",
+          expression: "parpadeo sincronizado en tres monitores",
+          text:
+            "Los monitores del pasillo principal parpadean con lecturas imposibles al unísono, un segundo entero, como un parpadeo colectivo del edificio. El olor a antiséptico se vuelve metálico. Una auxiliar murmura que ‘así no estaba en el manual’ y nadie se ríe.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Voz en altavoz",
+          expression: "tu timbre, pero no tu aliento",
+          text:
+            "—Atención: se solicita evacuación ordenada del ala este…—\n\nEl altavoz usa tu cadencia, tu pausa entre palabras. Pero tú no has tocado el micrófono. Alguien a tu lado dice ‘¿Era usted?’ con la cara blanca. Tú niegas con la cabeza y el silencio que sigue pesa más que cualquier mentira reconfortante.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Superviviente (testimonio fragmentado)",
+          expression: "voz temblorosa, ojos huidizos",
+          text:
+            "—En el pasillo B… había… había dos sombras con el mismo abrigo. Una me pidió agua. La otra me pidió nombre…—\n\nOtro testigo contradice sin querer: para uno el pasillo tenía alfombra roja; para otro, baldosas verdes. El Nudo distorsiona identidades y memoria por igual. Tu trabajo deja de ser solo anatomía: empieza a ser coherencia.",
+        },
+        {
+          vnMood: "serious",
+          speaker: "Tú (doctor)",
+          expression: "mandíbula apretada, decisiones que no caben en un parte",
+          text:
+            "Guardas el bolígrafo con cuidado exagerado, como ritual. Decides que el informe oficial tendrá una versión ‘limpia’ y tu cuaderno personal otra con lo que realmente oyes. No es paranoia si el edificio repite tu voz sin permiso. Es supervivencia.",
+        },
+      ],
     },
     {
       id: "cap2",
       unlockFloor: 10,
       title: "Capítulo 2 — Calle comercial",
-      vnMood: "calm",
-      text:
-        "Entre escaparates rotos, los maniquíes te siguen con la mirada solo cuando parpadeas. Un civil te entrega un frasco sin etiqueta: ‘Sirve para el dolor del alma’, dice, y desaparece en la niebla antes de que puedas tomar pulso.",
       bg: 1,
+      vnMood: "calm",
+      pages: [
+        {
+          vnMood: "calm",
+          speaker: "Narración",
+          expression: "escaparates rotos, niebla baja con olor a caramelos quemados",
+          text:
+            "La calle comercial era el lugar donde la ciudad presumía de normalidad. Ahora los escaparates muestran maniquíes con posturas demasiado humanas y vitrinas que reflejan versiones ligeramente torcidas de quien mira. Cada paso cruje sobre vidrio y propaganda arrancada.",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Narración",
+          expression: "detalle absurdo que rompe el horror",
+          text:
+            "Un altavoz de tienda aún repite una oferta de ‘dos por uno’ con voz alegre, desfasada, como burla del tiempo. Un gato callejero te observa desde un mostrador; no huye. En el Nudo, hasta los animales parecen evaluarte antes de moverse.",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Civil encapuchado",
+          expression: "manos que tiemblan, ojos demasiado claros",
+          text:
+            "—Tome. No pregunte de dónde salió. —Te entrega un frasco sin etiqueta; el líquido brilla con un tono que no debería existir en farmacología seria.— Sirve para el dolor del alma, dicen. Yo solo sé que después de beberlo… dejé de oír mi nombre en la estática. —Se aleja entre la niebla antes de que puedas tomarle pulso.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Narración",
+          expression: "parpadeo: los maniquíes ‘giran’ un milímetro",
+          text:
+            "Entre escaparates rotos, los maniquíes te siguen con la mirada solo cuando parpadeas. No es truco de luz: es regla del lugar. Aprendes a contar los parpadeos como quien cuenta respiraciones en una crisis. Uno. Dos. Tres. En el cuatro, una figura ya no está donde debería.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Tú (doctor)",
+          expression: "mano en el frasco, duda ética punzante",
+          text:
+            "El frasco pesa poco y, aun así, te parece ilegal en todos los sentidos. Piensas en el juramento, en el laboratorio, en lo que diría tu yo de internado. Luego piensas en los pacientes que no mejoran con ciencia ‘normal’. Guardas el frasco. Todavía no sabes si eso te convierte en salvador o en cómplice.",
+        },
+        {
+          vnMood: "calm",
+          speaker: "Narración",
+          expression: "atardecer falso, luz que no calienta",
+          text:
+            "Más adelante, una fuente seca tiene monedas oxidadas como ojos. Alguien ha escrito con tiza: ‘NO MIRES EL AGUA QUE NO ESTÁ’. Decides obedecer. En esta ciudad, a veces la prudencia es la única medicina que queda.",
+        },
+      ],
     },
     {
       id: "cap3",
       unlockFloor: 15,
       title: "Capítulo 3 — Subestación",
-      vnMood: "serious",
-      text:
-        "Cables arden sin calor. La ciudad parece tener otra ciudad debajo: conductos que laten como venas. Tu juramento médico choca con la necesidad de atravesar la anomalía hasta el origen del pulso falso.",
       bg: 2,
+      vnMood: "serious",
+      pages: [
+        {
+          vnMood: "serious",
+          speaker: "Narración",
+          expression: "bajada a servicios, aire denso, zumbido en los dientes",
+          text:
+            "La subestación no aparece en los mapas turísticos. Aparece en los susurros de técnicos que dejaron de venir y en sellos de ‘PELIGRO’ repintados tantas veces que la pintura forma relieves como cicatrices. Cada escalón hacia abajo te recuerda que la ciudad tiene piso y también pulso.",
+        },
+        {
+          vnMood: "serious",
+          speaker: "Técnico fantasma (grabación en walkie)",
+          expression: "estática, risa nerviosa al fondo",
+          text:
+            "—…si el cable ‘suda’, corta el… no, espera, no cortes nada, solo… mierda, ¿me copian?—\n\nLa grabación salta. Oyes tu propia respiración en el pasillo y te odias un segundo por el susto. Los cables en las paredes brillan sin calor, como venas con fiebre de mentira.",
+        },
+        {
+          vnMood: "serious",
+          speaker: "Narración",
+          expression: "conductos que laten, sombras que se alargan y acortan",
+          text:
+            "Cables arden sin calor. La ciudad parece tener otra ciudad debajo: conductos que laten como venas, válvulas que susurran nombres que no son tuyos. El aire vibra en la frente. Aquí el juramento médico choca con la necesidad de atravesar la anomalía hasta el origen del pulso falso.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Tú (doctor)",
+          expression: "sudor frío, determinación quieta",
+          text:
+            "Te detienes ante una arqueta marcada con un símbolo que no recuerdas haber visto en ningún curso. Huele a ozono y a papel mojado. Piensas en los que arriba esperan una explicación limpia. Les debes la verdad… o al menos una mentira que los mantenga vivos hasta mañana.",
+        },
+        {
+          vnMood: "serious",
+          speaker: "Narración",
+          expression: "puerta de servicio al ‘núcleo’ simbólico",
+          text:
+            "Una luz de emergencia parpadea en rojo, pero el pasillo suena azul. El Nudo juega con sentidos cruzados. Anotas el fenómeno: no para el paper, sino para no volverte loco. La cordura, aquí, es también protocolo.",
+        },
+      ],
     },
     {
       id: "cap4",
       unlockFloor: 20,
       title: "Capítulo 4 — Núcleo frío",
-      vnMood: "serious",
-      text:
-        "Una voz estática susurra coordenadas. Los que salvaste empiezan a recordar el mismo sueño. El fondo del Nudo no es un lugar: es un acuerdo colectivo roto, y alguien sigue firmando con tu nombre.",
       bg: 0,
+      vnMood: "serious",
+      pages: [
+        {
+          vnMood: "serious",
+          speaker: "Narración",
+          expression: "sala amplia, eco que repite palabras medio segundo tarde",
+          text:
+            "El ‘núcleo’ no es un artefacto brillante de ciencia ficción: es un silencio demasiado ordenado, como quirófano antes de la primera incisión. Las paredes sudan condensación. Cada gota sigue un ritmo. No es aleatorio. Nada aquí lo es.",
+        },
+        {
+          vnMood: "serious",
+          speaker: "Voz estática",
+          expression: "susurro que ensambla sílabas como piezas de rompecabezas",
+          text:
+            "—…coordenadas… no… tuyas… firma…—\n\nLa voz ensambla fragmentos. Entre líneas, crees oír tu nombre deletreado con la paciencia de quien repite una lección hasta que el alumno rompa. Aprietas los puños. Respiras lento. El miedo es contagioso; la calma también.",
+        },
+        {
+          vnMood: "serious",
+          speaker: "Narración",
+          expression: "pacientes rescatados, mismos ojos vacíos al despertar",
+          text:
+            "Los que salvaste empiezan a recordar el mismo sueño: un pasillo, una puerta, una pregunta que no tiene respuesta corta. No es epidemia clásica; es sincronía del trauma. Tu intervención ya no basta con vendas: necesitas sentido, aunque duela.",
+        },
+        {
+          vnMood: "tension",
+          speaker: "Tú (doctor)",
+          expression: "voz ronca, furia contenida",
+          text:
+            "—Si alguien usa mi nombre, que se presente. —El eco devuelve la frase casi burlón, como si el lugar te citara a juicio. Entiendes, de golpe, que el fondo del Nudo no es un sitio: es un acuerdo colectivo roto, y alguien sigue firmando con tinta que huele a hospital y ceniza.",
+        },
+        {
+          vnMood: "serious",
+          speaker: "Narración",
+          expression: "amanecer gris tras la puerta",
+          text:
+            "Subes de nuevo hacia la luz verdosa del pasillo. No has ganado; has sobrevivido a una capa más del problema. Eso, en este oficio, a veces cuenta como victoria. Guardas el bolígrafo. El siguiente informe tendrá una línea en blanco al final, para lo que aún no tiene nombre.",
+        },
+      ],
     },
   ];
 
@@ -1386,10 +1613,18 @@
     if (nowPlayingEl) nowPlayingEl.textContent = "Música: " + label + " (minijuego)";
   }
 
+  /** Historia: no reiniciar pista si el tono no cambia (evita cortes al pulsar Continuar). */
+  let lastVnStoryMood = null;
+  function resetVnStoryMusicState() {
+    lastVnStoryMood = null;
+  }
   /** Historia: una base por tono (calma / tensión / serio), sin azar. */
   function playStoryMood(mood) {
-    if (mood === "tension") playLotgTrack("omen", "Historia — tensión");
-    else if (mood === "serious") playLotgTrack("chill", "Historia — serio");
+    const m = mood === "tension" || mood === "serious" || mood === "calm" ? mood : "calm";
+    if (lastVnStoryMood === m) return;
+    lastVnStoryMood = m;
+    if (m === "tension") playLotgTrack("omen", "Historia — tensión");
+    else if (m === "serious") playLotgTrack("chill", "Historia — serio");
     else playLotgTrack("youthful", "Historia — calma");
   }
 
@@ -2266,6 +2501,11 @@
     };
   }
 
+  function vnFormatStoryText(s) {
+    if (s == null) return "";
+    return escapeHtml(String(s)).replace(/\n/g, "<br/>");
+  }
+
   function resetVNChrome() {
     const port = document.getElementById("vnPortrait");
     const ch = document.getElementById("vnChoices");
@@ -2284,11 +2524,23 @@
   function showVN(beat, onDone) {
     const ov = document.getElementById("vnOverlay");
     const txt = document.getElementById("vnText");
+    const port = document.getElementById("vnPortrait");
     resetVNChrome();
     const bg = VN_BG[beat.bg % VN_BG.length];
     ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${bg}")`;
-    const body = beat.text != null ? escapeHtml(beat.text) : "";
+    let body = vnFormatStoryText(beat.text);
+    if (beat.speaker) {
+      const expr =
+        beat.expression != null && String(beat.expression).trim() !== ""
+          ? ` <span class="muted vn-expression">(${escapeHtml(String(beat.expression).trim())})</span>`
+          : "";
+      body = `<strong class="vn-speaker">${escapeHtml(beat.speaker)}</strong>${expr}<br/><br/>` + body;
+    }
     txt.innerHTML = `<strong>${escapeHtml(beat.title)}</strong><br/><br/>${body}`;
+    if (beat.portrait && port) {
+      port.style.display = "block";
+      port.innerHTML = `<img src="${escapeAttrUrl(beat.portrait)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.style.display='none'"/>`;
+    }
     playStoryMood(beat.vnMood || "calm");
     ov.classList.add("show");
     const cont = document.getElementById("vnContinue");
@@ -2296,7 +2548,7 @@
       ov.classList.remove("show");
       cont.onclick = null;
       resetVNChrome();
-      playLotgTrack("safe", "Safe Area");
+      /* No volver a «Safe Area» entre páginas: solo el callback final (salida del capítulo) pone música del hub. */
       onDone && onDone();
     };
     cont.onclick = close;
@@ -2322,6 +2574,9 @@
           text: pg.text,
           bg: pg.bg != null ? pg.bg : beat.bg,
           vnMood: mood,
+          speaker: pg.speaker,
+          expression: pg.expression,
+          portrait: pg.portrait,
         },
         next
       );
@@ -2351,38 +2606,39 @@
       resetVNChrome();
       const bg = VN_BG[ch.bg % VN_BG.length];
       ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${bg}")`;
-      playStoryMood("calm");
       port.style.display = "block";
       port.innerHTML = `<img src="${escapeAttrUrl(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.style.display='none'"/>`;
       txt.innerHTML = `<strong>${escapeHtml(ch.title)}</strong><br/><br/>
-      <span class="muted">${escapeHtml(displayName)}</span> te intercepta en un pasillo que no estaba en el mapa. El aire vibra; sus ojos dicen que lleva tiempo esperando a alguien que no gritara al ver la anomalía.<br/><br/>
-      —Doctor… ¿vas a fingir que esto es solo un desastre urbano, o podemos hablar en serio?`;
+      <strong class="vn-speaker">${escapeHtml(displayName)}</strong> <span class="muted vn-expression">(postura tensa, dedos en el guantelete como si midiera un cable invisible)</span><br/><br/>
+      Te intercepta en un pasillo que <em>no</em> estaba en el mapa que te dieron en recepción. El aire huele a ozono barato y a café frío; sus ojos, claros bajo el flequillo, llevan el brillo de quien ha contado demasiados segundos entre un latido y el siguiente.<br/><br/>
+      —Doctor… no voy a pedirte que seas valiente. Solo que no me mientas con la voz de <em>protocolo</em>. ¿Esto es un desastre urbano para el parte, o podemos hablar como adultos que ya oyeron el zumbido?`;
       choicesEl.style.display = "flex";
       cont.style.display = "none";
+      /* La música ya viene del último beat del interludio; solo subimos tensión si antes estaba en calma/serio. */
       playStoryMood("tension");
       ov.classList.add("show");
 
       const opts = [
         {
           id: "calma",
-          label: "Responder con calma clínica: priorizas datos y seguridad.",
+          label: "Calma clínica: datos, riesgos y siguiente paso (sin teatro).",
           reaction:
             displayName +
-            " asiente, aliviada. ‘Bien. Entonces no me pidas que sea valiente: pídeme que sea precisa.’ Sus manos dejan de temblar; la confianza sube un grado.",
+            " exhala por la nariz, casi una risa sin humor. ‘Bien. Eso es lo que necesito: que me trates como instrumento bien calibrado, no como damisela en apuros.’ Afloja los dedos; el hombro deja de estar encajado como un candado.— Doctor, cuando digas ‘avanzamos’, avanzo. No antes. No después.",
         },
         {
           id: "empatia",
-          label: "Mostrar empatía: reconoces el miedo sin minimizarlo.",
+          label: "Empatía sincera: nombras el miedo sin quitarle peso al deber.",
           reaction:
             displayName +
-            " baja la guardia. ‘…Gracias. La mayoría solo ordena. Tú… escuchas.’ Una sombra de sonrisa, breve, como un latido.",
+            " parpadea demasiado rápido, una vez, dos. Luego asiente con la barbilla alta, como si aceptara un trato vergonzoso pero justo.— …Gracias. Odio que me funcione eso. La mayoría solo grita órdenes con voz de trueno falso. Tú… —traga— …escuchas como quien toma lecturas. No voy a olvidarlo.",
         },
         {
           id: "firme",
-          label: "Ser firme: necesitas obediencia en zona caliente.",
+          label: "Frialdad operativa: necesitas obediencia inmediata en zona caliente.",
           reaction:
             displayName +
-            " entrecierra los ojos, luego exhala. ‘De acuerdo. Pero cuando esto termine, recordaré quién me trató como herramienta.’ El vínculo queda tenso, pero operativo.",
+            " te mira un segundo de más, el brillo frío de quien aprendió a no discutir con el cable equivocado.— Entendido. Modo herramienta. —Su voz baja un tono, afilada.— Cuando esto pase, recordaré quién me pidió silencio útil y quién me pidió alma. Por ahora: orden recibida.",
         },
       ];
 
@@ -2390,7 +2646,7 @@
         playStoryMood(choiceId === "firme" ? "serious" : "calm");
         choicesEl.style.display = "none";
         choicesEl.innerHTML = "";
-        txt.innerHTML += `<br/><br/><em>${reactionHtml}</em>`;
+        txt.innerHTML += `<br/><br/><em>${vnFormatStoryText(reactionHtml)}</em>`;
         if (!lotgState.storyChoiceLog) lotgState.storyChoiceLog = [];
         lotgState.storyChoiceLog.push({
           chapter: ch.id,
@@ -2404,6 +2660,7 @@
           cont.onclick = null;
           resetVNChrome();
           playLotgTrack("safe", "Safe Area");
+          resetVnStoryMusicState();
           lotgSave();
           onDone && onDone();
         };
@@ -3995,8 +4252,10 @@
           if (!ch) return;
           const done = () => {
             playLotgTrack("safe", "Safe Area");
+            resetVnStoryMusicState();
             renderLotgGame();
           };
+          resetVnStoryMusicState();
           if (ch.type === "choice") runChoiceAllyChapter(ch, done);
           else if (ch.pages && ch.pages.length) showVNSequenceFromBeat(ch, done);
           else showVN(ch, done);
