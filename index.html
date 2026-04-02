@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Patimon Archive — Legend of the Gathering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Zen+Antique+Soft&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0a0c12;
+      --panel: rgba(18, 22, 34, 0.92);
+      --panel-border: rgba(120, 160, 255, 0.25);
+      --accent: #7eb8ff;
+      --accent-hot: #ff8a5c;
+      --gold: #e8c547;
+      --text: #e8ecf4;
+      --muted: #8b95a8;
+      --danger: #ff6b6b;
+      --success: #5ce0a0;
+      --slot-head: #a78bfa;
+      --slot-body: #60a5fa;
+      --slot-weapon: #f87171;
+      --slot-acc: #34d399;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Outfit", system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg-deep);
+      line-height: 1.5;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: center/cover no-repeat var(--page-bg-img, none), linear-gradient(160deg, #0d1118 0%, #151a2a 50%, #0a0e18 100%);
+      opacity: 0.55;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(100, 140, 255, 0.15), transparent 55%);
+      pointer-events: none;
+    }
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      background: linear-gradient(180deg, rgba(10, 14, 24, 0.97), rgba(10, 14, 24, 0.88));
+      border-bottom: 1px solid var(--panel-border);
+      backdrop-filter: blur(12px);
+    }
+    .logo {
+      font-family: "Zen Antique Soft", serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    nav.tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    nav.tabs button {
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--panel-border);
+      background: rgba(30, 38, 58, 0.6);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    nav.tabs button:hover { border-color: var(--accent); background: rgba(50, 70, 110, 0.5); }
+    nav.tabs button.active {
+      background: linear-gradient(135deg, rgba(100, 140, 255, 0.35), rgba(255, 138, 92, 0.2));
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .audio-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .audio-bar input[type="range"] { width: 72px; accent-color: var(--accent); }
+    main { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    section.panel {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+    section.panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+    .card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .card h3 { margin: 1rem 0 0.5rem; font-size: 1rem; color: var(--gold); }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+    .tutorial-box {
+      border-left: 4px solid var(--accent-hot);
+      padding-left: 1rem;
+      margin: 1rem 0;
+    }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .filter-row button {
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--panel-border);
+      background: rgba(35, 42, 62, 0.8);
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .filter-row button.on { border-color: var(--accent); background: rgba(80, 120, 200, 0.25); }
+    .equip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .equip-card {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--panel-border);
+      background: linear-gradient(165deg, rgba(28, 34, 52, 0.95), rgba(18, 22, 34, 0.98));
+    }
+    .equip-card .img-wrap {
+      aspect-ratio: 4/3;
+      background: #121620;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .equip-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .equip-card .body { padding: 0.85rem; }
+    .slot-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      margin-bottom: 0.35rem;
+    }
+    .slot-Cabeza { background: rgba(167, 139, 250, 0.25); color: var(--slot-head); }
+    .slot-Cuerpo { background: rgba(96, 165, 250, 0.25); color: var(--slot-body); }
+    .slot-Arma { background: rgba(248, 113, 113, 0.25); color: var(--slot-weapon); }
+    .slot-Accesorio { background: rgba(52, 211, 153, 0.25); color: var(--slot-acc); }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.25rem 0.5rem;
+      font-size: 0.78rem;
+      margin-top: 0.5rem;
+    }
+    .stat-grid span { color: var(--muted); }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    button.primary {
+      font-family: inherit;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #5b8def, #7eb8ff);
+      color: #0a0c12;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.ghost {
+      font-family: inherit;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+    button.danger { border-color: var(--danger); color: var(--danger); }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.65);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      width: min(560px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #141824;
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.25rem;
+    }
+    .modal h3 { margin-top: 0; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 0.5rem 0 0.2rem; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid var(--panel-border);
+      background: rgba(20, 24, 36, 0.9);
+      color: var(--text);
+      font-family: inherit;
+    }
+    textarea { min-height: 64px; resize: vertical; }
+    .form-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    .placeholder-big { padding: 3rem; text-align: center; color: var(--muted); }
+    /* LOTG */
+    .lotg-hub { display: grid; gap: 1rem; }
+    .lotg-stats-create { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; }
+    .lotg-map { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin: 1rem 0; }
+    @media (max-width: 600px) { .lotg-map { grid-template-columns: repeat(3, 1fr); } }
+    .map-cell {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px dashed var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      cursor: pointer;
+      background: rgba(30, 36, 52, 0.5);
+      text-align: center;
+      padding: 0.25rem;
+    }
+    .map-cell.revealed { border-style: solid; }
+    .map-cell.player { outline: 2px solid var(--gold); }
+    .map-cell.enemy { border-color: var(--danger); }
+    .map-cell.map-enemy-boss {
+      border-color: rgba(220, 38, 38, 0.95);
+      color: #fecaca;
+      background: linear-gradient(145deg, rgba(90, 22, 22, 0.72), rgba(28, 10, 14, 0.92));
+      box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.35), 0 0 18px rgba(239, 68, 68, 0.35);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .map-cell.map-enemy-miniboss {
+      border-color: rgba(167, 139, 250, 0.95);
+      color: #ede9fe;
+      background: linear-gradient(145deg, rgba(76, 29, 120, 0.62), rgba(30, 20, 55, 0.9));
+      box-shadow: inset 0 0 0 1px rgba(196, 181, 253, 0.4), 0 0 14px rgba(139, 92, 246, 0.32);
+      font-weight: 700;
+    }
+    .map-cell.event { border-color: var(--accent); }
+    .map-cell.rest { border-color: var(--success); }
+    .map-cell.shop {
+      border-color: rgba(255, 200, 120, 0.95);
+      color: #ffd89a;
+      background: linear-gradient(145deg, rgba(60, 45, 28, 0.55), rgba(28, 22, 14, 0.75));
+      box-shadow: inset 0 0 0 1px rgba(255, 200, 120, 0.25), 0 0 12px rgba(255, 180, 80, 0.12);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .map-cell.exit {
+      border-color: rgba(147, 197, 253, 0.9);
+      color: #bfdbfe;
+      background: linear-gradient(160deg, rgba(30, 58, 95, 0.5), rgba(15, 24, 42, 0.85));
+      box-shadow: 0 0 14px rgba(96, 165, 250, 0.15);
+      font-weight: 700;
+    }
+    .map-cell.done {
+      border-color: rgba(167, 139, 250, 0.95) !important;
+      color: #ddd6fe;
+      background: linear-gradient(145deg, rgba(76, 29, 120, 0.55), rgba(30, 20, 50, 0.88)) !important;
+      box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.35), 0 0 14px rgba(139, 92, 246, 0.2);
+      font-weight: 700;
+    }
+    .map-cell.done.player {
+      outline-color: #c4b5fd;
+    }
+    .lotg-done-inline { color: #c4b5fd; }
+    .combat-log {
+      font-family: ui-monospace, monospace;
+      font-size: 0.8rem;
+      max-height: 180px;
+      overflow-y: auto;
+      background: #0d1018;
+      padding: 0.75rem;
+      border-radius: 10px;
+      margin: 0.75rem 0;
+      white-space: pre-wrap;
+    }
+    .unit-face { width: 112px; height: 112px; border-radius: 12px; object-fit: cover; border: 2px solid var(--panel-border); }
+    .lotg-combat-unit-face { width: 104px !important; height: 104px !important; border-radius: 12px; }
+    .flex { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start; }
+    .bar-wrap { height: 8px; background: #222; border-radius: 4px; overflow: hidden; margin-top: 0.25rem; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--danger), var(--accent-hot)); border-radius: 4px; }
+    .bar-fill.sp { background: linear-gradient(90deg, #6366f1, var(--accent)); }
+    .vn-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      background: center/cover no-repeat;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .vn-overlay.show { display: flex; }
+    .vn-box {
+      width: min(720px, 100%);
+      background: rgba(8, 10, 18, 0.92);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .vn-portrait {
+      float: right;
+      width: min(220px, 42vw);
+      height: min(220px, 42vw);
+      margin: 0 0 0.75rem 1rem;
+      border-radius: 12px;
+      border: 2px solid rgba(126, 184, 255, 0.45);
+      object-fit: cover;
+      shape-outside: margin-box;
+    }
+    .vn-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .vn-choices button {
+      font-family: inherit;
+      text-align: left;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      background: rgba(40, 50, 78, 0.85);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .vn-choices button:hover { border-color: var(--accent); }
+    .party-badge {
+      font-size: 0.65rem;
+      padding: 0.22rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(94, 224, 160, 0.12);
+      color: #86efac;
+      border: 1px solid rgba(94, 224, 160, 0.45);
+      display: inline-block;
+      margin-top: 0.35rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .party-badge-active {
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.25), rgba(16, 185, 129, 0.2));
+      border-color: rgba(52, 211, 153, 0.65);
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.2);
+    }
+    .lotg-roster-grid { align-items: stretch; }
+    .lotg-roster-card {
+      max-width: 220px;
+      padding: 0.65rem 0.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--panel-border);
+      background: rgba(18, 22, 34, 0.65);
+    }
+    .lotg-roster-stats { font-size: 0.68rem; line-height: 1.45; margin-top: 0.35rem; word-break: break-word; }
+    .ally-equip-block { margin-top: 0.35rem; padding-top: 0.35rem; border-top: 1px dashed rgba(255,255,255,0.08); }
+    .ally-stash-btns { display: flex; flex-wrap: wrap; align-items: center; }
+    .gacha-pull-log {
+      max-height: 220px;
+      overflow-y: auto;
+      margin-top: 0.5rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      background: rgba(10, 12, 20, 0.85);
+      border: 1px solid var(--panel-border);
+      font-size: 0.78rem;
+    }
+    .gacha-log-list { margin: 0; padding-left: 1.1rem; line-height: 1.45; }
+    .gacha-log-list li { margin-bottom: 0.35rem; }
+    .lotg-ally-combat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
+      align-items: flex-start;
+    }
+    .lotg-ally-combat-card {
+      text-align: center;
+      padding: 0.45rem 0.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      background: rgba(20, 24, 38, 0.75);
+      min-width: 96px;
+      max-width: 130px;
+    }
+    .lotg-enemy-hord-wrap {
+      flex: 1;
+      min-width: 200px;
+      max-width: 520px;
+    }
+    .lotg-enemy-card {
+      padding: 0.5rem 0.65rem;
+      margin-bottom: 0.5rem;
+      border-radius: 10px;
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      background: rgba(40, 20, 28, 0.45);
+    }
+    .lotg-enemy-card.enemy-down {
+      opacity: 0.45;
+      filter: grayscale(0.4);
+    }
+    .lotg-elem-tag { font-size: 0.7rem; color: #fcd34d; }
+    .combat-triangle-hint {
+      font-size: 0.72rem;
+      color: #a5b4fc;
+      margin-bottom: 0.5rem;
+      padding: 0.35rem 0.5rem;
+      border-radius: 8px;
+      background: rgba(79, 70, 229, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.25);
+    }
+    .lotg-combat-main-row { align-items: flex-start; }
+    .lotg-ally-combat-card.ally-down { opacity: 0.45; filter: grayscale(0.35); }
+    .lotg-ally-combat-name { font-size: 0.68rem; max-width: 104px; line-height: 1.2; margin: 0.25rem 0; }
+    .combat-phase-banner {
+      font-size: 0.85rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 10px;
+      margin-bottom: 0.65rem;
+      border: 1px solid var(--panel-border);
+    }
+    .combat-phase-banner.protag-turn {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(96, 165, 250, 0.35);
+    }
+    .combat-phase-banner.ally-turn {
+      background: rgba(168, 85, 247, 0.12);
+      border-color: rgba(192, 132, 252, 0.35);
+    }
+    .combat-buff-pill {
+      font-size: 0.78rem;
+      padding: 0.4rem 0.65rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: #fcd34d;
+    }
+    .combat-items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.45rem;
+      margin-bottom: 0.35rem;
+    }
+    .story-skill-codex summary { cursor: pointer; color: var(--accent); }
+    .merge-badge { font-size: 0.65rem; margin-left: 0.25rem; color: var(--gold); }
+    .slot-equip-tag { font-size: 0.7rem; color: var(--muted); }
+    .rarity-SSS { color: #ff6ec7; font-weight: 700; }
+    .rarity-SS { color: #ffd700; }
+    .rarity-S { color: #c084fc; }
+    .rarity-A { color: #60a5fa; }
+    .rarity-B { color: #94a3b8; }
+    .lotg-subnav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .lotg-subnav button {
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.45rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      background: rgba(30, 38, 55, 0.85);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .lotg-subnav button.on {
+      border-color: var(--accent);
+      background: rgba(80, 120, 200, 0.28);
+      font-weight: 600;
+    }
+    .gacha-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    @media (max-width: 900px) { .gacha-two-col { grid-template-columns: 1fr; } }
+    .gacha-panel {
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1rem;
+      background: rgba(20, 26, 40, 0.65);
+    }
+    .gacha-panel h3 { margin-top: 0; color: var(--gold); }
+    .gacha-common-banner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin: 0.75rem 0 1rem;
+    }
+    .gacha-common-banner img {
+      width: 100%;
+      min-height: 168px;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 2px solid var(--panel-border);
+    }
+    .gacha-premium-art {
+      margin: 0.75rem 0 1rem;
+      text-align: center;
+    }
+    .gacha-premium-art img {
+      max-width: 100%;
+      width: 100%;
+      max-height: 420px;
+      min-height: 220px;
+      object-fit: contain;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 110, 199, 0.45);
+      box-shadow: 0 0 24px rgba(255, 110, 199, 0.15);
+    }
+    .story-chapter-list { list-style: none; padding: 0; margin: 0; }
+    .story-chapter-list li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--panel-border);
+      background: rgba(22, 28, 42, 0.75);
+    }
+    .story-chapter-list li.locked { opacity: 0.65; }
+    .lotg-currency-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.25rem;
+      margin: 0 0 1.25rem;
+      padding: 0.65rem 1rem;
+      border-radius: 14px;
+      border: 1px solid var(--panel-border);
+      background: linear-gradient(135deg, rgba(30, 38, 58, 0.9), rgba(18, 24, 38, 0.95));
+    }
+    .lotg-soul-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      background: linear-gradient(135deg, rgba(100, 80, 200, 0.35), rgba(255, 110, 199, 0.2));
+      border: 1px solid rgba(180, 140, 255, 0.45);
+      color: #e8d4ff;
+    }
+    .lotg-protagonist-card {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.25rem;
+      border-radius: 16px;
+      border: 1px solid rgba(126, 184, 255, 0.35);
+      background: linear-gradient(145deg, rgba(28, 36, 56, 0.95), rgba(16, 20, 32, 0.98));
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    }
+    .lotg-protagonist-card .lotg-protag-portrait {
+      width: 120px;
+      height: 120px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 3px solid rgba(126, 184, 255, 0.5);
+      box-shadow: 0 0 20px rgba(100, 160, 255, 0.2);
+      flex-shrink: 0;
+    }
+    .lotg-protag-meta .lotg-protag-name {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem;
+      color: var(--text);
+    }
+    .lotg-protag-meta .lotg-protag-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .lotg-protag-bars { margin-top: 0.5rem; max-width: 220px; }
+    .gacha-banner-face {
+      text-align: center;
+    }
+    .gacha-banner-face img {
+      width: 100%;
+      min-height: 110px;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 2px solid var(--panel-border);
+      display: block;
+    }
+    .gacha-banner-name {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-top: 0.35rem;
+      color: var(--accent);
+      line-height: 1.2;
+      min-height: 2.2em;
+    }
+    .gacha-common-pool-names {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0.5rem 0 0;
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--panel-border);
+    }
+    .gacha-premium-hero {
+      text-align: center;
+      padding: 0.5rem 0 0.25rem;
+    }
+    .gacha-premo-eyebrow {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #ff8ec8;
+      margin: 0 0 0.35rem;
+      font-weight: 700;
+    }
+    .gacha-premo-title {
+      font-family: "Syne", "Outfit", sans-serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin: 0 0 0.75rem;
+      line-height: 1.15;
+      background: linear-gradient(120deg, #fff5f8 0%, #ffb8e0 35%, #c084fc 70%, #7eb8ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 20px rgba(255, 140, 200, 0.35));
+    }
+    .gacha-premo-tagline {
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin: 0 0 1rem;
+    }
+    .gacha-premo-grade {
+      font-size: 0.8rem;
+      color: #ff9ed8;
+      font-weight: 600;
+      margin: 0.75rem 0 0;
+    }
+    .lotg-combat-protag-wrap {
+      text-align: center;
+    }
+    .lotg-combat-protag-wrap .lotg-protag-portrait-combat {
+      width: 108px;
+      height: 108px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid rgba(126, 184, 255, 0.55);
+      margin-bottom: 0.35rem;
+    }
+
+    /* Gacha — catálogo reclutas por rareza (scroll horizontal) */
+    .gacha-recruit-showcase {
+      margin: 1rem 0 1.5rem;
+      padding: 1rem 1.15rem 1.25rem;
+      border-radius: 18px;
+      border: 1px solid rgba(0, 255, 255, 0.22);
+      background: linear-gradient(165deg, rgba(12, 20, 40, 0.92), rgba(8, 6, 22, 0.96));
+      box-shadow: 0 0 40px rgba(0, 220, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .gacha-showcase-head { margin-bottom: 0.85rem; }
+    .gacha-showcase-title {
+      margin: 0 0 0.35rem;
+      font-family: "Syne", "Outfit", ui-sans-serif, system-ui, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7ee8ff;
+      text-shadow: 0 0 18px rgba(0, 255, 255, 0.35);
+    }
+    .gacha-showcase-hint { margin: 0; font-size: 0.82rem; line-height: 1.45; }
+    .gacha-catalog-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 0.85rem;
+    }
+    .gacha-cat-tab {
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.35);
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, color 0.15s;
+    }
+    .gacha-cat-tab .gacha-tab-count {
+      opacity: 0.75;
+      font-weight: 600;
+      margin-left: 0.25rem;
+      font-size: 0.72rem;
+    }
+    .gacha-cat-tab.on {
+      border-color: rgba(0, 255, 255, 0.55);
+      color: #ecfeff;
+      box-shadow: 0 0 16px rgba(0, 255, 255, 0.2);
+      background: rgba(0, 60, 80, 0.45);
+    }
+    .gacha-cat-panel { display: none; }
+    .gacha-cat-panel.gacha-cat-panel--active { display: block; }
+    .gacha-cat-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      margin-bottom: 0.5rem;
+    }
+    .gacha-cat-nudge {
+      min-width: 2.25rem;
+      padding: 0.35rem 0.5rem !important;
+      font-size: 1rem !important;
+      border-radius: 8px !important;
+      border-color: rgba(255, 77, 166, 0.4) !important;
+      color: #fda4d4 !important;
+    }
+    .gacha-cat-label {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .gacha-cat-scroll {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.5rem 0.15rem 0.85rem;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-color: rgba(0, 255, 255, 0.4) rgba(0, 0, 0, 0.3);
+    }
+    .gacha-cat-scroll::-webkit-scrollbar { height: 8px; }
+    .gacha-cat-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, rgba(0, 255, 255, 0.45), rgba(255, 100, 200, 0.4));
+      border-radius: 8px;
+    }
+    .gacha-cat-card {
+      flex: 0 0 auto;
+      width: 132px;
+      scroll-snap-align: start;
+      border-radius: 14px;
+      padding: 0.45rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .gacha-cat-card--SSS { border-color: rgba(255, 110, 199, 0.65); box-shadow: 0 0 20px rgba(255, 110, 199, 0.15); }
+    .gacha-cat-card--SS { border-color: rgba(255, 215, 0, 0.55); box-shadow: 0 0 16px rgba(255, 215, 0, 0.12); }
+    .gacha-cat-card--S { border-color: rgba(192, 132, 252, 0.55); }
+    .gacha-cat-card--A { border-color: rgba(96, 165, 250, 0.55); }
+    .gacha-cat-card--B { border-color: rgba(148, 163, 184, 0.45); }
+    .gacha-cat-card-frame {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 1;
+    }
+    .gacha-cat-card-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .gacha-cat-rarity-pill {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 0.12rem 0.35rem;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .gacha-cat-card-meta { margin-top: 0.4rem; text-align: center; }
+    .gacha-cat-card-name {
+      display: block;
+      font-size: 0.68rem;
+      line-height: 1.25;
+      color: #f1f5f9;
+    }
+    .gacha-cat-card-sub {
+      display: block;
+      font-size: 0.58rem;
+      color: var(--muted);
+      line-height: 1.3;
+      margin-top: 0.15rem;
+    }
+    .gacha-cat-empty { margin: 0.5rem; text-align: center; }
+    .gacha-promo-strip {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed rgba(255, 110, 199, 0.3);
+    }
+    .gacha-promo-strip-title {
+      margin: 0 0 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #ff9ed8;
+      letter-spacing: 0.04em;
+    }
+    .gacha-promo-scroll { padding-bottom: 0.5rem; }
+
+    /* Combate — estética tipo Shin Megami Tensei (UI oscura, neón, rejilla) */
+    #lotgGameWrap.lotg-combat-active {
+      padding: 0.75rem 1rem 1.25rem;
+    }
+    .smt-combat-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      border: 2px solid rgba(0, 255, 255, 0.28);
+      border-radius: 4px;
+      background: linear-gradient(180deg, rgba(4, 6, 14, 0.94), rgba(10, 4, 18, 0.97));
+      box-shadow:
+        0 0 0 1px rgba(255, 0, 180, 0.12),
+        0 0 48px rgba(0, 255, 255, 0.06),
+        inset 0 0 80px rgba(80, 0, 120, 0.15);
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    }
+    .smt-combat-header {
+      padding: 0.65rem 1rem 0.5rem;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      background: linear-gradient(90deg, rgba(0, 40, 50, 0.5), transparent 55%);
+    }
+    .smt-combat-header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.75rem 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .smt-combat-venue {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.28em;
+      color: #22d3ee;
+      text-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
+    }
+    .smt-combat-h1 {
+      margin: 0;
+      font-family: "Syne", "Outfit", ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(1.15rem, 3vw, 1.55rem);
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      color: #fafafa;
+      text-shadow: 0 0 24px rgba(236, 72, 153, 0.35);
+    }
+    .smt-floor-tag {
+      display: inline-block;
+      margin-left: 0.35rem;
+      padding: 0.15rem 0.55rem;
+      font-size: 0.55em;
+      letter-spacing: 0.08em;
+      vertical-align: middle;
+      border: 1px solid rgba(250, 204, 21, 0.55);
+      color: #fde047;
+      background: rgba(60, 40, 0, 0.45);
+    }
+    .smt-combat-help {
+      margin: 0;
+      font-size: 0.76rem;
+      line-height: 1.5;
+      color: #a5f3fc;
+      max-width: 56rem;
+      opacity: 0.92;
+    }
+    .smt-combat-grid {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) minmax(220px, 1.35fr) minmax(150px, 0.95fr);
+      gap: 0.85rem;
+      padding: 0.85rem 0.75rem 0.65rem;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .smt-combat-grid {
+        grid-template-columns: 1fr;
+      }
+      .smt-wing--commander { order: -1; }
+    }
+    .smt-wing-title {
+      margin: 0 0 0.5rem;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      padding-bottom: 0.35rem;
+      border-bottom: 2px solid;
+    }
+    .smt-wing-title--cyan {
+      color: #22d3ee;
+      border-color: rgba(34, 211, 238, 0.45);
+      text-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+    }
+    .smt-wing-title--magenta {
+      color: #f472b6;
+      border-color: rgba(244, 114, 182, 0.45);
+      text-shadow: 0 0 14px rgba(244, 114, 182, 0.35);
+    }
+    .smt-wing-title--gold {
+      color: #fcd34d;
+      border-color: rgba(252, 211, 77, 0.45);
+      text-shadow: 0 0 12px rgba(252, 211, 77, 0.25);
+    }
+    .smt-wing-caption {
+      font-size: 0.68rem;
+      color: #99f6e4;
+      margin: 0 0 0.45rem;
+      line-height: 1.35;
+    }
+    .smt-ally-strip {
+      justify-content: flex-start;
+    }
+    .smt-enemy-sub {
+      margin: 0 0 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fda4af;
+      letter-spacing: 0.06em;
+    }
+    .lotg-combat-active .lotg-ally-combat-card {
+      border-color: rgba(34, 211, 238, 0.35);
+      background: linear-gradient(160deg, rgba(0, 40, 50, 0.65), rgba(10, 12, 28, 0.9));
+      box-shadow: 0 0 16px rgba(0, 255, 255, 0.06);
+    }
+    .lotg-combat-active .lotg-enemy-card {
+      border: 1px solid rgba(244, 114, 182, 0.4);
+      border-left-width: 4px;
+      background: linear-gradient(95deg, rgba(60, 10, 40, 0.55), rgba(15, 8, 20, 0.88));
+      box-shadow: 0 0 14px rgba(236, 72, 153, 0.08);
+    }
+    .lotg-combat-active .lotg-enemy-card.combat-pickable-enemy {
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.45), 0 0 20px rgba(34, 211, 238, 0.15);
+    }
+    .smt-protag-card {
+      text-align: center;
+      padding: 0.65rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid rgba(252, 211, 77, 0.35);
+      background: linear-gradient(180deg, rgba(50, 40, 10, 0.5), rgba(8, 8, 16, 0.92));
+      box-shadow: inset 0 0 24px rgba(252, 211, 77, 0.06);
+    }
+    .smt-protag-portrait {
+      border: 2px solid rgba(252, 211, 77, 0.55) !important;
+      box-shadow: 0 0 20px rgba(252, 211, 77, 0.2);
+    }
+    .smt-protag-id { margin-top: 0.25rem; color: #fef9c3; font-size: 0.85rem; }
+    .smt-protag-meta { font-size: 0.72rem; color: #fde68a; margin-bottom: 0.25rem; }
+    .smt-stat-line { font-size: 0.72rem; color: #e2e8f0; margin-bottom: 0.15rem; }
+    .smt-bar { margin-top: 0.35rem; }
+    .lotg-combat-active .bar-fill {
+      background: linear-gradient(90deg, #f43f5e, #fb923c) !important;
+      box-shadow: 0 0 8px rgba(251, 146, 60, 0.4);
+    }
+    .lotg-combat-active .bar-fill.sp {
+      background: linear-gradient(90deg, #6366f1, #22d3ee) !important;
+      box-shadow: 0 0 8px rgba(34, 211, 238, 0.35);
+    }
+    .smt-combat-footer {
+      padding: 0.65rem 0.85rem 0.85rem;
+      border-top: 1px solid rgba(236, 72, 153, 0.2);
+      background: linear-gradient(0deg, rgba(20, 0, 30, 0.5), transparent);
+    }
+    .smt-combat-log {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      background: rgba(0, 8, 12, 0.92) !important;
+      border: 1px solid rgba(34, 211, 238, 0.25) !important;
+      color: #5eead4 !important;
+      text-shadow: 0 0 8px rgba(94, 234, 212, 0.25);
+      max-height: 200px;
+    }
+    .smt-action-deck .combat-phase-banner {
+      border-radius: 4px;
+      border-width: 2px;
+    }
+    .smt-action-deck .combat-phase-banner.protag-turn {
+      background: rgba(8, 40, 55, 0.75);
+      border-color: rgba(34, 211, 238, 0.45);
+      color: #cffafe;
+    }
+    .smt-action-deck .combat-phase-banner.ally-turn {
+      background: rgba(45, 10, 50, 0.75);
+      border-color: rgba(232, 121, 249, 0.45);
+      color: #fae8ff;
+    }
+    .smt-action-deck .combat-pick-banner {
+      border-color: rgba(34, 211, 238, 0.5) !important;
+      background: rgba(0, 50, 60, 0.55) !important;
+      color: #ecfeff !important;
+    }
+    .smt-action-deck .combat-triangle-hint {
+      background: rgba(45, 20, 80, 0.45);
+      border-color: rgba(192, 132, 252, 0.35);
+      color: #e9d5ff;
+    }
+    .smt-action-deck .combat-buff-pill {
+      background: rgba(60, 40, 0, 0.55);
+      border-color: rgba(252, 211, 77, 0.45);
+      color: #fef08a;
+    }
+    .smt-action-deck .btn-row button.primary {
+      background: linear-gradient(180deg, rgba(34, 211, 238, 0.35), rgba(8, 80, 90, 0.85));
+      border-color: rgba(34, 211, 238, 0.55);
+      color: #ecfeff;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo">Patimon Archive</div>
+    <nav class="tabs" id="mainNav">
+      <button type="button" data-section="equip" class="active">Equipos Patimon</button>
+      <button type="button" data-section="tutorial">Tutorial de combate</button>
+      <button type="button" data-section="lotg">Legend of the Gathering</button>
+    </nav>
+    <div class="audio-bar">
+      <span id="nowPlaying">Música: —</span>
+      <input type="range" id="masterVol" min="0" max="100" value="70" title="Volumen" />
+    </div>
+  </header>
+
+  <audio id="bgmGlobal" loop></audio>
+  <audio id="bgmLotg" loop></audio>
+
+  <main>
+    <section id="sec-equip" class="panel active">
+      <div class="card">
+        <h2>Guía rápida — Patimon</h2>
+        <div class="tutorial-box">
+          <p class="muted" style="margin-top:0">
+            <strong>Independiente de «Legend of the Gathering»:</strong> aquí solo guardas y consultas <em>fichas de equipo Patimon</em> (lista + añadir piezas). No es el inventario del minijuego; eso está en la otra pestaña cuando juegas una partida. Esta guía describe piezas <strong>Patimon</strong> como conjunto especial que refuerza la voluntad de los interventores en el campo.
+          </p>
+          <p>
+            Cada pieza puede ganar experiencia en combate. Al subir de nivel, sus estadísticas crecen según el tiempo de uso y el tipo de pieza, y puede desbloquear ramas de habilidad útiles en los <strong>Nudos de permanencia</strong>.
+          </p>
+          <p>
+            Si llevas piezas sueltas de distintos sets, solo aplican los <strong>bonos de sub-stats</strong> (texto breve bajo cada stat). Si completas el <strong>set del mismo tipo y elemento</strong>, se activa el <strong>bono principal del set</strong> y la <strong>habilidad de set completo</strong> descrita en la ficha.
+          </p>
+          <p>
+            Los estilos de set incluyen, entre otros: <em>Berserker, Licántropo, Rey Mago, Dulahand, Goliath, Exosister, Foturnito, Luciérnaga, John</em>. Cada uno ofrece una sinergia distinta; elige según tu estrategia elemental y de rol.
+          </p>
+          <p class="muted" style="margin-bottom:0">
+            Usa los filtros para ver por ranura (Cabeza, Cuerpo, Arma, Accesorio). Puedes <strong>añadir</strong> piezas manualmente (imagen + stats + textos) o <strong>eliminar</strong> las que hayas creado tú. Los datos de ejemplo usan imágenes de la carpeta <code>Patimon</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Catálogo de equipamiento Patimon</h2>
+        <p class="muted" style="margin:0 0 0.75rem">
+          Aquí defines el <strong>equipamiento Patimon</strong>: piezas por ranura (Cabeza, Cuerpo, Arma, Accesorio) con stats y textos de set, pensadas para armar builds y roles de combate en tu mesa o narrativa — independientes del minijuego <em>Legend of the Gathering</em>.
+        </p>
+        <div class="filter-row" id="slotFilters"></div>
+        <div class="btn-row">
+          <button type="button" class="primary" id="btnAddEquip">+ Añadir pieza</button>
+        </div>
+        <div class="equip-grid" id="equipGrid"></div>
+      </div>
+    </section>
+
+    <section id="sec-tutorial" class="panel">
+      <div class="card">
+        <h2>Tutorial de combate</h2>
+        <p class="placeholder-big">En proceso de creación.</p>
+      </div>
+    </section>
+
+    <section id="sec-lotg" class="panel">
+      <div class="card" id="lotgIntro">
+        <h2>Legend of the Gathering</h2>
+        <p class="muted">
+          Roguelike por turnos: eres un médico en los <strong>Nudos de permanencia</strong>. Dentro del juego tienes pestañas <strong>Exploración</strong> (mapa y combates con fondos de <code>Misc/Backgrounds</code>), <strong>Reclutamiento</strong> (gacha común y premium con arte promocional) e <strong>Historia</strong> (visual novel: prólogo al inicio y capítulos al alcanzar pisos 5, 10, 15 y 20). Al crear personaje recibes <strong>Soul Points</strong> iniciales para el gacha (común ×10 y margen; el premium ×1 cuesta más). Gana más Soul Points en combate, equípate y guarda a menudo. Si caes, pierdes la run actual.
+        </p>
+        <div id="lotgCreateWrap"></div>
+      </div>
+      <div class="card lotg-game-wrap" id="lotgGameWrap" style="display:none;min-height:12rem"></div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="modalEquip">
+    <div class="modal">
+      <h3>Nueva pieza de equipamiento</h3>
+      <form id="formEquip">
+        <label>Ranura</label>
+        <select name="slot" required>
+          <option value="Cabeza">Cabeza</option>
+          <option value="Cuerpo">Cuerpo</option>
+          <option value="Arma">Arma</option>
+          <option value="Accesorio">Accesorio</option>
+        </select>
+        <label>Nombre del set / pieza</label>
+        <input type="text" name="name" required placeholder="Ej. Berserker — Corona ígnea" />
+        <label>ID de set (mismo texto en las 4 piezas para activar bono completo)</label>
+        <input type="text" name="setId" required placeholder="berserker_fuego" />
+        <label>Elemento</label>
+        <input type="text" name="element" placeholder="Fuego" />
+        <label>Imagen (archivo)</label>
+        <input type="file" name="image" accept="image/*" />
+        <label>Descripción breve de la pieza</label>
+        <textarea name="descPiece" placeholder="Qué representa visualmente o narrativamente"></textarea>
+        <h3 style="margin-top:1rem;color:var(--gold)">Stats base</h3>
+        <p class="muted" style="margin:0 0 0.5rem">HP, SP, STG, DX, VI, MA, EN, AG, LUK — debajo puedes escribir la descripción del sub-stat / bono parcial.</p>
+        <div class="form-stats" id="formStatInputs"></div>
+        <label>Sub-stats / bonos parciales (texto)</label>
+        <textarea name="subStatsDesc" placeholder="Ej. +crítico menor mientras no completes el set..."></textarea>
+        <label>Bono de set completo</label>
+        <textarea name="setBonus" required placeholder="Qué obtienes al reunir las 4 piezas del mismo setId"></textarea>
+        <h3 style="margin-top:1rem;color:var(--gold)">Habilidad con set completo</h3>
+        <label>Nombre</label>
+        <input type="text" name="skillName" placeholder="Erupción de voluntad" />
+        <div class="form-stats" style="grid-template-columns:1fr 1fr 1fr">
+          <div><label>Coste SP</label><input type="number" name="skillSp" min="0" value="15" /></div>
+          <div><label>CD (turnos)</label><input type="number" name="skillCd" min="0" value="3" /></div>
+          <div><label>Usos máx. / combate</label><input type="number" name="skillUses" min="0" value="3" /></div>
+        </div>
+        <label>Daño (texto o número descriptivo)</label>
+        <input type="text" name="skillDmg" placeholder="180% MA + daño ígneo" />
+        <label>Condición para usar</label>
+        <textarea name="skillCond" placeholder="Solo con set completo equipado y SP suficiente"></textarea>
+        <label>Descripción</label>
+        <textarea name="skillDesc"></textarea>
+        <div class="btn-row" style="margin-top:1rem">
+          <button type="submit" class="primary">Guardar en catálogo</button>
+          <button type="button" class="ghost" id="modalEquipClose">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="vn-overlay" id="vnOverlay">
+    <div class="vn-box">
+      <div id="vnPortrait" class="vn-portrait" style="display:none"></div>
+      <p id="vnText" style="margin:0;font-size:1rem;line-height:1.6"></p>
+      <div id="vnChoices" class="vn-choices" style="display:none;margin-top:1rem"></div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button type="button" class="primary" id="vnContinue">Continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="anomalyShopOverlay" style="display:none">
+    <div class="modal" style="max-width:520px">
+      <h3 id="shopTitle">Tienda anómala</h3>
+      <p class="muted" id="shopDesc">Un comerciante sin rostro susurra precios en Zen…</p>
+      <div id="shopBody"></div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button type="button" class="ghost" id="shopClose">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>window.__KBK_JS_FILE_FAILED = false;</script>
+  <script src="kbk-app.js" onerror="window.__KBK_JS_FILE_FAILED=true"></script>
+  <script>
+    (function () {
+      if (window.KBK_APP_SHELL_OK) return;
+      var sectionMap = { equip: "sec-equip", tutorial: "sec-tutorial", lotg: "sec-lotg" };
+      function activateSection(dataSection) {
+        var id = sectionMap[dataSection] || "sec-equip";
+        var nav = document.getElementById("mainNav");
+        if (nav) {
+          var btns = nav.querySelectorAll("button");
+          for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.toggle("active", btns[i].getAttribute("data-section") === dataSection);
+          }
+        }
+        var panels = document.querySelectorAll("main section.panel");
+        for (var j = 0; j < panels.length; j++) panels[j].classList.remove("active");
+        var panel = document.getElementById(id);
+        if (panel) panel.classList.add("active");
+      }
+      var navRoot = document.getElementById("mainNav");
+      if (navRoot) {
+        var nbs = navRoot.querySelectorAll("button");
+        for (var k = 0; k < nbs.length; k++) {
+          nbs[k].addEventListener("click", function () {
+            activateSection(this.getAttribute("data-section"));
+          });
+        }
+      }
+      var warn = document.createElement("div");
+      warn.setAttribute("role", "alert");
+      warn.style.cssText =
+        "margin:1rem auto;padding:1rem;max-width:1200px;background:#3d1f1f;border:1px solid #c44;color:#fcc;border-radius:10px;font-size:0.9rem";
+      warn.innerHTML = window.__KBK_JS_FILE_FAILED
+        ? "<strong>No se encontró o no se pudo abrir kbk-app.js.</strong> Tiene que estar en la <em>misma carpeta</em> que este archivo HTML (por ejemplo <code>Projecto KBk\\Kbk.html</code> y <code>Projecto KBk\\kbk-app.js</code>). No borres kbk-app.js. Si moviste solo el HTML, copia también el .js."
+        : "<strong>kbk-app.js se descargó pero falló al ejecutarse.</strong> Pulsa F12 → pestaña Consola y copia el error en rojo. Actualiza Chrome o Edge. Prueba recargar con Ctrl+F5. No borres kbk-app.js salvo que quieras romper la página.";
+      if (window.KBK_APP_SHELL_ERROR) {
+        var pre = document.createElement("pre");
+        pre.style.cssText = "margin:0.75rem 0 0;font-size:0.8rem;white-space:pre-wrap;word-break:break-all;opacity:0.95";
+        pre.textContent = window.KBK_APP_SHELL_ERROR;
+        warn.appendChild(pre);
+      }
+      var mainEl = document.querySelector("main");
+      if (mainEl) mainEl.insertBefore(warn, mainEl.firstChild);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,4634 @@
+(function () {
+  "use strict";
+
+  try {
+    if (typeof NodeList !== "undefined" && NodeList.prototype && !NodeList.prototype.forEach) {
+      NodeList.prototype.forEach = Array.prototype.forEach;
+    }
+    if (typeof HTMLCollection !== "undefined" && HTMLCollection.prototype && !HTMLCollection.prototype.forEach) {
+      HTMLCollection.prototype.forEach = Array.prototype.forEach;
+    }
+  } catch (e) {}
+
+  const STAT_KEYS = ["HP", "SP", "STG", "DX", "VI", "MA", "EN", "AG", "LUK"];
+  const MUSIC = {
+    clinic: ["Music/Clinic.mp3", "music/Clinic.mp3", "music/clinic.mp3"],
+    safe: ["Music/Safe Area.mp3", "music/Safe Area.mp3", "music/Safe%20Area.mp3"],
+    nervous: ["Music/Nervo.mp3", "Music/Nervious.mp3", "music/Nervo.mp3", "music/Nervious.mp3"],
+    dungeonV1: ["Music/DungeonV1.mp3", "music/DungeonV1.mp3", "music/dungeonv1.mp3"],
+    boss: ["Music/Battle of OTA.mp3", "Music/Battle of ota.mp3", "music/Battle of OTA.mp3"],
+    miniboss: ["Music/DungeonLv4.mp3", "music/DungeonLv4.mp3", "music/dungeonlv4.mp3"],
+    youthful: ["Music/Youthful.mp3", "music/Youthful.mp3"],
+    chill: ["Music/Chill out.mp3", "music/Chill out.mp3", "music/Chill%20out.mp3"],
+    omen: ["Music/Omen.mp3", "music/Omen.mp3"],
+  };
+  const BG_PAGE = ["Fondo/Fondo.png", "Fondo/fondo.png", "Fondo/fondo.jpg", "Fondo/bg.jpg"];
+  const VN_BG = [
+    "Misc/Backgrounds/Nudopermanencia.png",
+    "Misc/Backgrounds/Ciudad.webp",
+    "Misc/Backgrounds/Hospital.webp",
+    "Misc/Backgrounds/Cavidad.png",
+    "miscs/backgronds/vn1.jpg",
+    "miscs/backgrounds/vn1.jpg",
+  ];
+  const COMBAT_BG = [
+    "Misc/Backgrounds/Hospital.webp",
+    "Misc/Backgrounds/Ciudad.webp",
+    "Misc/Backgrounds/Cavidad.png",
+    "Misc/Backgrounds/Nudopermanencia.png",
+    "Backgrounds/Hospital.webp",
+    "Backgrounds/Ciudad.webp",
+    "Backgrounds/Cavidad.png",
+    "Backgrounds/Nudopermanencia.png",
+    "miscs/backgronds/combat.jpg",
+  ];
+
+  /** Fondos del hub/exploración LOTG (carpeta miscs/backgrounds y Misc). */
+  const LOTG_HUB_BACKGROUNDS = [
+    "miscs/backgrounds/vn1.jpg",
+    "miscs/backgronds/vn1.jpg",
+    "Misc/Backgrounds/Ciudad.webp",
+    "Misc/Backgrounds/Hospital.webp",
+    "Misc/Backgrounds/Cavidad.png",
+    "Misc/Backgrounds/Nudopermanencia.png",
+    "Backgrounds/Ciudad.webp",
+    "Backgrounds/Hospital.webp",
+  ];
+
+  /** Triángulo: Fuego > Hielo > Trueno > Fuego. Resto = Neutral (×1). */
+  const LOTG_TRIANGLE = { Fuego: "Hielo", Hielo: "Trueno", Trueno: "Fuego" };
+
+  /** Soul Points iniciales. Común ×1 = 700 SP; premium ×1 = 870, ×10 = 2500. */
+  const INITIAL_SOUL = 3200;
+
+  const EQUIP_SLOTS = ["Cabeza", "Cuerpo", "Arma", "Accesorio"];
+  const MAX_PARTY_ALLIES = 3;
+  const MAX_MERGE_RANK = 6;
+
+  /** Historia (visual novel): prólogo multipágina; encuentro con recluta con elecciones; capítulos por piso. */
+  const STORY_CHAPTERS = [
+    {
+      id: "prologo",
+      unlockFloor: 0,
+      title: "Prólogo — Llamada desde el vacío",
+      bg: 0,
+      vnMood: "calm",
+      pages: [
+        {
+          vnMood: "calm",
+          text:
+            "La radio del vehículo corta el silencio con estática, como si la ciudad respirara al otro lado del cristal empañado. No es humo lo que ves: es una capa de ‘permanencia’, un velo que el manual de campo no nombra. Tu jefe de unidad repite el protocolo, pero tú ya sabes que los protocolos nacieron para un mundo que ya no existe.",
+        },
+        {
+          vnMood: "calm",
+          text:
+            "Te llaman por tu título —médico— como si fuera un escudo. Lo es, hasta que el primer herido te mira y no pregunta por la herida, sino si tú también oyes el zumbido. El zumbido no figura en ningún electrocardiograma. Late en los muros, en las tuberías, en los pasillos que el GPS marca como ‘cerrados por mantenimiento eterno’.",
+        },
+        {
+          vnMood: "tension",
+          text:
+            "El informe oficial habla de ‘Nudos de permanencia’: zonas donde el tiempo, el dolor y el miedo quedan atrapados en bucle. Los civiles atrapados en el centro comercial no son solo rehenes del fuego ni del derrumbe; son rehenes de un eco que repite el mismo minuto hasta desgastar el alma. Tu juramento no menciona ecos. Aun así, tu mano aprieta el estetoscopio.",
+        },
+        {
+          vnMood: "tension",
+          text:
+            "Antes de cruzar el perímetro, guardas una foto que no es tuya en el bolsillo —una polaroid arrugada que alguien dejó en la ambulancia— y una dosis de analgésico que sí es tuya. La puerta de servicio gime. Del otro lado, el aire sabe a metal frío y a recuerdos ajenos. Una voz lejana, quizá la tuya, pide evacuación por el altavoz. Tú no has tocado el micrófono.",
+        },
+        {
+          vnMood: "serious",
+          text:
+            "El primer paso dentro del Nudo es siempre el más fácil: todavía crees que el dolor se puede medir, que la muerte respeta turnos. Más adelante entenderás que aquí el combate no es solo contra carne corrupta, sino contra la insistencia del lugar en recordarte cosas que no viviste. Por ahora, avanzas. La ciudad te observa. Tú observas de vuelta, como buen médico: con atención, con miedo contenido, con la promesa de no abandonar a quien todavía late.",
+        },
+      ],
+    },
+    {
+      id: "vignette_aliada",
+      unlockFloor: 3,
+      title: "Interludio — Quien camina contigo",
+      type: "choice",
+      requiresRosterMin: 1,
+      /** Unidad fija del diálogo (arte y nombre del catálogo gacha). Si no está en el roster, igual aparece en la VN. */
+      partnerUnitName: "Aozora Lin",
+      bg: 1,
+      vnMood: "calm",
+      pages: [
+        {
+          vnMood: "calm",
+          text:
+            "El pasillo que no figuraba en el croquis termina en una sala de espera demasiado limpia. Las sillas de plástico están alineadas como dientes; la única luz viva es un letrero de ‘SILENCIO’ parpadeando sin apagarse nunca.",
+        },
+        {
+          vnMood: "tension",
+          text:
+            "Oyes pasos que no corresponden a ningún paciente: son el ritmo de alguien que ya aprendió a caminar entre anomalías sin romperse el tobillo moral. Cuando giras, la reconoces antes que a ti mismo: es la misma cara del informe de reclutamiento, pero con el cansancio de quien lleva semanas sin dormir bien.",
+        },
+      ],
+    },
+    {
+      id: "cap1",
+      unlockFloor: 5,
+      title: "Capítulo 1 — Primer informe",
+      vnMood: "tension",
+      text:
+        "Los monitores del hospital parpadean con lecturas imposibles. Alguien grabó tu voz pidiendo evacuación… pero no fuiste tú. El Nudo distorsiona identidades: cada superviviente describe una versión distinta de lo que vio en el pasillo B.",
+      bg: 0,
+    },
+    {
+      id: "cap2",
+      unlockFloor: 10,
+      title: "Capítulo 2 — Calle comercial",
+      vnMood: "calm",
+      text:
+        "Entre escaparates rotos, los maniquíes te siguen con la mirada solo cuando parpadeas. Un civil te entrega un frasco sin etiqueta: ‘Sirve para el dolor del alma’, dice, y desaparece en la niebla antes de que puedas tomar pulso.",
+      bg: 1,
+    },
+    {
+      id: "cap3",
+      unlockFloor: 15,
+      title: "Capítulo 3 — Subestación",
+      vnMood: "serious",
+      text:
+        "Cables arden sin calor. La ciudad parece tener otra ciudad debajo: conductos que laten como venas. Tu juramento médico choca con la necesidad de atravesar la anomalía hasta el origen del pulso falso.",
+      bg: 2,
+    },
+    {
+      id: "cap4",
+      unlockFloor: 20,
+      title: "Capítulo 4 — Núcleo frío",
+      vnMood: "serious",
+      text:
+        "Una voz estática susurra coordenadas. Los que salvaste empiezan a recordar el mismo sueño. El fondo del Nudo no es un lugar: es un acuerdo colectivo roto, y alguien sigue firmando con tu nombre.",
+      bg: 0,
+    },
+  ];
+
+  function tryPlayAudio(el, urls, label) {
+    if (!el || !urls || !urls.length) return;
+    let i = 0;
+    function next() {
+      if (i >= urls.length) return;
+      el.src = urls[i++];
+      el.load();
+      el.play().catch(() => next());
+    }
+    el.dataset.label = label || "";
+    next();
+  }
+
+  function setBodyBg() {
+    for (const u of BG_PAGE) {
+      const img = new Image();
+      img.onload = () => {
+        document.body.style.setProperty("--page-bg-img", `url("${u}")`);
+      };
+      img.src = u;
+    }
+  }
+
+  const DEFAULT_EQUIP = [
+    {
+      id: "def-bf-cabeza",
+      slot: "Cabeza",
+      name: "Corona del Berserker ígneo",
+      setId: "berserker_fuego",
+      element: "Fuego",
+      descPiece: "Cuernos carbonizados que canalizan furia controlada.",
+      stats: { HP: 24, SP: 8, STG: 12, DX: 4, VI: 10, MA: 6, EN: 8, AG: 5, LUK: 3 },
+      subStatsDesc: "Sub-stats: +STG y +VI mientras la pieza gana EXP; sin set completo no aplica el bono principal.",
+      setBonus: "Set Berserker (Fuego) completo: +18% daño físico, resistencia a quemadura y sinergia con Nudos de permanencia tipo colapso.",
+      skill: {
+        name: "Grito magma",
+        sp: 22,
+        cd: 4,
+        uses: 2,
+        dmg: "220% STG + 40% MA como ígneo",
+        cond: "Requiere las 4 piezas berserker_fuego equipadas.",
+        desc: "Aúlla y aplica quemadura en área; consume la voluntad acumulada del set.",
+      },
+      imageUrl: "Patimon/cabeza_berserker.png",
+    },
+    {
+      id: "def-bf-cuerpo",
+      slot: "Cuerpo",
+      name: "Coraza de ceniza viva",
+      setId: "berserker_fuego",
+      element: "Fuego",
+      descPiece: "Placas que brillan como brasas bajo el estrés del combate.",
+      stats: { HP: 40, SP: 10, STG: 8, DX: 6, VI: 18, MA: 5, EN: 14, AG: 4, LUK: 2 },
+      subStatsDesc: "Sub-stats: refuerza VI y EN; acumula cargas de ‘voluntad’ al recibir golpes.",
+      setBonus: "Set Berserker (Fuego) completo: +18% daño físico, resistencia a quemadura y sinergia con Nudos de permanencia tipo colapso.",
+      skill: {
+        name: "Grito magma",
+        sp: 22,
+        cd: 4,
+        uses: 2,
+        dmg: "220% STG + 40% MA como ígneo",
+        cond: "Requiere las 4 piezas berserker_fuego equipadas.",
+        desc: "Aúlla y aplica quemadura en área; consume la voluntad acumulada del set.",
+      },
+      imageUrl: "Patimon/cuerpo_berserker.png",
+    },
+    {
+      id: "def-bf-arma",
+      slot: "Arma",
+      name: "Hacha ritual ‘Patimin’",
+      setId: "berserker_fuego",
+      element: "Fuego",
+      descPiece: "Filo que deja estelas térmicas al cortar anomalías.",
+      stats: { HP: 10, SP: 6, STG: 22, DX: 10, VI: 6, MA: 4, EN: 6, AG: 8, LUK: 5 },
+      subStatsDesc: "Sub-stats: +STG y +DX; críticos menores si no hay set completo.",
+      setBonus: "Set Berserker (Fuego) completo: +18% daño físico, resistencia a quemadura y sinergia con Nudos de permanencia tipo colapso.",
+      skill: {
+        name: "Grito magma",
+        sp: 22,
+        cd: 4,
+        uses: 2,
+        dmg: "220% STG + 40% MA como ígneo",
+        cond: "Requiere las 4 piezas berserker_fuego equipadas.",
+        desc: "Aúlla y aplica quemadura en área; consume la voluntad acumulada del set.",
+      },
+      imageUrl: "Patimon/arma_berserker.png",
+    },
+    {
+      id: "def-bf-acc",
+      slot: "Accesorio",
+      name: "Brasalete de ascuas",
+      setId: "berserker_fuego",
+      element: "Fuego",
+      descPiece: "Sello que equilibra el calor interno del portador.",
+      stats: { HP: 16, SP: 20, STG: 5, DX: 5, VI: 8, MA: 14, EN: 10, AG: 7, LUK: 8 },
+      subStatsDesc: "Sub-stats: +SP y +MA; regenera un poco de SP al derrotar enemigos menores.",
+      setBonus: "Set Berserker (Fuego) completo: +18% daño físico, resistencia a quemadura y sinergia con Nudos de permanencia tipo colapso.",
+      skill: {
+        name: "Grito magma",
+        sp: 22,
+        cd: 4,
+        uses: 2,
+        dmg: "220% STG + 40% MA como ígneo",
+        cond: "Requiere las 4 piezas berserker_fuego equipadas.",
+        desc: "Aúlla y aplica quemadura en área; consume la voluntad acumulada del set.",
+      },
+      imageUrl: "Patimon/accesorio_berserker.png",
+    },
+  ];
+
+  const STORAGE_EQUIP = "kbk_equip_custom_v1";
+  const STORAGE_LOTG_LEGACY = "lotg_save_v1";
+  const STORAGE_LOTG = "lotg_save_v2";
+  const LOTG_PROTAG_FALLBACK_DATA_URL =
+    "data:image/svg+xml," +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect fill="#24283a" width="96" height="96" rx="12"/><text x="48" y="54" fill="#8b95a8" text-anchor="middle" font-size="13">?</text></svg>'
+    );
+  const LOTG_COMBAT_PROTAG_FALLBACK_DATA_URL =
+    "data:image/svg+xml," +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88"><rect fill="#333" width="88" height="88"/><text x="44" y="50" fill="#fff" text-anchor="middle" font-size="14">P</text></svg>'
+    );
+
+  const GACHA_UNITS = [
+    {
+      name: "Kiyama Reika",
+      img: "Char/KiyamaAwakening.png",
+      rarity: "SSS",
+      element: "Fuego",
+      role: "DPS Mágico",
+      promo: true,
+      passive: { name: "Corona de ceniza perpetua", desc: "Tras usar la habilidad, +12% daño ígneo durante 2 turnos propios del grupo." },
+      skill: {
+        name: "Rastro del amanecer roto",
+        sp: 26,
+        cd: 5,
+        dmg: "Área: 210% MA ígneo a todos los fragmentos",
+        desc: "Ultimate: onda expansiva; aplica Quemadura leve (−8% DEF enemiga, 2 turnos).",
+      },
+    },
+    {
+      name: "Akamine Toru",
+      img: "Char/Zenitsu.png",
+      rarity: "S",
+      element: "Trueno",
+      role: "DPS Físico",
+      passive: { name: "Canal resonante", desc: "+6% probabilidad de crítico en ataques físicos del grupo." },
+      skill: { name: "Línea Godspeed — eco urbano", sp: 18, cd: 3, dmg: "5× 45% STG trueno", desc: "Ráfaga; cada golpe puede encadenar (+5% daño si el anterior crítico)." },
+    },
+    {
+      name: "Hanazawa Yui",
+      img: "Char/Hishinaga.png",
+      rarity: "A",
+      element: "Neutral",
+      role: "Healer",
+      passive: { name: "Campo de sutura", desc: "Al final del turno enemigo, el aliado más herido recupera 4% HP máx." },
+      skill: { name: "Bálsamo de superposición", sp: 16, cd: 2, dmg: "Cura 28% HP grupo", desc: "Sanación en área; limpia 1 penalizador leve de DEF del equipo." },
+    },
+    {
+      name: "Kurosaki Ren",
+      img: "Char/Gilgamesh.png",
+      rarity: "A",
+      element: "Neutral",
+      role: "DPS Mágico",
+      passive: { name: "Eclipse interior", desc: "+8% daño mágico si el enemigo tiene más de 70% HP." },
+      skill: { name: "Llave del vacío menor", sp: 20, cd: 4, dmg: "220% MA a horda", desc: "Daño cuántico en área; roba 12 SP del objetivo principal." },
+    },
+    {
+      name: "Mizuno Sora",
+      img: "Char/Corin.png",
+      rarity: "B",
+      element: "Hielo",
+      role: "Soporte",
+      passive: { name: "Humedad anclada", desc: "+5% reducción de daño físico recibido por aliados adyacentes en combate." },
+      skill: { name: "Niebla de registro clínico", sp: 14, cd: 3, dmg: "Debuff: −10% precisión enemiga (3 turnos)", desc: "Aplica Niebla; el siguiente ataque aliado +15% daño." },
+    },
+    {
+      name: "Tachibana Ken",
+      img: "Char/Dekota.png",
+      rarity: "B",
+      element: "Fuego",
+      role: "DPS Físico",
+      passive: { name: "Ímpetu de callejón", desc: "+10% daño físico contra enemigos por debajo del 50% HP." },
+      skill: { name: "Combo — derribo cívico", sp: 14, cd: 2, dmg: "2× 95% STG ígneo", desc: "Dos golpes; el segundo +20% si el primero impacta." },
+    },
+    {
+      name: "Shirase Mio",
+      img: "Char/Ellen.png",
+      rarity: "A",
+      element: "Hielo",
+      role: "DPS Mágico",
+      passive: { name: "Lágrima estática", desc: "Los críticos mágicos aplican Escarcha (−5% AG enemiga, 2 turnos)." },
+      skill: { name: "Frijol perpetuo — calle sin salida", sp: 18, cd: 3, dmg: "175% MA hielo área", desc: "Ralentiza; enemigos afectados reciben +10% daño de Trueno." },
+    },
+    {
+      name: "Nishimura Hayato",
+      img: "Char/Sun.png",
+      rarity: "S",
+      element: "Trueno",
+      role: "Soporte",
+      passive: { name: "Vectores de huida", desc: "+7% esquiva del doctor y aliados en combate." },
+      skill: { name: "Sobrecarga — paso del nudo", sp: 15, cd: 4, dmg: "Buff: +12% AG equipo (4 turnos)", desc: "Aumenta esquiva y velocidad de turno aliado percibida." },
+    },
+    {
+      name: "Fujita Anna",
+      img: "Char/Thoma.png",
+      rarity: "B",
+      element: "Fuego",
+      role: "DPS Físico",
+      passive: { name: "Seguro roto", desc: "+5% daño por cada enemigo vivo en la horda (máx. +15%)." },
+      skill: { name: "Disparo sellado — perímetro cero", sp: 16, cd: 3, dmg: "160% STG ígneo", desc: "Ataque en línea; ignora 10% de DEF física." },
+    },
+    {
+      name: "Aozora Lin",
+      img: "Char/Lawliet.png",
+      rarity: "A",
+      element: "Trueno",
+      role: "Soporte",
+      passive: { name: "Índice de interferencias", desc: "+15 SP al doctor al entrar en combate." },
+      passiveHook: "doctorSp15",
+      skill: { name: "Faraday improvisado", sp: 13, cd: 3, dmg: "130% MA trueno + aturdir leve", desc: "Interrumpe cadencias enemigas; +8% daño Trueno siguiente turno." },
+    },
+    { name: "Kisaragi Eve", img: "Char/LawlietG.png", rarity: "A", element: "Hielo", role: "DPS Mágico",
+      passive: { name: "Cristal de contrato", desc: "+10% MA si hay 2+ enemigos en campo." },
+      skill: { name: "Sentencia — subcero urbano", sp: 19, cd: 4, dmg: "195% MA hielo", desc: "Golpe focal; aplica Vulnerabilidad mágica +8% (2 turnos)." } },
+    { name: "Morimoto Vex", img: "Char/Firefly.png", rarity: "S", element: "Neutral", role: "DPS Mágico",
+      passive: { name: "Motor de anomalía", desc: "Cada habilidad aliada usada +2% daño mágico acumulable (máx. 18%)." },
+      skill: { name: "Colapso de fase — calle 7", sp: 22, cd: 5, dmg: "240% MA área", desc: "Daño cuántico masivo; consume 5% HP propio para +15% penetración." } },
+    {
+      name: "Ventura Aoi",
+      img: "Char/Aventurino.png",
+      rarity: "A",
+      element: "Trueno",
+      role: "Soporte",
+      passive: { name: "Mapa de rutas rotas", desc: "+6% daño de Trueno del equipo tras usar objeto en combate." },
+      skill: { name: "Farol de encrucijada", sp: 15, cd: 3, dmg: "140% MA trueno", desc: "Marca al jefe de la horda; recibe +10% daño de todos los elementos (2 turnos)." },
+    },
+    {
+      name: "Dorian Vale",
+      img: "Char/Dorian.png",
+      rarity: "S",
+      element: "Hielo",
+      role: "DPS Mágico",
+      passive: { name: "Espejo de asfalto", desc: "+8% MA contra enemigos con debuff." },
+      skill: { name: "Catedral de cristal líquido", sp: 20, cd: 4, dmg: "205% MA hielo área", desc: "Congela cadencias; aplica Fractura mágica −12% RES (2 turnos)." },
+    },
+    {
+      name: "Kozue Dosh",
+      img: "Char/Dosh.png",
+      rarity: "B",
+      element: "Neutral",
+      role: "DPS Físico",
+      passive: { name: "Cobro en efectivo", desc: "+10% STG contra objetivos por encima del 75% HP." },
+      skill: { name: "Martillo de contención", sp: 14, cd: 2, dmg: "155% STG", desc: "Golpe brutal; +15% daño si el enemigo está por encima del 75% HP." },
+    },
+    {
+      name: "Gamha Ire",
+      img: "Char/Gamha.png",
+      rarity: "A",
+      element: "Fuego",
+      role: "DPS Físico",
+      passive: { name: "Calor de fundición", desc: "+5% daño ígneo por enemigo en horda (máx. +15%)." },
+      skill: { name: "Ola térmica — distrito industrial", sp: 18, cd: 3, dmg: "170% STG ígneo área", desc: "Quemadura intensa; −10% DEF física objetivos (2 turnos)." },
+    },
+    {
+      name: "Amane Grace",
+      img: "Char/Grace.png",
+      rarity: "A",
+      element: "Neutral",
+      role: "Healer",
+      passive: { name: "Protocolo de triage", desc: "Al usar habilidad, cura extra 6% HP máx. al aliado más bajo." },
+      skill: { name: "Sala cero — esterilización", sp: 17, cd: 3, dmg: "Cura 22% HP grupo", desc: "Limpia 1 efecto de penalización de precisión o esquiva en el equipo." },
+    },
+    {
+      name: "Amane Grace — Despertar",
+      img: "Char/GraceAwakaening.png",
+      rarity: "SSS",
+      element: "Hielo",
+      role: "Healer",
+      promo: true,
+      passive: { name: "Halo clínico absoluto", desc: "Las curaciones del grupo +10% eficacia durante 3 turnos tras tu ultimate." },
+      skill: { name: "Renacimiento en hielo seco", sp: 28, cd: 6, dmg: "Cura 38% HP + escudo 12% máx.", desc: "Ultimate: inmunidad breve a Quemadura/Escarcha leve en aliados (1 turno)." },
+    },
+    {
+      name: "Hayasaka Mirei",
+      img: "Char/Hayasaka.png",
+      rarity: "B",
+      element: "Trueno",
+      role: "DPS Mágico",
+      passive: { name: "Pulsos paralelos", desc: "+7% MA en el primer turno de combate." },
+      skill: { name: "Cableado invertido", sp: 16, cd: 3, dmg: "165% MA trueno", desc: "Encadena al segundo enemigo vivo por 35% del daño." },
+    },
+    {
+      name: "Hintake Ren",
+      img: "Char/Hintake.png",
+      rarity: "B",
+      element: "Hielo",
+      role: "Soporte",
+      passive: { name: "Capa de aguanieve", desc: "+5% reducción de daño ígneo recibido por el grupo." },
+      skill: { name: "Barrera de deshielo", sp: 13, cd: 3, dmg: "Buff: +10% RES mágica (3 turnos)", desc: "Mitiga estallidos elementales; siguiente ataque enemigo −8% si es Fuego." },
+    },
+    {
+      name: "Hintoki Sou",
+      img: "Char/Hintoki.png",
+      rarity: "A",
+      element: "Fuego",
+      role: "DPS Mágico",
+      passive: { name: "Brasas en el conducto", desc: "+10% MA si el enemigo principal tiene Escarcha o debuff de hielo." },
+      skill: { name: "Incendio controlado — bloque B", sp: 19, cd: 4, dmg: "188% MA ígneo", desc: "Área reducida pero alta intensidad; +12% si hay 2+ enemigos." },
+    },
+    {
+      name: "Homura Kise",
+      img: "Char/Homura.png",
+      rarity: "S",
+      element: "Fuego",
+      role: "DPS Mágico",
+      passive: { name: "Lente de calor residual", desc: "Los críticos mágicos +15% daño ígneo en el siguiente ataque del mismo objetivo." },
+      skill: { name: "Línea de fuego amigo", sp: 21, cd: 4, dmg: "215% MA ígneo línea", desc: "Aplica Combustión: +8% daño recibido de Hielo y Trueno (2 turnos)." },
+    },
+    {
+      name: "Kabal Lynx",
+      img: "Char/Kabal.png",
+      rarity: "A",
+      element: "Neutral",
+      role: "DPS Físico",
+      passive: { name: "Garras de titanio reciclado", desc: "+8% penetración de DEF física simulada en texto de combate." },
+      skill: { name: "Salto de tejado — tercer riel", sp: 15, cd: 2, dmg: "2× 88% STG", desc: "Dos golpes; el segundo favorece crítico (+12% tasa)." },
+    },
+    {
+      name: "Kiyama Non",
+      img: "Char/Kiyama.png",
+      rarity: "B",
+      element: "Fuego",
+      role: "Soporte",
+      passive: { name: "Brasa comunitaria", desc: "+5% STG a aliados después de tu turno de habilidad." },
+      skill: { name: "Muro de chispas", sp: 14, cd: 3, dmg: "120% MA ígneo + provocación narrativa", desc: "Enfoca la horda; el doctor +10% esquiva 1 turno." },
+    },
+    {
+      name: "Kokonota Mie",
+      img: "Char/Kokonota.png",
+      rarity: "B",
+      element: "Neutral",
+      role: "Soporte",
+      passive: { name: "Ecos en el pasillo", desc: "+4 SP al doctor cuando esta unidad usa pasar en combate." },
+      skill: { name: "Bucle de notas perdidas", sp: 12, cd: 2, dmg: "Debuff: −8% ATK enemigo (2 turnos)", desc: "Prioriza al líder de la horda si existe." },
+    },
+    {
+      name: "Kon Shigeru",
+      img: "Char/Kon.png",
+      rarity: "A",
+      element: "Trueno",
+      role: "DPS Físico",
+      passive: { name: "Reflejo en el charco", desc: "+6% esquiva propia y +4% del grupo." },
+      skill: { name: "Rayo en cadena — callejón", sp: 17, cd: 3, dmg: "175% STG trueno", desc: "Salto al siguiente enemigo por 40% si el primero cae por debajo del 40% HP." },
+    },
+    {
+      name: "Kaname Mio",
+      img: "Char/Madoka.png",
+      rarity: "S",
+      element: "Hielo",
+      role: "Soporte",
+      passive: { name: "Pacto de linterna", desc: "Al curar, aplica Velo +5% RES todo elemento 2 turnos." },
+      skill: { name: "Arco de deseos — versión urbana", sp: 18, cd: 4, dmg: "Cura 18% + 130% MA hielo", desc: "Sanación y golpe; congela parcialmente (−6% AG, 2 turnos)." },
+    },
+    {
+      name: "Masato Jin",
+      img: "Char/Masato.png",
+      rarity: "B",
+      element: "Neutral",
+      role: "DPS Físico",
+      passive: { name: "Ritmo de metro fantasma", desc: "+10% STG contra Neutral." },
+      skill: { name: "Combo de andén", sp: 14, cd: 2, dmg: "3× 52% STG", desc: "Ráfaga; cada impacto +5% si el anterior fue crítico." },
+    },
+    {
+      name: "Metsuda Rei",
+      img: "Char/Metsuda.png",
+      rarity: "A",
+      element: "Trueno",
+      role: "DPS Mágico",
+      passive: { name: "Condensador urbano", desc: "+12% MA trueno tras recibir daño mágico (1 vez por combate)." },
+      skill: { name: "Torre de relés — sobrecarga", sp: 20, cd: 4, dmg: "198% MA trueno área", desc: "Paralización narrativa; enemigos −10% precisión (2 turnos)." },
+    },
+    {
+      name: "Ragna Voss",
+      img: "Char/Ragna.png",
+      rarity: "A",
+      element: "Hielo",
+      role: "DPS Físico",
+      passive: { name: "Filos de ventisca", desc: "+8% STG contra enemigos bajo 50% HP." },
+      skill: { name: "Corte de turbina", sp: 16, cd: 3, dmg: "185% STG hielo", desc: "Aplica Escarcha profunda; +10% daño Fuego recibido por el objetivo (interacción elemental)." },
+    },
+    {
+      name: "Ragna Voss — Stormbreaker",
+      img: "Char/Ragnastorm breaker.png",
+      rarity: "S",
+      element: "Trueno",
+      role: "DPS Físico",
+      passive: { name: "Rompetormentas", desc: "+15% STG trueno si hay 3+ enemigos en campo." },
+      skill: { name: "Fisura del frente frío", sp: 22, cd: 5, dmg: "230% STG trueno área", desc: "Golpe masivo; empuja la ventaja elemental +8% daño extra si debilitas Hielo." },
+    },
+    {
+      name: "Shirakawa Miko",
+      img: "Char/Reimu.png",
+      rarity: "S",
+      element: "Neutral",
+      role: "DPS Mágico",
+      passive: { name: "Barrera de ofrendas digitales", desc: "+10% MA en oleadas (combates con 2+ enemigos)." },
+      skill: { name: "Fantasma — limpieza de distrito", sp: 19, cd: 4, dmg: "210% MA área", desc: "Daño espectral; roba 8 SP del enemigo con más HP%." },
+    },
+    {
+      name: "Ryouga Taiga",
+      img: "Char/Ryouga.png",
+      rarity: "B",
+      element: "Trueno",
+      role: "DPS Físico",
+      passive: { name: "Instinto de perro callejero", desc: "+12% crítico físico cuando tu HP está por debajo del 45%." },
+      skill: { name: "Zarpazo cargado", sp: 15, cd: 3, dmg: "168% STG trueno", desc: "Si mata al objetivo, +10% STG siguiente ataque." },
+    },
+    {
+      name: "Sho Arata",
+      img: "Char/Sho.png",
+      rarity: "A",
+      element: "Hielo",
+      role: "DPS Físico",
+      passive: { name: "Silencio en la nieve negra", desc: "+7% daño a enemigos afectados por debuffs de precisión." },
+      skill: { name: "Hoja de aire acondicionado roto", sp: 17, cd: 3, dmg: "172% STG hielo", desc: "Ataque único; +20% si el enemigo es Fuego (triángulo)." },
+    },
+    {
+      name: "Soka Miri",
+      img: "Char/Soka.png",
+      rarity: "B",
+      element: "Neutral",
+      role: "Healer",
+      passive: { name: "Té de refugio", desc: "Las curaciones +6% en combates de jefe (piso múltiplo de 5)." },
+      skill: { name: "Vapor reconfortante", sp: 15, cd: 2, dmg: "Cura 20% HP aliado más bajo", desc: "Regenera 4% HP máx. al doctor." },
+    },
+    {
+      name: "Soren Val",
+      img: "Char/Soren.png",
+      rarity: "A",
+      element: "Hielo",
+      role: "DPS Mágico",
+      passive: { name: "Biblioteca congelada", desc: "+8% MA hielo si el doctor tiene SP por encima del 50%." },
+      skill: { name: "Índice de cristal", sp: 18, cd: 4, dmg: "192% MA hielo", desc: "Marca objetivo; aliados Trueno +10% daño contra él (2 turnos)." },
+    },
+    {
+      name: "Sori Lune",
+      img: "Char/Sori.png",
+      rarity: "B",
+      element: "Hielo",
+      role: "Soporte",
+      passive: { name: "Marea descendente", desc: "+5% MA de todo el grupo tras Escarcha en enemigo." },
+      skill: { name: "Ola bajo el neón", sp: 14, cd: 3, dmg: "135% MA hielo + ralentizar", desc: "−10% AG enemiga (2 turnos)." },
+    },
+    {
+      name: "Stone Kaito",
+      img: "Char/Stone.png",
+      rarity: "A",
+      element: "Neutral",
+      role: "DPS Físico",
+      passive: { name: "Piel de hormigón bendecido", desc: "−8% daño físico recibido (narrativo en descripción de tanque)." },
+      skill: { name: "Maza de obra — cimientos", sp: 16, cd: 3, dmg: "160% STG + empuje", desc: "Aturdimiento leve al objetivo principal; −12% su STG 1 turno." },
+    },
+    {
+      name: "Sunoichi Taro",
+      img: "Char/Sunoichi.png",
+      rarity: "S",
+      element: "Trueno",
+      role: "DPS Físico",
+      passive: { name: "Sombra del mercado negro", desc: "+10% daño trueno tras esquivar (1 vez por ronda enemiga)." },
+      skill: { name: "Corte silencioso — kilovatio", sp: 20, cd: 4, dmg: "200% STG trueno", desc: "Ignora 15% DEF si el objetivo tiene debuff." },
+    },
+    {
+      name: "Sura Neon",
+      img: "Char/Sura.png",
+      rarity: "B",
+      element: "Fuego",
+      role: "DPS Mágico",
+      passive: { name: "Letreros en llamas", desc: "+6% MA ígneo por cada aliado vivo." },
+      skill: { name: "Publicidad ardiente", sp: 15, cd: 3, dmg: "162% MA ígneo área", desc: "Quemadura de marca; +5% daño recibido del doctor 2 turnos." },
+    },
+    {
+      name: "Terumi Kame",
+      img: "Char/Terumikame.png",
+      rarity: "B",
+      element: "Neutral",
+      role: "Healer",
+      passive: { name: "Caparazón compartido", desc: "+8% curación en aliados por debajo del 35% HP." },
+      skill: { name: "Manantial bajo el asfalto", sp: 16, cd: 3, dmg: "Cura 24% grupo", desc: "Escudo 6% HP máx. al doctor." },
+    },
+    {
+      name: "Toa Mira",
+      img: "Char/Toa.png",
+      rarity: "A",
+      element: "Trueno",
+      role: "Soporte",
+      passive: { name: "Antena de barrio", desc: "+5% precisión del grupo contra hordas." },
+      skill: { name: "Señal de auxilio amplificada", sp: 14, cd: 3, dmg: "125% MA trueno + buff", desc: "+12% MA aliados siguiente turno." },
+    },
+    {
+      name: "Tsuki Ren",
+      img: "Char/Tsuki.png",
+      rarity: "S",
+      element: "Hielo",
+      role: "DPS Mágico",
+      passive: { name: "Mareas lunares", desc: "Cada tercer ataque mágico +18% daño hielo." },
+      skill: { name: "Eclipse sobre el distrito", sp: 21, cd: 5, dmg: "225% MA hielo", desc: "Congela parcialmente la horda; vulnerabilidad +10% a Trueno (2 turnos)." },
+    },
+    {
+      name: "Yeshpir Sol",
+      img: "Char/Yesjpir.png",
+      rarity: "B",
+      element: "Neutral",
+      role: "DPS Mágico",
+      passive: { name: "Firma ilegible", desc: "+7% MA contra enemigos Neutral." },
+      skill: { name: "Glifo de grafito cuántico", sp: 17, cd: 4, dmg: "178% MA", desc: "Daño único; −10% RES mágica objetivo (2 turnos)." },
+    },
+    {
+      name: "Ylilea Nox",
+      img: "Char/Ylilea.png",
+      rarity: "A",
+      element: "Neutral",
+      role: "DPS Mágico",
+      passive: { name: "Sutura del vacío", desc: "+10% MA si ningún aliado murió en el combate actual." },
+      skill: { name: "Pozo sin fondo — calle 9", sp: 19, cd: 4, dmg: "195% MA", desc: "Drena 6% HP propio para +20% penetración mágica en el golpe." },
+    },
+    {
+      name: "Yoshikawa Taka",
+      img: "Char/Yoshi.png",
+      rarity: "B",
+      element: "Fuego",
+      role: "DPS Físico",
+      passive: { name: "Turbo de barrio", desc: "+8% STG ígneo en la primera mitad del combate." },
+      skill: { name: "Quemado de neumáticos", sp: 14, cd: 2, dmg: "158% STG ígneo", desc: "Rastro de fuego; siguiente ataque aliado +8% daño al mismo objetivo." },
+    },
+    {
+      name: "Youli Chen",
+      img: "Char/Youli.png",
+      rarity: "A",
+      element: "Hielo",
+      role: "Soporte",
+      passive: { name: "Red de frío distribuido", desc: "+6% RES hielo del equipo." },
+      skill: { name: "Nodo de climatización", sp: 15, cd: 3, dmg: "Buff +10% DEF mágica (3 turnos)", desc: "Reduce daño de área enemiga en narrativa de combate." },
+    },
+    {
+      name: "Zera Null",
+      img: "Char/Zera.png",
+      rarity: "S",
+      element: "Neutral",
+      role: "DPS Mágico",
+      passive: { name: "Anulación de ruido", desc: "+12% MA si la horda tiene tipos de elemento mezclados." },
+      skill: { name: "Punto cero — ciudad dormida", sp: 23, cd: 5, dmg: "248% MA cuántico área", desc: "Resetea narrativamente debuffs leves propios a cambio de daño masivo." },
+    },
+  ];
+
+  const ENEMY_TEMPLATES = [
+    { name: "Vitrina sin juicio", tag: "Nexo Δ-11", element: "Hielo" },
+    { name: "Ascensor que susurra pisos", tag: "Torre sellada", element: "Trueno" },
+    { name: "Memoria de asfalto húmedo", tag: "Cicatriz urbana", element: "Neutral" },
+    { name: "Custodio de cable pelado", tag: "Subestación fantasma", element: "Trueno" },
+    { name: "Horda de etiquetas RFID", tag: "Basura cognitiva", element: "Neutral" },
+    { name: "Fiebre del quiosco 24h", tag: "Comercio errante", element: "Fuego" },
+    { name: "Eco de megafonía rota", tag: "Propaganda persistente", element: "Trueno" },
+    { name: "Sombra de torniquete", tag: "Metro sellado", element: "Hielo" },
+    { name: "Fragmento de pantalla azul", tag: "Glitch municipal", element: "Neutral" },
+    { name: "Ducto que respira ozono", tag: "Ventilación maldita", element: "Fuego" },
+    { name: "Firma ilegible del edificio", tag: "Notaría del vacío", element: "Neutral" },
+    { name: "Latido de transformador", tag: "Red hambrienta", element: "Trueno" },
+    { name: "Mancha de neón persistente", tag: "Distrito sin ley", element: "Fuego" },
+    { name: "Archivo mojado del sótano", tag: "Biblioteca sumergida", element: "Hielo" },
+    { name: "Vigía de perro mecánico", tag: "Patrulla oxidada", element: "Neutral" },
+  ];
+
+  let filterSlot = "all";
+  let lotgState = null;
+  /** Enemigos en combate actual (horda); vacío = fuera de combate. */
+  let combatEnemies = [];
+
+  function inLotgCombat() {
+    return combatEnemies.length > 0 && combatEnemies.some((e) => e && e.hp > 0);
+  }
+
+  function firstAliveEnemy() {
+    return combatEnemies.find((e) => e && e.hp > 0) || null;
+  }
+
+  function anyEnemyAlive() {
+    return combatEnemies.some((e) => e && e.hp > 0);
+  }
+
+  function normalizeLotgElement(el) {
+    const s = String(el || "");
+    if (/fuego|ígneo|igneo/i.test(s)) return "Fuego";
+    if (/hielo|escarcha|ice/i.test(s)) return "Hielo";
+    if (/trueno|rayo|electro|thunder/i.test(s)) return "Trueno";
+    return "Neutral";
+  }
+
+  function elementalDamageMult(attackerEl, defenderEl) {
+    const a = normalizeLotgElement(String(attackerEl || ""));
+    const d = normalizeLotgElement(String(defenderEl || ""));
+    if (a === "Neutral" || d === "Neutral") return 1;
+    if (LOTG_TRIANGLE[a] === d) return 1.22;
+    if (LOTG_TRIANGLE[d] === a) return 0.82;
+    return 1;
+  }
+
+  function formatEquipBonusLine(eq) {
+    if (!eq || !eq.bonus || typeof eq.bonus !== "object") return "";
+    const parts = STAT_KEYS.map((k) => {
+      const v = eq.bonus[k];
+      if (v == null || v === 0) return null;
+      return k + " +" + v;
+    }).filter(Boolean);
+    return parts.length ? parts.join(" · ") : "";
+  }
+  let combatLog = [];
+  let skillCdPro = 0;
+  let combatPhase = "player";
+  let combatAllyIndex = 0;
+  let vnQueue = [];
+  /** Modo selección de objetivo en combate: { type, uid?, profile? } */
+  let combatPickMode = null;
+
+  /** Limpia combate en curso y la UI de batalla (evita quedar “atascado” en la pelea tras derrota o al reiniciar). */
+  function clearCombatScene() {
+    combatEnemies = [];
+    combatLog = [];
+    skillCdPro = 0;
+    combatPhase = "player";
+    combatAllyIndex = 0;
+    combatPickMode = null;
+    if (lotgState && lotgState.combatAllyVitals) delete lotgState.combatAllyVitals;
+    if (lotgState && lotgState.combatBuff) lotgState.combatBuff = { atkMult: 1, turns: 0 };
+    const wrap = document.getElementById("lotgGameWrap");
+    if (wrap) {
+      wrap.style.backgroundImage = "";
+      if (wrap.dataset) delete wrap.dataset.cbg;
+    }
+  }
+
+  /** Asegura que Soul Points sea un entero válido (JSON/localStorage a veces deja null, string o NaN). */
+  function normalizeSoulPointsOnState(s) {
+    if (!s) return;
+    let raw = s.soul;
+    if (raw === undefined || raw === null) {
+      if (s.soulPoints != null) raw = s.soulPoints;
+    }
+    const n = typeof raw === "string" && raw.trim() !== "" ? parseInt(raw, 10) : Number(raw);
+    if (!Number.isFinite(n) || Number.isNaN(n)) {
+      s.soul = INITIAL_SOUL;
+      return;
+    }
+    s.soul = Math.max(0, Math.floor(n));
+  }
+
+  function getSoulPoints() {
+    if (!lotgState) return 0;
+    normalizeSoulPointsOnState(lotgState);
+    return lotgState.soul;
+  }
+
+  function pickCommonBannerFour() {
+    const pool = GACHA_UNITS.filter((u) => !u.promo).map((u) => ({ img: u.img, name: u.name }));
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = pool[i];
+      pool[i] = pool[j];
+      pool[j] = t;
+    }
+    return pool.slice(0, 4);
+  }
+
+  function commonPoolRecruitNamesHtml() {
+    const names = GACHA_UNITS.filter((u) => !u.promo).map((u) => `<strong>${escapeHtml(u.name)}</strong> (${escapeHtml(u.rarity)})`);
+    return names.join(" · ");
+  }
+
+  /** Catálogo visual por rareza (pestañas + scroll horizontal). */
+  function buildGachaRecruitmentCatalogHtml() {
+    const pool = GACHA_UNITS.filter((u) => !u.promo);
+    const tiers = ["SSS", "SS", "S", "A", "B"];
+    let html = `<section class="gacha-recruit-showcase" aria-label="Catálogo de unidades reclutables">
+      <div class="gacha-showcase-head">
+        <h3 class="gacha-showcase-title">Atlas de reclutas</h3>
+        <p class="muted gacha-showcase-hint">Elige una rareza y <strong>desplázate</strong> con la rueda del ratón o las flechas ◀ ▶. El resultado de cada tirada sigue siendo aleatorio según el banner.</p>
+      </div>
+      <div class="gacha-catalog-tabs" role="tablist">`;
+    tiers.forEach((r, i) => {
+      const count = pool.filter((u) => u.rarity === r).length;
+      html += `<button type="button" role="tab" class="gacha-cat-tab${i === 0 ? " on" : ""}" data-gacha-rarity="${escapeHtml(r)}" aria-selected="${i === 0 ? "true" : "false"}">${escapeHtml(r)} <span class="gacha-tab-count">${count}</span></button>`;
+    });
+    html += `</div>`;
+    tiers.forEach((r, i) => {
+      const units = pool.filter((u) => u.rarity === r);
+      html += `<div class="gacha-cat-panel${i === 0 ? " gacha-cat-panel--active" : ""}" role="tabpanel" data-gacha-panel="${escapeHtml(r)}">`;
+      html += `<div class="gacha-cat-toolbar">
+        <button type="button" class="ghost gacha-cat-nudge" data-gacha-scroll="-1" title="Desplazar a la izquierda">◀</button>
+        <span class="gacha-cat-label rarity-${escapeHtml(r)}">Rango ${escapeHtml(r)}</span>
+        <button type="button" class="ghost gacha-cat-nudge" data-gacha-scroll="1" title="Desplazar a la derecha">▶</button>
+      </div>
+      <div class="gacha-cat-scroll" data-gacha-scrollport="${escapeHtml(r)}">`;
+      if (!units.length) {
+        html += `<p class="muted gacha-cat-empty">No hay unidades de este rango en el pool común.</p>`;
+      } else {
+        units.forEach((u) => {
+          html += `<article class="gacha-cat-card gacha-cat-card--${escapeHtml(u.rarity)}">
+            <div class="gacha-cat-card-frame">
+              <img src="${escapeAttrUrl(u.img)}" alt="" loading="lazy" onerror="this.style.opacity=0.35" />
+              <span class="gacha-cat-rarity-pill rarity-${escapeHtml(u.rarity)}">${escapeHtml(u.rarity)}</span>
+            </div>
+            <div class="gacha-cat-card-meta">
+              <strong class="gacha-cat-card-name">${escapeHtml(u.name)}</strong>
+              <span class="gacha-cat-card-sub">${escapeHtml(u.element)} · ${escapeHtml(u.role)}</span>
+            </div>
+          </article>`;
+        });
+      }
+      html += `</div></div>`;
+    });
+    const promos = GACHA_UNITS.filter((u) => u.promo);
+    if (promos.length) {
+      html += `<div class="gacha-promo-strip">
+        <p class="gacha-promo-strip-title">Unidades promo · tirada premium (~1%)</p>
+        <div class="gacha-cat-scroll gacha-promo-scroll">`;
+      promos.forEach((u) => {
+        html += `<article class="gacha-cat-card gacha-cat-card--SSS">
+          <div class="gacha-cat-card-frame">
+            <img src="${escapeAttrUrl(u.img)}" alt="" loading="lazy" onerror="this.style.opacity=0.35" />
+            <span class="gacha-cat-rarity-pill rarity-SSS">SSS</span>
+          </div>
+          <div class="gacha-cat-card-meta">
+            <strong class="gacha-cat-card-name">${escapeHtml(u.name)}</strong>
+            <span class="gacha-cat-card-sub">${escapeHtml(u.element)} · ${escapeHtml(u.role)}</span>
+          </div>
+        </article>`;
+      });
+      html += `</div></div>`;
+    }
+    html += `</section>`;
+    return html;
+  }
+
+  function bindGachaCatalogUi(container) {
+    if (!container) return;
+    container.querySelectorAll(".gacha-cat-tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const r = btn.getAttribute("data-gacha-rarity");
+        container.querySelectorAll(".gacha-cat-tab").forEach((b) => {
+          b.classList.toggle("on", b === btn);
+          b.setAttribute("aria-selected", b === btn ? "true" : "false");
+        });
+        container.querySelectorAll(".gacha-cat-panel").forEach((p) => {
+          const on = p.getAttribute("data-gacha-panel") === r;
+          p.classList.toggle("gacha-cat-panel--active", on);
+        });
+      });
+    });
+    container.querySelectorAll(".gacha-cat-nudge").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const panel = btn.closest(".gacha-cat-panel");
+        const port = panel && panel.querySelector(".gacha-cat-scroll");
+        if (!port) return;
+        const dir = parseInt(btn.getAttribute("data-gacha-scroll"), 10) || 0;
+        port.scrollBy({ left: dir * 260, behavior: "smooth" });
+      });
+    });
+  }
+
+  function storyChapterUnlocked(ch) {
+    if (!lotgState) return false;
+    if (lotgState.floor < ch.unlockFloor) return false;
+    if (ch.requiresRosterMin != null && (lotgState.roster || []).length < ch.requiresRosterMin) return false;
+    return true;
+  }
+
+  function normalizeInventoryItem(it) {
+    if (!it || typeof it !== "object") return;
+    if (!it.type) it.type = "heal";
+    if (it.type === "heal") {
+      if (it.healPct == null) it.healPct = 0.35;
+      if (!it.desc) it.desc = "Restaura ≈" + Math.round(it.healPct * 100) + "% del HP máximo.";
+    } else if (it.type === "sp") {
+      if (it.spPct == null) it.spPct = 0.28;
+      if (!it.desc) it.desc = "Restaura ≈" + Math.round(it.spPct * 100) + "% del SP máximo.";
+    } else if (it.type === "buff") {
+      if (it.atkPct == null) it.atkPct = 0.1;
+      if (it.turns == null) it.turns = 4;
+      if (!it.desc) it.desc = "+" + Math.round(it.atkPct * 100) + "% daño temporal durante varios turnos propios.";
+    }
+  }
+
+  function migrateLotgState(s) {
+    if (!s) return;
+    if (!Array.isArray(s.roster)) s.roster = [];
+    s.roster = s.roster.filter((u) => u && typeof u === "object");
+    if (!Array.isArray(s.gearStash)) s.gearStash = [];
+    if (!s.mapRevealed || typeof s.mapRevealed !== "object") s.mapRevealed = {};
+    if (!s.mapCellTypes || typeof s.mapCellTypes !== "object") s.mapCellTypes = {};
+    if (!s.mapCellDone || typeof s.mapCellDone !== "object") s.mapCellDone = {};
+    if (!s.mapCellMeta || typeof s.mapCellMeta !== "object") s.mapCellMeta = {};
+    if (typeof s.floorConditionForFloor !== "number" || !Number.isFinite(s.floorConditionForFloor)) s.floorConditionForFloor = 0;
+    if (!s.floorAdvanceRule || typeof s.floorAdvanceRule !== "string") s.floorAdvanceRule = "free";
+    if (typeof s.floorBossCleared !== "boolean") s.floorBossCleared = true;
+    if (typeof s.floorExitKey !== "boolean") s.floorExitKey = true;
+    if (typeof s.floorRelicFound !== "boolean") s.floorRelicFound = true;
+    if (s.mapBossCellKey != null && typeof s.mapBossCellKey !== "string") s.mapBossCellKey = null;
+    if (typeof s.mapFloorForExitCoord !== "number" || !Number.isFinite(s.mapFloorForExitCoord)) s.mapFloorForExitCoord = -1;
+    if (!Array.isArray(s.shopPurchaseLog)) s.shopPurchaseLog = [];
+    if (typeof s.runCombatAtkMult !== "number" || !Number.isFinite(s.runCombatAtkMult)) s.runCombatAtkMult = 1;
+    if (typeof s.runCombatAtkFights !== "number" || !Number.isFinite(s.runCombatAtkFights)) s.runCombatAtkFights = 0;
+    if (typeof s.mapPos !== "string" || !/^\s*\d+\s*,\s*\d+\s*$/.test(s.mapPos)) s.mapPos = "2,2";
+    if (typeof s.floor !== "number" || !Number.isFinite(s.floor) || s.floor < 1) s.floor = 1;
+    if (typeof s.zen !== "number" || !Number.isFinite(s.zen)) s.zen = 0;
+    if (s.protag && typeof s.protag === "object") {
+      if (!s.protag.stats || typeof s.protag.stats !== "object") s.protag.stats = emptyStats();
+      else
+        STAT_KEYS.forEach((k) => {
+          const v = Number(s.protag.stats[k]);
+          s.protag.stats[k] = Number.isFinite(v) ? v : 0;
+        });
+    }
+    if (s.protag && (s.protag.level == null || s.protag.level < 1)) s.protag.level = 1;
+    if (s.protag && typeof s.protag === "object") {
+      if (!s.protag.lotgElement) s.protag.lotgElement = "Imaginario";
+      if (!s.protag.passive || typeof s.protag.passive !== "object") {
+        s.protag.passive = {
+          name: "Resonancia del juramento",
+          desc: "+4% resistencia mágica. Recuperas +2 SP al inicio de cada turno propio en combate.",
+        };
+      }
+      if (!s.protag.skillActive || typeof s.protag.skillActive !== "object") {
+        s.protag.skillActive = {
+          name: "Trazado Aónico — Grúa clínica",
+          desc: "Daño cuántico (MA×1.35). Si hay horda, el daño se reparte con ligera eficiencia de área.",
+        };
+      }
+    }
+    if (!s.equipSlots || typeof s.equipSlots !== "object") s.equipSlots = {};
+    EQUIP_SLOTS.forEach((sl) => {
+      if (!(sl in s.equipSlots)) s.equipSlots[sl] = null;
+    });
+    if (Array.isArray(s.equipment)) {
+      s.equipment.forEach((eq) => {
+        const sl = eq.equipSlot && EQUIP_SLOTS.includes(eq.equipSlot) ? eq.equipSlot : "Cuerpo";
+        if (!eq.equipSlot || !EQUIP_SLOTS.includes(eq.equipSlot)) eq.equipSlot = sl;
+        if (!s.equipSlots[sl]) s.equipSlots[sl] = eq;
+        else {
+          if (!s.gearStash) s.gearStash = [];
+          s.gearStash.push(eq);
+        }
+      });
+      delete s.equipment;
+    }
+    if (!Array.isArray(s.partyUids)) s.partyUids = [];
+    s.partyUids = s.partyUids.filter((uid) => typeof uid === "string").slice(0, MAX_PARTY_ALLIES);
+    if (!s.partyVitalsPersist || typeof s.partyVitalsPersist !== "object") s.partyVitalsPersist = {};
+    (s.roster || []).forEach((u) => {
+      if (!u.uid || typeof u.uid !== "string") u.uid = "u-mig-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
+      if (u.mergeRank == null) u.mergeRank = 0;
+      if (!u.dupeKey) u.dupeKey = u.name;
+      if (u.level == null || u.level < 1) u.level = 1;
+      if (u.xp == null || u.xp < 0 || !Number.isFinite(u.xp)) u.xp = 0;
+      if (!u.stats || typeof u.stats !== "object") u.stats = emptyStats();
+      else
+        STAT_KEYS.forEach((k) => {
+          const v = Number(u.stats[k]);
+          u.stats[k] = Number.isFinite(v) ? v : 0;
+        });
+      if (!u.equipSlots || typeof u.equipSlots !== "object") u.equipSlots = {};
+      EQUIP_SLOTS.forEach((sl) => {
+        if (!(sl in u.equipSlots)) u.equipSlots[sl] = null;
+      });
+      if (!u.element) u.element = "Neutral";
+      const tmpl = GACHA_UNITS.find((g) => g.name === u.name);
+      if (tmpl && tmpl.passive && !u.passive) u.passive = { name: tmpl.passive.name, desc: tmpl.passive.desc };
+      if (tmpl && tmpl.passiveHook && !u.passiveHook) u.passiveHook = tmpl.passiveHook;
+    });
+    if (!Array.isArray(s.inventory)) s.inventory = [];
+    s.inventory.forEach(normalizeInventoryItem);
+    if (!Array.isArray(s.gachaLog)) s.gachaLog = [];
+    if (s.gachaLog.length > 80) s.gachaLog = s.gachaLog.slice(-80);
+    (s.gearStash || []).forEach((eq) => {
+      if (!eq.equipSlot || !EQUIP_SLOTS.includes(eq.equipSlot)) {
+        eq.equipSlot = EQUIP_SLOTS[Math.floor(Math.random() * EQUIP_SLOTS.length)];
+      }
+    });
+    if (!s.storyChoiceLog) s.storyChoiceLog = [];
+    if (!s.combatBuff || typeof s.combatBuff !== "object") s.combatBuff = { atkMult: 1, turns: 0 };
+    const r = s.roster || [];
+    s.partyUids = (s.partyUids || []).filter((uid) => r.some((u) => u.uid === uid)).slice(0, MAX_PARTY_ALLIES);
+    const ruids = new Set(r.map((u) => u.uid));
+    Object.keys(s.partyVitalsPersist || {}).forEach((uid) => {
+      if (!ruids.has(uid)) delete s.partyVitalsPersist[uid];
+    });
+    if (s.mapLayoutFloor == null && Object.keys(s.mapCellTypes || {}).length > 0) {
+      s.mapLayoutFloor = s.floor || 1;
+    }
+  }
+
+  /** Reglas de salida de piso (jefe cada 3 pisos, llave, reliquia o libre). */
+  function ensureFloorExitConditions() {
+    if (!lotgState) return;
+    const f = lotgState.floor || 1;
+    if (lotgState.floorConditionForFloor === f) return;
+    lotgState.floorConditionForFloor = f;
+    lotgState.mapBossCellKey = null;
+    if (f % 3 === 0) {
+      lotgState.floorAdvanceRule = "boss";
+      lotgState.floorBossCleared = false;
+      lotgState.floorExitKey = true;
+      lotgState.floorRelicFound = true;
+    } else {
+      const r = Math.random();
+      if (r < 0.28) {
+        lotgState.floorAdvanceRule = "key";
+        lotgState.floorBossCleared = true;
+        lotgState.floorExitKey = false;
+        lotgState.floorRelicFound = true;
+      } else if (r < 0.52) {
+        lotgState.floorAdvanceRule = "relic";
+        lotgState.floorBossCleared = true;
+        lotgState.floorExitKey = true;
+        lotgState.floorRelicFound = false;
+      } else {
+        lotgState.floorAdvanceRule = "free";
+        lotgState.floorBossCleared = true;
+        lotgState.floorExitKey = true;
+        lotgState.floorRelicFound = true;
+      }
+    }
+  }
+
+  function bindLotgSubnav(wrap) {
+    wrap.querySelectorAll("[data-lotg-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (inLotgCombat()) return;
+        const tab = btn.getAttribute("data-lotg-tab");
+        lotgState.lotgView = tab;
+        if (tab === "gacha") lotgState.bannerCommonFour = pickCommonBannerFour();
+        lotgSave();
+        renderLotgGame();
+      });
+    });
+  }
+
+  function isValidPatimonCatalogEntry(e) {
+    return (
+      e &&
+      typeof e === "object" &&
+      typeof e.slot === "string" &&
+      typeof e.name === "string" &&
+      typeof e.id === "string"
+    );
+  }
+
+  function loadCustomEquip() {
+    try {
+      const raw = localStorage.getItem(STORAGE_EQUIP);
+      if (raw == null || raw === "" || raw === "null") return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter(isValidPatimonCatalogEntry);
+    } catch {
+      return [];
+    }
+  }
+  function saveCustomEquip(arr) {
+    try {
+      localStorage.setItem(STORAGE_EQUIP, JSON.stringify(arr));
+    } catch (e) {
+      console.error(e);
+      alert("No se pudo guardar el catálogo en el navegador (almacenamiento lleno o modo privado). Las piezas personalizadas pueden no conservarse.");
+    }
+  }
+
+  function allEquip() {
+    return DEFAULT_EQUIP.concat(loadCustomEquip());
+  }
+
+  function buildStatForm() {
+    const wrap = document.getElementById("formStatInputs");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    STAT_KEYS.forEach((k) => {
+      const d = document.createElement("div");
+      d.innerHTML = `<label>${k}</label><input type="number" name="st_${k}" value="0" min="0" max="999" />
+        <input type="text" name="sd_${k}" placeholder="Desc. sub-stat ${k}" style="margin-top:4px" />`;
+      wrap.appendChild(d);
+    });
+  }
+
+  function renderSlotFilters() {
+    const el = document.getElementById("slotFilters");
+    if (!el) return;
+    const slots = ["all", "Cabeza", "Cuerpo", "Arma", "Accesorio"];
+    el.innerHTML = slots
+      .map((s) => {
+        const label = s === "all" ? "Todos" : s;
+        return `<button type="button" class="${filterSlot === s ? "on" : ""}" data-slot="${s}">${label}</button>`;
+      })
+      .join("");
+    el.querySelectorAll("button").forEach((b) => {
+      b.addEventListener("click", () => {
+        filterSlot = b.getAttribute("data-slot");
+        renderSlotFilters();
+        renderEquipGrid();
+      });
+    });
+  }
+
+  function statBlockHtml(stats, subLines) {
+    const parts = STAT_KEYS.map((k) => {
+      const v = stats[k] != null ? stats[k] : 0;
+      const sub = subLines && subLines[k] ? `<div class="muted" style="font-size:0.7rem">${escapeHtml(subLines[k])}</div>` : "";
+      return `<div><span>${k}</span> <strong>${v}</strong>${sub}</div>`;
+    });
+    return `<div class="stat-grid">${parts.join("")}</div>`;
+  }
+
+  function escapeHtml(s) {
+    if (!s) return "";
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  /** Para atributo src (rutas y data URLs); no convierte &lt; para no romper imágenes base64. */
+  function escapeAttrUrl(s) {
+    if (s == null || s === "") return "";
+    return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  }
+
+  function renderEquipGrid() {
+    const grid = document.getElementById("equipGrid");
+    if (!grid) return;
+    const list = allEquip().filter((e) => filterSlot === "all" || e.slot === filterSlot);
+    grid.innerHTML = list
+      .map((e) => {
+        const sk = e.skill || {};
+        const isCustom = !String(e.id || "").startsWith("def-");
+        const subLines = e.subStatLines || {};
+        return `
+        <article class="equip-card" data-id="${escapeHtml(e.id)}">
+          <div class="img-wrap"><img src="${escapeHtml(e.imageUrl)}" alt="" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<span class=muted>Sin imagen</span>'" /></div>
+          <div class="body">
+            <span class="slot-tag slot-${escapeHtml(e.slot)}">${escapeHtml(e.slot)}</span>
+            <h3 style="margin:0;font-size:1rem">${escapeHtml(e.name)}</h3>
+            <p class="muted" style="margin:0.35rem 0;font-size:0.8rem">Set: <code>${escapeHtml(e.setId)}</code> · ${escapeHtml(e.element || "—")}</p>
+            <p style="font-size:0.85rem">${escapeHtml(e.descPiece || "")}</p>
+            ${statBlockHtml(e.stats || {}, subLines)}
+            <p style="font-size:0.8rem;margin-top:0.5rem"><strong>Sub-stats (texto):</strong> ${escapeHtml(e.subStatsDesc || "")}</p>
+            <p style="font-size:0.8rem"><strong>Bono set completo:</strong> ${escapeHtml(e.setBonus || "")}</p>
+            <h3 style="font-size:0.9rem">Habilidad de set completo</h3>
+            <p style="font-size:0.8rem;margin:0"><strong>${escapeHtml(sk.name || "—")}</strong> · SP ${sk.sp != null ? sk.sp : "—"} · CD ${sk.cd != null ? sk.cd : "—"} · Usos ${sk.uses != null ? sk.uses : "—"}</p>
+            <p style="font-size:0.8rem;margin:0.25rem 0"><strong>Daño:</strong> ${escapeHtml(sk.dmg || "—")}</p>
+            <p style="font-size:0.8rem;margin:0"><strong>Condición:</strong> ${escapeHtml(sk.cond || "—")}</p>
+            <p style="font-size:0.8rem">${escapeHtml(sk.desc || "")}</p>
+            ${isCustom ? `<div class="btn-row"><button type="button" class="ghost danger" data-del="${escapeHtml(e.id)}">Eliminar pieza</button></div>` : ""}
+          </div>
+        </article>`;
+      })
+      .join("");
+
+    grid.querySelectorAll("[data-del]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-del");
+        if (!confirm("¿Eliminar esta pieza del catálogo local?")) return;
+        const next = loadCustomEquip().filter((x) => x.id !== id);
+        saveCustomEquip(next);
+        renderEquipGrid();
+      });
+    });
+  }
+
+  /* Audio / música: fuera de try/catch para que LOTG y el resto del IIFE puedan llamar playLotgTrack, etc. */
+  const bgmGlobal = document.getElementById("bgmGlobal");
+  const bgmLotg = document.getElementById("bgmLotg");
+  const nowPlayingEl = document.getElementById("nowPlaying");
+  const masterVol = document.getElementById("masterVol");
+
+  function setVol() {
+    if (!masterVol) return;
+    const v = (parseInt(masterVol.value, 10) || 0) / 100;
+    if (bgmGlobal) bgmGlobal.volume = v;
+    if (bgmLotg) bgmLotg.volume = v;
+  }
+  if (masterVol) masterVol.addEventListener("input", setVol);
+
+  function playGlobalClinic() {
+    tryPlayAudio(bgmGlobal, MUSIC.clinic, "Clinic");
+    if (nowPlayingEl) nowPlayingEl.textContent = "Música: Clinic (sitio)";
+    try {
+      if (bgmLotg) bgmLotg.pause();
+    } catch (e) {}
+  }
+
+  function playLotgTrack(key, label) {
+    const urls = MUSIC[key];
+    if (!urls) return;
+    try {
+      if (bgmGlobal) bgmGlobal.pause();
+    } catch (e) {}
+    tryPlayAudio(bgmLotg, urls, label);
+    if (nowPlayingEl) nowPlayingEl.textContent = "Música: " + label + " (minijuego)";
+  }
+
+  /** Historia: una base por tono (calma / tensión / serio), sin azar. */
+  function playStoryMood(mood) {
+    if (mood === "tension") playLotgTrack("omen", "Historia — tensión");
+    else if (mood === "serious") playLotgTrack("chill", "Historia — serio");
+    else playLotgTrack("youthful", "Historia — calma");
+  }
+
+  try {
+  (function () {
+    const btnAdd = document.getElementById("btnAddEquip");
+    if (btnAdd) {
+      btnAdd.addEventListener("click", () => {
+        const m = document.getElementById("modalEquip");
+        if (m) m.classList.add("open");
+      });
+    }
+  })();
+  (function () {
+    const btnClose = document.getElementById("modalEquipClose");
+    if (btnClose) {
+      btnClose.addEventListener("click", () => {
+        const m = document.getElementById("modalEquip");
+        if (m) m.classList.remove("open");
+      });
+    }
+  })();
+
+  (function () {
+    const formEquip = document.getElementById("formEquip");
+    if (!formEquip) return;
+    formEquip.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const f = ev.target;
+    const stats = {};
+    const subStatLines = {};
+    STAT_KEYS.forEach((k) => {
+      stats[k] = parseInt(f["st_" + k].value, 10) || 0;
+      const sd = f["sd_" + k].value.trim();
+      if (sd) subStatLines[k] = sd;
+    });
+    const fileInp = f.image;
+    const finish = (imageUrl) => {
+      const id = "usr-" + Date.now();
+      const item = {
+        id,
+        slot: f.slot.value,
+        name: f.name.value.trim(),
+        setId: f.setId.value.trim(),
+        element: f.element.value.trim(),
+        descPiece: f.descPiece.value.trim(),
+        stats,
+        subStatLines,
+        subStatsDesc: f.subStatsDesc.value.trim(),
+        setBonus: f.setBonus.value.trim(),
+        skill: {
+          name: f.skillName.value.trim(),
+          sp: parseInt(f.skillSp.value, 10) || 0,
+          cd: parseInt(f.skillCd.value, 10) || 0,
+          uses: parseInt(f.skillUses.value, 10) || 0,
+          dmg: f.skillDmg.value.trim(),
+          cond: f.skillCond.value.trim(),
+          desc: f.skillDesc.value.trim(),
+        },
+        imageUrl: imageUrl || "Patimon/placeholder.png",
+      };
+      const cur = loadCustomEquip();
+      cur.push(item);
+      saveCustomEquip(cur);
+      const modal = document.getElementById("modalEquip");
+      if (modal) modal.classList.remove("open");
+      f.reset();
+      buildStatForm();
+      renderEquipGrid();
+    };
+    if (fileInp.files && fileInp.files[0]) {
+      const r = new FileReader();
+      r.onload = () => finish(r.result);
+      r.readAsDataURL(fileInp.files[0]);
+    } else {
+      finish("");
+    }
+    });
+  })();
+
+  document.querySelectorAll("#mainNav button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const sec = btn.getAttribute("data-section");
+      document.querySelectorAll("#mainNav button").forEach((b) => {
+        if (b === btn) b.classList.add("active");
+        else b.classList.remove("active");
+      });
+      document.querySelectorAll("main section.panel").forEach((p) => p.classList.remove("active"));
+      const map = { equip: "sec-equip", tutorial: "sec-tutorial", lotg: "sec-lotg" };
+      const targetPanel = document.getElementById(map[sec]);
+      if (targetPanel) targetPanel.classList.add("active");
+      if (sec === "lotg") {
+        playLotgTrack("safe", "Safe Area");
+      } else {
+        playGlobalClinic();
+      }
+    });
+  });
+
+  window.KBK_APP_SHELL_OK = true;
+  } catch (e) {
+    console.error("[KBK — interfaz principal]", e);
+    window.KBK_APP_SHELL_ERROR = (e && e.message) || String(e);
+  }
+
+  function combatBgFromWrap() {
+    const w = document.getElementById("lotgGameWrap");
+    return w && w.dataset ? w.dataset.cbg : undefined;
+  }
+
+  /* --- LOTG --- */
+  function emptyStats() {
+    const o = {};
+    STAT_KEYS.forEach((k) => (o[k] = 0));
+    return o;
+  }
+
+  function createLotgCharacter(data) {
+    const stats = emptyStats();
+    STAT_KEYS.forEach((k) => {
+      stats[k] = data.stats[k] || 0;
+    });
+    let avatar = null;
+    if (data.avatarDataUrl) avatar = data.avatarDataUrl;
+    else if (data.avatarPreset === "lawliet") avatar = "Char/Lawliet.png";
+    else if (data.avatarPreset === "lawlietg") avatar = "Char/LawlietG.png";
+    return {
+      name: data.name || "Protagonista",
+      gender: data.gender,
+      avatar,
+      stats,
+      statPoints: 0,
+      level: 1,
+      xp: 0,
+      hpCur: 0,
+      spCur: 0,
+      lotgElement: "Imaginario",
+      passive: {
+        name: "Resonancia del juramento",
+        desc: "+4% resistencia mágica. +2 SP al inicio de cada turno propio en combate.",
+      },
+      skillActive: {
+        name: "Trazado Aónico — Grúa clínica",
+        desc: "Técnica definitiva: daño cuántico basado en MA; eficaz contra hordas (reparto en área).",
+      },
+    };
+  }
+
+  function protagCombatStats(p) {
+    if (!p || !p.stats) {
+      const z = emptyStats();
+      return {
+        hpMax: Math.floor(40 + z.HP * 12 + z.VI * 7.5 + z.EN * 4),
+        spMax: Math.floor(22 + z.SP * 9 + z.MA * 2.2),
+        atkP: Math.floor(8 + z.STG * 2.2 + z.DX * 0.8),
+        atkM: Math.floor(6 + z.MA * 2.4 + z.SP * 0.3),
+        def: Math.floor(4 + z.VI + z.EN * 0.8 + z.DX * 0.3),
+        agi: Math.floor(z.AG * 1.2 + z.LUK * 0.5 + z.DX * 0.4),
+      };
+    }
+    const s = p.stats;
+    const lv = p.level != null && p.level >= 1 ? p.level : 1;
+    const mult = 1 + (lv - 1) * 0.04;
+    const hpMax = Math.floor((40 + s.HP * 12 + s.VI * 7.5 + s.EN * 4) * mult);
+    const spMax = Math.floor((22 + s.SP * 9 + s.MA * 2.2) * mult);
+    const atkP = Math.floor((8 + s.STG * 2.2 + s.DX * 0.8) * mult);
+    const atkM = Math.floor((6 + s.MA * 2.4 + s.SP * 0.3) * mult);
+    const def = Math.floor((4 + s.VI + s.EN * 0.8 + s.DX * 0.3) * mult);
+    const agi = Math.floor((s.AG * 1.2 + s.LUK * 0.5 + s.DX * 0.4) * mult);
+    return { hpMax, spMax, atkP, atkM, def, agi };
+  }
+
+  function getPartyUnits() {
+    if (!lotgState || !Array.isArray(lotgState.partyUids)) return [];
+    return lotgState.partyUids
+      .slice(0, MAX_PARTY_ALLIES)
+      .map((uid) => (lotgState.roster || []).find((u) => u && u.uid === uid))
+      .filter(Boolean);
+  }
+
+  function allyBonusFromParty() {
+    let b = { hp: 0, atk: 0, def: 0 };
+    getPartyUnits().forEach((u) => {
+      const r =
+        u.rarity === "SSS" ? 0.12 : u.rarity === "SS" ? 0.1 : u.rarity === "S" ? 0.08 : u.rarity === "A" ? 0.05 : 0.03;
+      const mrg = 1 + Math.min(MAX_MERGE_RANK, u.mergeRank || 0) * 0.02;
+      b.hp += r * 0.5 * mrg;
+      b.atk += r * mrg;
+      b.def += r * 0.5 * mrg;
+    });
+    const damp = 0.52;
+    return { hp: b.hp * damp, atk: b.atk * damp, def: b.def * damp };
+  }
+
+  function mergeStatsWithEquipSlots(baseStats, slots) {
+    const s = { ...baseStats };
+    if (!slots) return s;
+    EQUIP_SLOTS.forEach((sl) => {
+      const eq = slots[sl];
+      if (!eq || !eq.bonus) return;
+      Object.entries(eq.bonus).forEach(([k, v]) => {
+        s[k] = (s[k] || 0) + (Number(v) || 0);
+      });
+    });
+    return s;
+  }
+
+  function mitigationPhysFromStats(st, lvMult) {
+    const m = lvMult || 1;
+    return Math.min(
+      0.58,
+      ((st.EN || 0) * 0.014 + (st.VI || 0) * 0.009 + (st.DX || 0) * 0.0045) * m
+    );
+  }
+
+  function mitigationMagFromStats(st, lvMult) {
+    const m = lvMult || 1;
+    return Math.min(
+      0.55,
+      ((st.MA || 0) * 0.013 + (st.SP || 0) * 0.006 + (st.VI || 0) * 0.005) * m
+    );
+  }
+
+  function dodgeFromStats(st, lvMult) {
+    const m = lvMult || 1;
+    return Math.min(0.34, ((st.AG || 0) * 0.0034 + (st.LUK || 0) * 0.0024 + (st.DX || 0) * 0.002) * m);
+  }
+
+  function critChanceFromStats(st) {
+    return Math.min(0.4, 0.05 + (st.LUK || 0) * 0.0035 + (st.DX || 0) * 0.0012);
+  }
+
+  function getProtagDerivedDefense() {
+    if (!lotgState || !lotgState.protag) {
+      return { phys: 0.15, mag: 0.15, dodge: 0.05, crit: 0.05 };
+    }
+    const p = lotgState.protag;
+    const s = mergeStatsWithEquipSlots(p.stats, lotgState.equipSlots || {});
+    const mult = 1 + (p.level - 1) * 0.04;
+    const ab = allyBonusFromParty();
+    const passMag = p.passive && p.passive.name ? 1.04 : 1;
+    return {
+      phys: Math.min(0.6, mitigationPhysFromStats(s, mult) + ab.def * 0.045),
+      mag: Math.min(0.6, mitigationMagFromStats(s, mult) * passMag + ab.def * 0.038),
+      dodge: Math.min(0.36, dodgeFromStats(s, mult) + ab.def * 0.022),
+      crit: critChanceFromStats(s),
+    };
+  }
+
+  function allyDerivedDefense(u, magic) {
+    const s = mergeStatsWithEquipSlots(u.stats || {}, u.equipSlots || {});
+    const mult = 1 + ((u.level || 1) - 1) * 0.038;
+    return magic ? mitigationMagFromStats(s, mult) : mitigationPhysFromStats(s, mult);
+  }
+
+  function allyDodgeChance(u) {
+    const s = mergeStatsWithEquipSlots(u.stats || {}, u.equipSlots || {});
+    const mult = 1 + ((u.level || 1) - 1) * 0.038;
+    return dodgeFromStats(s, mult);
+  }
+
+  function enemyLevelMult(e) {
+    return 1 + ((e.level || 1) - 1) * 0.038;
+  }
+
+  function enemyMitigationPhys(e) {
+    return mitigationPhysFromStats(e.stats || {}, enemyLevelMult(e));
+  }
+
+  function enemyMitigationMag(e) {
+    return mitigationMagFromStats(e.stats || {}, enemyLevelMult(e));
+  }
+
+  function damageToEnemyPhysical(raw, e) {
+    const mit = enemyMitigationPhys(e);
+    return Math.max(1, Math.floor(raw * (1 - mit)));
+  }
+
+  function damageToEnemyMagical(raw, e) {
+    const mit = enemyMitigationMag(e);
+    return Math.max(1, Math.floor(raw * (1 - mit)));
+  }
+
+  /**
+   * Fórmulas base LOTG: daño bruto antes de mitigación enemiga.
+   * físico ≈ atkP × mult × variación; mágico ≈ atkM × mult × variación (ligeramente más alto en coef).
+   */
+  function lotgProtagPhysicalRaw(cs, atkMult, buffMult) {
+    const m = (atkMult || 1) * (buffMult || 1);
+    return cs.atkP * m * (0.88 + Math.random() * 0.26);
+  }
+
+  function lotgProtagMagicalRaw(cs, atkMult, buffMult, skillCoef) {
+    const c = skillCoef != null ? skillCoef : 1.35;
+    const m = (atkMult || 1) * (buffMult || 1);
+    return cs.atkM * c * m * (1.02 + Math.random() * 0.28);
+  }
+
+  function rollEnemyAttackDamage(enemy, target) {
+    const es = enemy.stats || emptyStats();
+    const useMag = Math.random() < 0.26 + Math.min(0.18, (es.MA || 0) / ((es.STG || 0) + (es.MA || 0) + 8));
+    let power = useMag
+      ? (es.MA || 0) * 2.25 + (es.SP || 0) * 0.42 + (es.LUK || 0) * 0.12
+      : (es.STG || 0) * 2.1 + (es.DX || 0) * 1.12 + (es.LUK || 0) * 0.1;
+    power *= (0.92 + Math.random() * 0.34) * (1 + (enemy.level || 1) * 0.048);
+    let defMit;
+    let dodgeChance;
+    let defLuk = 0;
+    let defenderElement = "Neutral";
+    if (target.kind === "protag") defenderElement = (lotgState.protag && lotgState.protag.lotgElement) || "Neutral";
+    else if (target.u) defenderElement = target.u.element || "Neutral";
+    if (target.kind === "protag") {
+      const pd = getProtagDerivedDefense();
+      defMit = useMag ? pd.mag : pd.phys;
+      dodgeChance = pd.dodge;
+      defLuk = lotgState.protag.stats.LUK || 0;
+    } else {
+      defMit = allyDerivedDefense(target.u, useMag);
+      dodgeChance = allyDodgeChance(target.u);
+      defLuk = (target.u.stats || {}).LUK || 0;
+    }
+    const dodgeBonus = Math.max(
+      0,
+      ((target.kind === "protag" ? lotgState.protag.stats.AG : (target.u.stats || {}).AG) || 0) * 0.0006
+    );
+    if (Math.random() < Math.min(0.38, dodgeChance + dodgeBonus)) {
+      return { dmg: 0, dodge: true, mag: useMag };
+    }
+    let dmg = Math.floor(power * (1 - defMit));
+    dmg = Math.floor(dmg * elementalDamageMult(enemy.element || "Neutral", defenderElement));
+    const atkLuk = es.LUK || 0;
+    const critP = Math.min(0.38, Math.max(0.04, 0.07 + atkLuk * 0.0032 - defLuk * 0.001));
+    let crit = false;
+    if (Math.random() < critP) {
+      dmg = Math.floor(dmg * 1.62);
+      crit = true;
+    }
+    return { dmg: Math.max(3, dmg), crit, mag: useMag };
+  }
+
+  function allyCombatStats(u) {
+    const st = mergeStatsWithEquipSlots(u.stats || {}, u.equipSlots || {});
+    const lv = u.level != null && u.level >= 1 ? u.level : 1;
+    const mult = 1 + (lv - 1) * 0.038;
+    const mrg = 1 + Math.min(MAX_MERGE_RANK, u.mergeRank || 0) * 0.04;
+    const baseHp = 28 + (st.HP || 0) * 9 + (st.VI || 0) * 6.8 + (st.EN || 0) * 3.2;
+    const baseSp = 14 + (st.SP || 0) * 7.5 + (st.MA || 0) * 2;
+    const baseAtkP = 7 + (st.STG || 0) * 2.15 + (st.DX || 0) * 0.78;
+    const baseAtkM = 5 + (st.MA || 0) * 2.35 + (st.SP || 0) * 0.38;
+    const baseDef = 3 + (st.VI || 0) + (st.EN || 0) * 0.75 + (st.DX || 0) * 0.25;
+    const rareAmp =
+      u.rarity === "SSS" ? 1.09 : u.rarity === "SS" ? 1.065 : u.rarity === "S" ? 1.048 : u.rarity === "A" ? 1.032 : 1.018;
+    return {
+      hpMax: Math.floor(baseHp * mult * mrg * rareAmp),
+      spMax: Math.floor(baseSp * mult * mrg * rareAmp),
+      atkP: Math.floor(baseAtkP * mult * mrg * rareAmp),
+      atkM: Math.floor(baseAtkM * mult * mrg * rareAmp),
+      def: Math.floor(baseDef * mult * mrg * rareAmp),
+    };
+  }
+
+  /** Guarda HP/SP actuales de aliados en grupo para el mapa (descanso, siguiente combate). */
+  function snapshotPartyVitalsToPersist() {
+    if (!lotgState || !lotgState.combatAllyVitals) return;
+    if (!lotgState.partyVitalsPersist) lotgState.partyVitalsPersist = {};
+    getPartyUnits().forEach((u) => {
+      const v = lotgState.combatAllyVitals[u.uid];
+      if (!v) return;
+      const st = allyCombatStats(u);
+      lotgState.partyVitalsPersist[u.uid] = {
+        hp: Math.max(0, Math.min(st.hpMax, v.hp)),
+        sp: Math.max(0, Math.min(st.spMax, v.sp)),
+      };
+    });
+  }
+
+  function computeAllyDamage(u, e, extraMult) {
+    const em = extraMult || 1;
+    const st = allyCombatStats(u);
+    const raw = st.atkP * (0.9 + Math.random() * 0.26) * 0.98 * em;
+    let dmg = damageToEnemyPhysical(raw, e);
+    dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", e.element || "Neutral"));
+    return Math.max(1, dmg);
+  }
+
+  /** Enemigo con mismas stats base que las unidades (HP, SP, STG, DX, MA, …), nivel ≥1 que escala con piso y victorias. */
+  function scaleEnemy(floor, boss, extra) {
+    extra = extra || {};
+    const miniboss = !!extra.miniboss;
+    const t = ENEMY_TEMPLATES[(floor + Math.floor(Math.random() * 3)) % ENEMY_TEMPLATES.length];
+    const streak = Math.max(0, (lotgState && lotgState.combatsCleared) || 0);
+    const danger = 1 + floor * 0.14 + streak * 0.04;
+    const level = Math.max(
+      1,
+      1 + Math.floor(floor * 0.72 + streak * 0.14 + (boss ? 4 : miniboss ? 3 : 0))
+    );
+    const budgetBase = Math.floor((22 + level * 7 + floor * 3 + streak * 1.1) * danger * (boss ? 1.3 : miniboss ? 1.22 : 1));
+    const minPerStat = Math.max(2, 2 + Math.floor(level / 12) + (boss ? 1 : 0));
+    const floorMinTotal = STAT_KEYS.length * minPerStat;
+    const budget = Math.max(budgetBase, floorMinTotal + 12);
+    const stats = emptyStats();
+    STAT_KEYS.forEach((k) => {
+      stats[k] = minPerStat;
+    });
+    let left = budget - floorMinTotal;
+    while (left > 0) {
+      stats[STAT_KEYS[Math.floor(Math.random() * STAT_KEYS.length)]]++;
+      left--;
+    }
+    if (boss) {
+      STAT_KEYS.forEach((k) => {
+        stats[k] += 1 + Math.floor(level / 6);
+      });
+    } else if (miniboss) {
+      STAT_KEYS.forEach((k) => {
+        stats[k] += 1 + Math.floor(level / 8);
+      });
+    }
+    const lm = 1 + (level - 1) * 0.038;
+    const hpTier = boss ? 1.34 : miniboss ? 1.22 : 1.05;
+    let hpMax = Math.floor((40 + stats.HP * 11 + stats.VI * 6.5 + stats.EN * 4.5) * lm * danger * hpTier);
+    if (!boss && !miniboss) hpMax = Math.floor(hpMax * 0.68);
+    else if (miniboss) hpMax = Math.floor(hpMax * 0.88);
+    const spMax = Math.floor((18 + stats.SP * 7 + stats.MA * 2) * lm);
+    return {
+      name: t.name,
+      tag: t.tag,
+      element: t.element || "Neutral",
+      floor,
+      boss: !!boss,
+      miniboss: !!miniboss,
+      level,
+      stats,
+      hpMax,
+      hp: hpMax,
+      spMax,
+      spCur: spMax,
+    };
+  }
+
+  function xpToNext(lv) {
+    return 64 + lv * 36;
+  }
+
+  /** Umbral de XP para subir de nivel un recluta (más bajo que el doctor → suben un poco más rápido). */
+  function unitXpThreshold(lv) {
+    const l = lv != null && lv >= 1 ? lv : 1;
+    return 42 + l * 19;
+  }
+
+  function lotgSave() {
+    if (!lotgState) return;
+    try {
+      localStorage.setItem(STORAGE_LOTG, JSON.stringify(lotgState));
+    } catch (e) {
+      alert("No se pudo guardar (almacenamiento lleno o privado).");
+    }
+  }
+
+  function lotgLoad() {
+    try {
+      let raw = localStorage.getItem(STORAGE_LOTG);
+      if (!raw) {
+        raw = localStorage.getItem(STORAGE_LOTG_LEGACY);
+        if (raw) {
+          try {
+            localStorage.setItem(STORAGE_LOTG, raw);
+            localStorage.removeItem(STORAGE_LOTG_LEGACY);
+          } catch (e) {
+            /* ignore */
+          }
+        }
+      }
+      if (!raw) return null;
+      const s = JSON.parse(raw);
+      if (!s.gearStash) s.gearStash = [];
+      if (!s.mapCellTypes) s.mapCellTypes = {};
+      if (!Array.isArray(s.gachaLog)) s.gachaLog = [];
+      if (!Array.isArray(s.inventory)) s.inventory = [];
+      if (!s.lotgView) s.lotgView = "hub";
+      normalizeSoulPointsOnState(s);
+      migrateLotgState(s);
+      if (!s.protag || typeof s.protag !== "object" || !s.protag.stats) return null;
+      return s;
+    } catch {
+      return null;
+    }
+  }
+
+  function lotgWipe() {
+    clearCombatScene();
+    try {
+      localStorage.removeItem(STORAGE_LOTG_LEGACY);
+      localStorage.removeItem(STORAGE_LOTG);
+    } catch (e) {}
+    lotgState = null;
+  }
+
+  function randomZenReward(floor, streak, boss) {
+    const st = streak || 0;
+    const diff = floor * 2.2 + st * 1.4 + (boss ? 95 : 0);
+    const base = 155 + Math.min(520, floor * 18) + Math.floor(diff * 2.4);
+    return base + Math.floor(Math.random() * (140 + floor * 8 + Math.floor(st * 3)));
+  }
+
+  function soulRewardForVictory(floor, streak, wasBoss, wasMiniboss) {
+    const st = streak || 0;
+    const diff = floor * 2.4 + st * 1.35 + (wasBoss ? 52 : wasMiniboss ? 34 : 0);
+    let n = 38 + Math.floor(diff * 0.72) + (wasBoss ? 48 : wasMiniboss ? 32 : 0);
+    if (wasBoss) n += 400;
+    else if (wasMiniboss) n += 280;
+    else n += 200;
+    return n;
+  }
+
+  function gachaCosts(premium) {
+    const cost1 = premium ? 870 : 700;
+    const cost10 = premium ? 2500 : 1600;
+    return { cost1, cost10 };
+  }
+
+  function pickUnit(premium) {
+    const promos = GACHA_UNITS.filter((u) => u.promo);
+    const roll = Math.random() * 100;
+    if (premium && roll < 1 && promos.length) {
+      return promos[Math.floor(Math.random() * promos.length)];
+    }
+    const pool = GACHA_UNITS.filter((u) => !u.promo);
+    const weights = pool.map((u) => (u.rarity === "S" ? 5 : u.rarity === "A" ? 18 : 42));
+    let r = Math.random() * weights.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < pool.length; i++) {
+      r -= weights[i];
+      if (r <= 0) return pool[i];
+    }
+    return pool[0];
+  }
+
+  /** Pesos por stat según rol del recluta (gacha). */
+  function getRoleStatWeights(role) {
+    const r = String(role || "");
+    if (/Mágico|magico/i.test(r)) {
+      return { HP: 2, SP: 4, STG: 1, DX: 2, VI: 2, MA: 5, EN: 2, AG: 2, LUK: 2 };
+    }
+    if (/Físico|Fisico/i.test(r)) {
+      return { HP: 3, SP: 2, STG: 5, DX: 4, VI: 3, MA: 1, EN: 3, AG: 3, LUK: 2 };
+    }
+    if (/Healer|Sanador|Support heal/i.test(r)) {
+      return { HP: 3, SP: 5, STG: 1, DX: 1, VI: 4, MA: 4, EN: 3, AG: 2, LUK: 2 };
+    }
+    /* Soporte y otros */
+    return { HP: 2, SP: 4, STG: 1, DX: 2, VI: 3, MA: 3, EN: 3, AG: 4, LUK: 4 };
+  }
+
+  function distributeWeightedStatPoints(st, weights, points) {
+    const wSum = STAT_KEYS.reduce((s, k) => s + (weights[k] || 1), 0);
+    let left = points;
+    while (left > 0) {
+      let roll = Math.random() * wSum;
+      for (let i = 0; i < STAT_KEYS.length; i++) {
+        const k = STAT_KEYS[i];
+        roll -= weights[k] || 1;
+        if (roll <= 0) {
+          st[k] = (st[k] || 0) + 1;
+          left--;
+          break;
+        }
+      }
+    }
+  }
+
+  /** Stats iniciales: mínimo en todo + reparto aleatorio sesgado por rol y rareza (SSS > SS > S > A > B). */
+  function rollRecruitBaseStats(template) {
+    const weights = getRoleStatWeights(template.role);
+    const rarity = template.rarity || "B";
+    let minEach;
+    let extraPool;
+    if (rarity === "SSS") {
+      minEach = 4;
+      extraPool = 62;
+    } else if (rarity === "SS") {
+      minEach = 3;
+      extraPool = 54;
+    } else if (rarity === "S") {
+      minEach = 3;
+      extraPool = 46;
+    } else if (rarity === "A") {
+      minEach = 2;
+      extraPool = 36;
+    } else if (rarity === "B") {
+      minEach = 2;
+      extraPool = 30;
+    } else {
+      minEach = 2;
+      extraPool = 24;
+    }
+    const st = emptyStats();
+    STAT_KEYS.forEach((k) => {
+      st[k] = minEach;
+    });
+    distributeWeightedStatPoints(st, weights, extraPool);
+    return st;
+  }
+
+  function cloneUnit(template) {
+    const st = rollRecruitBaseStats(template);
+    const equipSlots = {};
+    EQUIP_SLOTS.forEach((sl) => {
+      equipSlots[sl] = null;
+    });
+    return {
+      uid: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+      name: template.name,
+      dupeKey: template.name,
+      img: template.img,
+      rarity: template.rarity,
+      element: template.element || "Neutral",
+      role: template.role,
+      level: 1,
+      xp: 0,
+      mergeRank: 0,
+      stats: st,
+      skill: template.skill,
+      passive: template.passive ? { name: template.passive.name, desc: template.passive.desc } : null,
+      passiveHook: template.passiveHook || null,
+      equipSlots,
+    };
+  }
+
+  function addOrMergeUnit(template) {
+    const key = template.name;
+    const existing = lotgState.roster.find((u) => (u.dupeKey || u.name) === key);
+    if (existing) {
+      if (!existing.stats || typeof existing.stats !== "object") existing.stats = emptyStats();
+      if ((existing.mergeRank || 0) < MAX_MERGE_RANK) {
+        existing.mergeRank = (existing.mergeRank || 0) + 1;
+        const rr = existing.rarity || "B";
+        const mergePts =
+          rr === "SSS" ? 24 : rr === "SS" ? 21 : rr === "S" ? 19 : rr === "A" ? 17 : 15;
+        distributeWeightedStatPoints(existing.stats, getRoleStatWeights(existing.role), mergePts);
+        return { merged: true, name: existing.name, rank: existing.mergeRank };
+      }
+      lotgState.zen += 150;
+      return { refund: true, zen: 150 };
+    }
+    const nu = cloneUnit(template);
+    nu.dupeKey = key;
+    nu.mergeRank = 0;
+    lotgState.roster.push(nu);
+    return { merged: false, name: nu.name, rarity: nu.rarity };
+  }
+
+  function randomEquipItem() {
+    const qual = Math.random() < 0.32 ? "S" : "A";
+    const urban = {
+      Cabeza: [
+        "Visor de interferencia (Bangboo mod.)",
+        "Casco de ánodo callejero",
+        "Máscara HIA — sello urbano",
+        "Gafas térmicas de contenedor",
+      ],
+      Cuerpo: [
+        "Chaleco laminar — ruta 6",
+        "Mono de extracción Hollow",
+        "Traje antiestático de metro sellado",
+        "Capa de cable reciclado",
+      ],
+      Arma: [
+        "Cadena eléctrica portátil",
+        "Pistola de clavos médicos",
+        "Vara de contención cívica",
+        "Sierra circular de obra (mod. W-Engine)",
+      ],
+      Accesorio: [
+        "Amuleto de Zen corrupto",
+        "Detector de Ether residual",
+        "Broche de facción sin nombre",
+        "Llavero de torniquete fantasma",
+      ],
+    };
+    const equipSlot = EQUIP_SLOTS[Math.floor(Math.random() * EQUIP_SLOTS.length)];
+    const pool = urban[equipSlot];
+    const baseName = pool[Math.floor(Math.random() * pool.length)];
+    const bonus =
+      qual === "S"
+        ? { HP: 9, STG: 3, MA: 3, VI: 5, EN: 4, DX: 2 }
+        : { HP: 5, STG: 2, MA: 2, VI: 3, EN: 3, AG: 1 };
+    return {
+      eid: "eq-" + Date.now(),
+      name: baseName + " [" + qual + "]",
+      equipSlot,
+      qual,
+      bonus,
+      urbanTag: true,
+    };
+  }
+
+  function renderLotgCreate() {
+    const w = document.getElementById("lotgCreateWrap");
+    if (!w) return;
+    w.innerHTML = `
+      <h3>Crear protagonista</h3>
+      <p class="muted">Distribuye <strong>50</strong> puntos en stats. Elige género y avatar predeterminado (Lawliet / LawlietG) o sube una imagen.</p>
+      <form id="lotgCreateForm">
+        <label>Nombre</label>
+        <input type="text" name="pname" required placeholder="Dr. …" />
+        <label>Género (lore)</label>
+        <select name="gender"><option value="M">Masculino</option><option value="F">Femenino</option><option value="X">Otro / NB</option></select>
+        <label>Avatar predeterminado</label>
+        <select name="preset">
+          <option value="lawliet" selected>Lawliet (Char/Lawliet.png)</option>
+          <option value="lawlietg">LawlietG (Char/LawlietG.png)</option>
+          <option value="">— Solo imagen propia (sin preset) —</option>
+        </select>
+        <label>Imagen propia (opcional)</label>
+        <input type="file" name="avatar" accept="image/*" />
+        <div class="lotg-stats-create" id="lotgStatInputs"></div>
+        <p class="muted" id="lotgPointsLeft"></p>
+        <button type="submit" class="primary">Comenzar run</button>
+        <button type="button" class="ghost" id="btnLoadLotg" style="margin-left:8px">Cargar partida</button>
+        <button type="button" class="ghost danger" id="btnWipeLotgSave" style="margin-left:8px">Borrar partida guardada</button>
+      </form>`;
+    const statWrap = document.getElementById("lotgStatInputs");
+    const ptsEl = document.getElementById("lotgPointsLeft");
+    const inputs = {};
+    STAT_KEYS.forEach((k) => {
+      const d = document.createElement("div");
+      d.innerHTML = `<label>${k}</label><input type="number" min="0" max="50" value="5" name="st_${k}" />`;
+      statWrap.appendChild(d);
+      inputs[k] = d.querySelector("input");
+    });
+    const BUDGET = 50;
+    function refreshPts() {
+      let used = 0;
+      STAT_KEYS.forEach((k) => (used += parseInt(inputs[k].value, 10) || 0));
+      ptsEl.textContent = "Puntos restantes: " + (BUDGET - used) + " / " + BUDGET;
+      ptsEl.style.color = used === BUDGET ? "var(--success)" : used > BUDGET ? "var(--danger)" : "var(--muted)";
+    }
+    STAT_KEYS.forEach((k) => inputs[k].addEventListener("input", refreshPts));
+    refreshPts();
+
+    const btnLoadLotg = document.getElementById("btnLoadLotg");
+    if (btnLoadLotg) {
+      btnLoadLotg.addEventListener("click", () => {
+      const s = lotgLoad();
+      if (!s) return alert("No hay partida guardada.");
+      clearCombatScene();
+      lotgState = s;
+      document.getElementById("lotgIntro").style.display = "none";
+      document.getElementById("lotgGameWrap").style.display = "block";
+      playLotgTrack("safe", "Safe Area");
+      renderLotgGame();
+    });
+    }
+
+    const btnWipeLotgSave = document.getElementById("btnWipeLotgSave");
+    if (btnWipeLotgSave) {
+      btnWipeLotgSave.addEventListener("click", () => {
+        if (!confirm("¿Borrar la partida guardada en este navegador? No se puede deshacer.")) return;
+        lotgWipe();
+        const gameWrap = document.getElementById("lotgGameWrap");
+        if (gameWrap) {
+          gameWrap.innerHTML = "";
+          gameWrap.style.display = "none";
+        }
+        const introEl = document.getElementById("lotgIntro");
+        if (introEl) introEl.style.display = "block";
+        renderLotgCreate();
+        alert("Guardado borrado. Puedes crear un personaje de nuevo.");
+      });
+    }
+
+    const lotgCreateForm = document.getElementById("lotgCreateForm");
+    if (lotgCreateForm) {
+      lotgCreateForm.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const f = ev.target;
+      const stats = emptyStats();
+      let used = 0;
+      STAT_KEYS.forEach((k) => {
+        const v = parseInt(f["st_" + k].value, 10) || 0;
+        stats[k] = v;
+        used += v;
+      });
+      if (used !== 50) {
+        alert("Debes repartir exactamente 50 puntos.");
+        return;
+      }
+      const pdata = {
+        name: f.pname.value.trim(),
+        gender: f.gender.value,
+        avatarPreset: f.preset.value,
+        stats,
+        avatarDataUrl: null,
+      };
+      const file = f.avatar.files[0];
+      const start = () => {
+        if (!pdata.avatarDataUrl && (!pdata.avatarPreset || pdata.avatarPreset === "")) {
+          alert("Sube una imagen o elige Lawliet / LawlietG como avatar.");
+          return;
+        }
+        lotgWipe();
+        lotgState = {
+          floor: 1,
+          zen: 0,
+          soul: INITIAL_SOUL,
+          lotgView: "hub",
+          protag: createLotgCharacter(pdata),
+          roster: [],
+          partyUids: [],
+          inventory: [],
+          gearStash: [],
+          equipSlots: { Cabeza: null, Cuerpo: null, Arma: null, Accesorio: null },
+          mapRevealed: {},
+          mapCellTypes: {},
+          mapCellDone: {},
+          mapCellMeta: {},
+          mapBossCellKey: null,
+          mapFloorForExitCoord: -1,
+          mapExitCoord: null,
+          floorConditionForFloor: 0,
+          floorAdvanceRule: "free",
+          floorBossCleared: true,
+          floorExitKey: true,
+          floorRelicFound: true,
+          mapPos: "2,2",
+          combatsCleared: 0,
+          storyChoiceLog: [],
+          gachaLog: [],
+          shopPurchaseLog: [],
+          runCombatAtkMult: 1,
+          runCombatAtkFights: 0,
+          combatBuff: { atkMult: 1, turns: 0 },
+          partyVitalsPersist: {},
+          mapLayoutFloor: null,
+        };
+        const cs = protagCombatStats(lotgState.protag);
+        lotgState.protag.hpCur = cs.hpMax;
+        lotgState.protag.spCur = cs.spMax;
+        document.getElementById("lotgIntro").style.display = "none";
+        document.getElementById("lotgGameWrap").style.display = "block";
+        playLotgTrack("safe", "Safe Area");
+        renderLotgGame();
+        lotgSave();
+      };
+      if (file) {
+        const r = new FileReader();
+        r.onload = () => {
+          pdata.avatarDataUrl = r.result;
+          start();
+        };
+        r.readAsDataURL(file);
+      } else start();
+    });
+    }
+  }
+
+  function applyEquipToProtag() {
+    if (!lotgState || !lotgState.protag || !lotgState.protag.stats) {
+      return { hpMax: 120, spMax: 60, atkP: 12, atkM: 10, def: 8, agi: 10 };
+    }
+    migrateLotgState(lotgState);
+    const p = lotgState.protag;
+    const merged = mergeStatsWithEquipSlots(p.stats || {}, lotgState.equipSlots || {});
+    const base = protagCombatStats({ ...p, stats: merged });
+    const ab = allyBonusFromParty();
+    return {
+      hpMax: Math.floor(base.hpMax * (1 + ab.hp)),
+      spMax: Math.floor(base.spMax * (1 + ab.hp * 0.12)),
+      atkP: Math.floor(base.atkP * (1 + ab.atk)),
+      atkM: Math.floor(base.atkM * (1 + ab.atk)),
+      def: Math.floor(base.def * (1 + ab.def)),
+      agi: base.agi,
+    };
+  }
+
+  function resetVNChrome() {
+    const port = document.getElementById("vnPortrait");
+    const ch = document.getElementById("vnChoices");
+    const cont = document.getElementById("vnContinue");
+    if (port) {
+      port.style.display = "none";
+      port.innerHTML = "";
+    }
+    if (ch) {
+      ch.style.display = "none";
+      ch.innerHTML = "";
+    }
+    if (cont) cont.style.display = "";
+  }
+
+  function showVN(beat, onDone) {
+    const ov = document.getElementById("vnOverlay");
+    const txt = document.getElementById("vnText");
+    resetVNChrome();
+    const bg = VN_BG[beat.bg % VN_BG.length];
+    ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${bg}")`;
+    const body = beat.text != null ? escapeHtml(beat.text) : "";
+    txt.innerHTML = `<strong>${escapeHtml(beat.title)}</strong><br/><br/>${body}`;
+    playStoryMood(beat.vnMood || "calm");
+    ov.classList.add("show");
+    const cont = document.getElementById("vnContinue");
+    const close = () => {
+      ov.classList.remove("show");
+      cont.onclick = null;
+      resetVNChrome();
+      playLotgTrack("safe", "Safe Area");
+      onDone && onDone();
+    };
+    cont.onclick = close;
+  }
+
+  function showVNSequenceFromBeat(beat, onDone) {
+    const pages = beat.pages || [];
+    if (!pages.length) {
+      showVN(beat, onDone);
+      return;
+    }
+    let i = 0;
+    function next() {
+      if (i >= pages.length) {
+        onDone && onDone();
+        return;
+      }
+      const pg = pages[i++];
+      const mood = pg.vnMood != null ? pg.vnMood : beat.vnMood != null ? beat.vnMood : "calm";
+      showVN(
+        {
+          title: pg.title || beat.title,
+          text: pg.text,
+          bg: pg.bg != null ? pg.bg : beat.bg,
+          vnMood: mood,
+        },
+        next
+      );
+    }
+    next();
+  }
+
+  function runChoiceAllyChapter(ch, onDone) {
+    const roster = lotgState.roster || [];
+    if (roster.length < (ch.requiresRosterMin || 1)) {
+      alert("Necesitas al menos un recluta en tu roster para esta escena.");
+      onDone && onDone();
+      return;
+    }
+    const partnerName = ch.partnerUnitName || "Aozora Lin";
+    const tmpl = GACHA_UNITS.find((g) => g.name === partnerName);
+    const rosterUnit = roster.find((u) => u.name === partnerName);
+    const imgSrc = (tmpl && tmpl.img) || (rosterUnit && rosterUnit.img) || "Char/Lawliet.png";
+    const displayName = partnerName;
+
+    function openChoicesOverlay() {
+      const ov = document.getElementById("vnOverlay");
+      const txt = document.getElementById("vnText");
+      const port = document.getElementById("vnPortrait");
+      const choicesEl = document.getElementById("vnChoices");
+      const cont = document.getElementById("vnContinue");
+      resetVNChrome();
+      const bg = VN_BG[ch.bg % VN_BG.length];
+      ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${bg}")`;
+      playStoryMood("calm");
+      port.style.display = "block";
+      port.innerHTML = `<img src="${escapeAttrUrl(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.style.display='none'"/>`;
+      txt.innerHTML = `<strong>${escapeHtml(ch.title)}</strong><br/><br/>
+      <span class="muted">${escapeHtml(displayName)}</span> te intercepta en un pasillo que no estaba en el mapa. El aire vibra; sus ojos dicen que lleva tiempo esperando a alguien que no gritara al ver la anomalía.<br/><br/>
+      —Doctor… ¿vas a fingir que esto es solo un desastre urbano, o podemos hablar en serio?`;
+      choicesEl.style.display = "flex";
+      cont.style.display = "none";
+      playStoryMood("tension");
+      ov.classList.add("show");
+
+      const opts = [
+        {
+          id: "calma",
+          label: "Responder con calma clínica: priorizas datos y seguridad.",
+          reaction:
+            displayName +
+            " asiente, aliviada. ‘Bien. Entonces no me pidas que sea valiente: pídeme que sea precisa.’ Sus manos dejan de temblar; la confianza sube un grado.",
+        },
+        {
+          id: "empatia",
+          label: "Mostrar empatía: reconoces el miedo sin minimizarlo.",
+          reaction:
+            displayName +
+            " baja la guardia. ‘…Gracias. La mayoría solo ordena. Tú… escuchas.’ Una sombra de sonrisa, breve, como un latido.",
+        },
+        {
+          id: "firme",
+          label: "Ser firme: necesitas obediencia en zona caliente.",
+          reaction:
+            displayName +
+            " entrecierra los ojos, luego exhala. ‘De acuerdo. Pero cuando esto termine, recordaré quién me trató como herramienta.’ El vínculo queda tenso, pero operativo.",
+        },
+      ];
+
+      function finishChoice(choiceId, reactionHtml) {
+        playStoryMood(choiceId === "firme" ? "serious" : "calm");
+        choicesEl.style.display = "none";
+        choicesEl.innerHTML = "";
+        txt.innerHTML += `<br/><br/><em>${reactionHtml}</em>`;
+        if (!lotgState.storyChoiceLog) lotgState.storyChoiceLog = [];
+        lotgState.storyChoiceLog.push({
+          chapter: ch.id,
+          unit: displayName,
+          choice: choiceId,
+          t: Date.now(),
+        });
+        cont.style.display = "";
+        cont.onclick = () => {
+          ov.classList.remove("show");
+          cont.onclick = null;
+          resetVNChrome();
+          playLotgTrack("safe", "Safe Area");
+          lotgSave();
+          onDone && onDone();
+        };
+      }
+
+      opts.forEach((o) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = o.label;
+        b.addEventListener("click", () => finishChoice(o.id, o.reaction));
+        choicesEl.appendChild(b);
+      });
+    }
+
+    if (ch.pages && ch.pages.length) {
+      showVNSequenceFromBeat(
+        { title: ch.title, bg: ch.bg, vnMood: ch.vnMood || "calm", pages: ch.pages },
+        openChoicesOverlay
+      );
+    } else openChoicesOverlay();
+  }
+
+  function gearSellPrice(eq) {
+    return 60 + (eq && eq.qual === "S" ? 50 : 25);
+  }
+
+  function applyEquipPieceFromStashToTarget(stashIdx, destKey) {
+    if (!lotgState) {
+      alert("El inventario de piezas del minijuego solo se usa dentro de «Legend of the Gathering» (inicia o carga una partida). El catálogo Patimon de arriba es independiente.");
+      return false;
+    }
+    const st = lotgState.gearStash || [];
+    const piece = st[stashIdx];
+    if (!piece) return false;
+    const sl = piece.equipSlot && EQUIP_SLOTS.includes(piece.equipSlot) ? piece.equipSlot : "Cuerpo";
+    migrateLotgState(lotgState);
+    if (destKey === "protag") {
+      if (lotgState.equipSlots[sl]) {
+        alert("Doctor " + lotgState.protag.name + ": la ranura " + sl + " está ocupada. Quítala primero.");
+        return false;
+      }
+      st.splice(stashIdx, 1);
+      lotgState.equipSlots[sl] = piece;
+      return true;
+    }
+    const u = (lotgState.roster || []).find((x) => x.uid === destKey);
+    if (!u) return false;
+    if (u.equipSlots[sl]) {
+      alert(u.name + ": la ranura " + sl + " está ocupada. Quítala primero.");
+      return false;
+    }
+    st.splice(stashIdx, 1);
+    u.equipSlots[sl] = piece;
+    return true;
+  }
+
+  function pushShopPurchaseLog(line) {
+    if (!lotgState.shopPurchaseLog) lotgState.shopPurchaseLog = [];
+    const t = new Date().toLocaleString();
+    lotgState.shopPurchaseLog.unshift("[" + t + "] " + line);
+    if (lotgState.shopPurchaseLog.length > 40) lotgState.shopPurchaseLog.length = 40;
+  }
+
+  function openAnomalyShop(mapCellKey) {
+    const ov = document.getElementById("anomalyShopOverlay");
+    const body = document.getElementById("shopBody");
+    if (!ov || !body || !lotgState) return;
+    if (mapCellKey) lotgState._shopFromCellKey = mapCellKey;
+    const stock = [
+      {
+        id: "med",
+        name: "Kit médico de campo (HIA)",
+        detail: "Cura ~40% HP en combate",
+        price: 175,
+        heal: true,
+      },
+      { id: "soul", name: "Residuo de alma comprimido", detail: "+80 Soul Points", price: 395, soul: 80 },
+      {
+        id: "buff",
+        name: "Inyector de Ether inestable",
+        detail: "Buff +12% daño, 6 turnos propios",
+        price: 245,
+        buffConsumable: true,
+      },
+      {
+        id: "w1",
+        name: "W-Engine — núcleo oxidado",
+        detail: "Arma · " + formatEquipBonusLine({ bonus: { STG: 5, DX: 3, HP: 4 } }),
+        price: 520,
+        gear: { equipSlot: "Arma", name: "W-Engine oxidado (tienda)", qual: "A", bonus: { STG: 5, DX: 3, HP: 4 } },
+      },
+      {
+        id: "w2",
+        name: "Placa Hollow — segmento A",
+        detail: "Cuerpo · " + formatEquipBonusLine({ bonus: { VI: 6, EN: 5, HP: 6 } }),
+        price: 480,
+        gear: { equipSlot: "Cuerpo", name: "Placa Hollow A", qual: "A", bonus: { VI: 6, EN: 5, HP: 6 } },
+      },
+      {
+        id: "w3",
+        name: "Disco Bangboo (accesorio)",
+        detail: "Accesorio · " + formatEquipBonusLine({ bonus: { LUK: 4, AG: 4, SP: 3 } }),
+        price: 340,
+        gear: { equipSlot: "Accesorio", name: "Disco Bangboo", qual: "A", bonus: { LUK: 4, AG: 4, SP: 3 } },
+      },
+    ];
+    function render() {
+      let html = "<p><strong>Tienda ambulante</strong> — Zen actual: <strong>" + lotgState.zen + "</strong></p>";
+      html += "<ul style='list-style:none;padding:0;margin:0.5rem 0 1rem'>";
+      stock.forEach((it) => {
+        html += `<li style="margin:0.55rem 0;padding:0.5rem;border-radius:10px;border:1px solid rgba(255,255,255,0.08)">
+          <div style="font-weight:600">${escapeHtml(it.name)}</div>
+          <div class="muted" style="font-size:0.78rem;margin:0.2rem 0">${escapeHtml(it.detail || "")}</div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.5rem;margin-top:0.35rem">
+            <span><strong>${it.price}</strong> Z</span>
+            <button type="button" class="ghost shop-buy" data-shop-id="${escapeHtml(it.id)}" style="font-size:0.85rem">Comprar</button>
+          </div>
+        </li>`;
+      });
+      html += "</ul>";
+      const log = lotgState.shopPurchaseLog || [];
+      html +=
+        "<p class='muted' style='font-size:0.78rem;margin:0 0 0.5rem'><strong>Últimas compras</strong></p><ul style='font-size:0.72rem;margin:0;padding-left:1rem;max-height:100px;overflow:auto'>" +
+        (log.length ? log.map((l) => "<li>" + escapeHtml(l) + "</li>").join("") : "<li class='muted'>Aún no hay compras registradas.</li>") +
+        "</ul>";
+      const stash = lotgState.gearStash || [];
+      if (stash.length) {
+        html += "<p><strong>Vender</strong> desde almacén</p><ul style='list-style:none;padding:0'>";
+        stash.forEach((eq, idx) => {
+          const sell = gearSellPrice(eq);
+          const bl = formatEquipBonusLine(eq);
+          html += `<li style="margin:0.5rem 0;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:space-between;align-items:center">
+            <span>${escapeHtml(eq.name)} <span class='slot-equip-tag'>[${escapeHtml(eq.equipSlot || "?")}]</span>${bl ? " · <span class='muted'>" + escapeHtml(bl) + "</span>" : ""} → <strong>${sell}</strong> Z</span>
+            <button type="button" class="ghost shop-sell" data-sell-idx="${idx}" style="font-size:0.85rem">Vender</button>
+          </li>`;
+        });
+        html += "</ul>";
+      } else html += "<p class='muted'>Sin objetos para vender en el almacén.</p>";
+      body.innerHTML = html;
+      body.querySelectorAll(".shop-buy").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-shop-id");
+          const it = stock.find((x) => x.id === id);
+          if (!it || lotgState.zen < it.price) {
+            alert("No tienes suficiente Zen.");
+            return;
+          }
+          const zenBefore = lotgState.zen;
+          lotgState.zen -= it.price;
+          const stamp = new Date().toLocaleString();
+          if (it.heal) {
+            lotgState.inventory.push({
+              type: "heal",
+              name: "Kit médico de campo (HIA)",
+              healPct: 0.4,
+              desc: "Restaura ≈40% del HP máximo en combate.",
+            });
+            pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · " + stamp);
+          }
+          if (it.soul) {
+            normalizeSoulPointsOnState(lotgState);
+            lotgState.soul += it.soul;
+            pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · +" + it.soul + " SP · " + stamp);
+          }
+          if (it.buffConsumable) {
+            lotgState.inventory.push({
+              type: "buff",
+              name: "Inyector Ether inestable",
+              atkPct: 0.12,
+              turns: 6,
+              desc: "+12% daño durante 6 turnos propios (estado de combate).",
+            });
+            pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · " + stamp);
+          }
+          if (it.gear) {
+            const g = {
+              eid: "shop-" + Date.now(),
+              name: it.gear.name,
+              equipSlot: it.gear.equipSlot,
+              qual: it.gear.qual,
+              bonus: it.gear.bonus || {},
+            };
+            if (!lotgState.gearStash) lotgState.gearStash = [];
+            lotgState.gearStash.push(g);
+            pushShopPurchaseLog(
+              "Compra: " + g.name + " [" + g.equipSlot + "] · " + formatEquipBonusLine(g) + " · −" + (zenBefore - lotgState.zen) + " Z · " + stamp
+            );
+          }
+          lotgSave();
+          render();
+        });
+      });
+      body.querySelectorAll(".shop-sell").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = parseInt(btn.getAttribute("data-sell-idx"), 10);
+          const st = lotgState.gearStash || [];
+          const eq = st[idx];
+          if (!eq) return;
+          const sell = gearSellPrice(eq);
+          lotgState.zen += sell;
+          st.splice(idx, 1);
+          pushShopPurchaseLog("Venta: " + eq.name + " · +" + sell + " Z · " + new Date().toLocaleString());
+          lotgSave();
+          render();
+        });
+      });
+    }
+    render();
+    ov.style.display = "flex";
+    const close = () => {
+      ov.style.display = "none";
+      document.getElementById("shopClose").onclick = null;
+      if (lotgState._shopFromCellKey) {
+        lotgState.mapCellDone[lotgState._shopFromCellKey] = true;
+        lotgState._shopFromCellKey = null;
+        lotgSave();
+        renderLotgGame();
+      }
+    };
+    document.getElementById("shopClose").onclick = close;
+  }
+
+  function startCombat() {
+    combatPickMode = null;
+    combatEnemies = [];
+    const isBoss = !!(lotgState && lotgState._combatIsBoss);
+    const isMini = !!(lotgState && lotgState._combatIsMiniboss);
+    if (lotgState) {
+      lotgState._combatIsBoss = false;
+      lotgState._combatIsMiniboss = false;
+    }
+    if (isBoss) {
+      combatEnemies.push(scaleEnemy(lotgState.floor, true));
+    } else if (isMini) {
+      combatEnemies.push(scaleEnemy(lotgState.floor, false, { miniboss: true }));
+    } else {
+      const pack = 2 + (Math.random() < 0.52 ? 1 : 0);
+      for (let i = 0; i < pack; i++) combatEnemies.push(scaleEnemy(lotgState.floor, false));
+    }
+    combatLog = [];
+    skillCdPro = 0;
+    combatPhase = "player";
+    combatAllyIndex = 0;
+    lotgState.combatAllyVitals = {};
+    if (!lotgState.partyVitalsPersist) lotgState.partyVitalsPersist = {};
+    getPartyUnits().forEach((u) => {
+      const st = allyCombatStats(u);
+      const pv = lotgState.partyVitalsPersist[u.uid];
+      let hp = st.hpMax;
+      let sp = st.spMax;
+      if (pv && typeof pv.hp === "number" && typeof pv.sp === "number" && Number.isFinite(pv.hp) && Number.isFinite(pv.sp)) {
+        hp = Math.max(0, Math.min(st.hpMax, Math.floor(pv.hp)));
+        sp = Math.max(0, Math.min(st.spMax, Math.floor(pv.sp)));
+      }
+      lotgState.combatAllyVitals[u.uid] = { hp, sp, skillCd: 0 };
+    });
+    lotgState.combatBuff = { atkMult: 1, turns: 0 };
+    if (lotgState.runCombatAtkFights > 0) {
+      lotgState.runCombatAtkFights--;
+      const m = lotgState.runCombatAtkMult > 1 ? lotgState.runCombatAtkMult : 1.14;
+      lotgState.combatBuff = { atkMult: m, turns: 99 };
+      combatLog.push("Efecto de evento: +" + Math.round((m - 1) * 100) + "% daño en esta batalla.");
+    }
+    getPartyUnits().forEach((u) => {
+      if (u.passiveHook === "doctorSp15") {
+        const p = lotgState.protag;
+        const cs = applyEquipToProtag();
+        p.spCur = Math.min(cs.spMax, p.spCur + 15);
+        combatLog.push("Pasiva — " + u.name + ": +15 SP al doctor.");
+      }
+    });
+    if (isBoss) {
+      playLotgTrack("boss", "Battle of OTA");
+    } else if (isMini) {
+      playLotgTrack("miniboss", "Dungeon Lv4");
+    } else {
+      const useNervo = ((lotgState.combatsCleared || 0) % 2 === 0);
+      if (useNervo) playLotgTrack("nervous", "Nervo");
+      else playLotgTrack("dungeonV1", "Dungeon V1");
+    }
+    const bg = COMBAT_BG[Math.floor(Math.random() * COMBAT_BG.length)];
+    renderLotgGame({ combatBg: bg });
+  }
+
+  function endCombat(win) {
+    const wasBoss = combatEnemies.some((e) => e && e.boss);
+    const wasMiniboss = combatEnemies.some((e) => e && e.miniboss);
+    if (win && lotgState) snapshotPartyVitalsToPersist();
+    if (lotgState && lotgState.combatAllyVitals) delete lotgState.combatAllyVitals;
+    combatPhase = "player";
+    combatAllyIndex = 0;
+    combatEnemies = [];
+    if (win) {
+      if (lotgState._pendingMapCellKey) {
+        if (!lotgState.mapCellDone) lotgState.mapCellDone = {};
+        lotgState.mapCellDone[lotgState._pendingMapCellKey] = true;
+        lotgState._pendingMapCellKey = null;
+      }
+      const streak = lotgState.combatsCleared || 0;
+      const zen = randomZenReward(lotgState.floor, streak, wasBoss || wasMiniboss);
+      lotgState.zen += zen;
+      const soul = soulRewardForVictory(lotgState.floor, streak, wasBoss, wasMiniboss);
+      normalizeSoulPointsOnState(lotgState);
+      lotgState.soul += soul;
+      combatLog.push("Victoria: +" + zen + " Zen, +" + soul + " Soul Points.");
+      const xpGain = 48 + lotgState.floor * 14 + Math.floor(streak * 1.1);
+      gainXpProtagonist(xpGain);
+      getPartyUnits().forEach((u) => gainXpUnit(u, Math.floor(xpGain * 0.72)));
+      if (wasBoss) lotgState.floorBossCleared = true;
+      lotgState.combatsCleared++;
+    } else {
+      if (lotgState) lotgState._pendingMapCellKey = null;
+      lotgWipe();
+      alert("Has caído. La anomalía reclama la run: se pierde progreso, Zen, Soul, unidades y equipo. Vuelves a la pantalla inicial.");
+      const gw = document.getElementById("lotgGameWrap");
+      if (gw) {
+        gw.style.display = "none";
+        gw.innerHTML = "";
+      }
+      document.getElementById("lotgIntro").style.display = "block";
+      renderLotgCreate();
+      playGlobalClinic();
+      return;
+    }
+    if (lotgState) lotgState.combatBuff = { atkMult: 1, turns: 0 };
+    playLotgTrack("safe", "Safe Area");
+    renderLotgGame();
+  }
+
+  function gainXpProtagonist(amt) {
+    const p = lotgState.protag;
+    p.xp += amt;
+    let need = xpToNext(p.level);
+    while (p.xp >= need) {
+      p.xp -= need;
+      p.level++;
+      p.statPoints += 5;
+      need = xpToNext(p.level);
+    }
+  }
+
+  function gainXpUnit(u, amt) {
+    if (!u.stats || typeof u.stats !== "object") u.stats = emptyStats();
+    if (u.xp == null || !Number.isFinite(u.xp)) u.xp = 0;
+    u.xp += amt;
+    let need = unitXpThreshold(u.level);
+    while (u.xp >= need) {
+      u.xp -= need;
+      u.level++;
+      const gain = 8 + Math.min(6, Math.floor(u.level / 5));
+      distributeWeightedStatPoints(u.stats, getRoleStatWeights(u.role), gain);
+      need = unitXpThreshold(u.level);
+    }
+  }
+
+  function tickCombatRoundStart() {
+    if (skillCdPro > 0) skillCdPro--;
+    if (!lotgState || !lotgState.combatAllyVitals) return;
+    getPartyUnits().forEach((u) => {
+      const v = lotgState.combatAllyVitals[u.uid];
+      if (v && v.skillCd > 0) v.skillCd--;
+    });
+    if (lotgState.combatBuff && lotgState.combatBuff.turns > 0) {
+      lotgState.combatBuff.turns--;
+      if (lotgState.combatBuff.turns <= 0) lotgState.combatBuff.atkMult = 1;
+    }
+    if (inLotgCombat() && lotgState.protag && lotgState.protag.passive) {
+      const cs = applyEquipToProtag();
+      lotgState.protag.spCur = Math.min(cs.spMax, lotgState.protag.spCur + 2);
+    }
+  }
+
+  function allySkillPrecheck(u, vitals) {
+    const sk = u.skill;
+    if (!sk) return { ok: false, log: u.name + " no tiene habilidad definida." };
+    const cost = sk.sp != null ? sk.sp : 16;
+    if (vitals.sp < cost) return { ok: false, log: u.name + " no tiene SP suficiente (" + vitals.sp + "/" + cost + ")." };
+    if (vitals.skillCd > 0) return { ok: false, log: u.name + " — habilidad en CD (" + vitals.skillCd + ")." };
+    return { ok: true, sk };
+  }
+
+  function payAllySkillCost(u, vitals, sk) {
+    const cost = sk.sp != null ? sk.sp : 16;
+    vitals.sp -= cost;
+    vitals.skillCd = sk.cd != null ? sk.cd : 3;
+  }
+
+  function allySkillPctFromLine(line, fallback) {
+    const m = String(line || "").match(/(\d+)%/);
+    if (m) return parseInt(m[1], 10) / 100;
+    return fallback != null ? fallback : 0.22;
+  }
+
+  /** Perfil de objetivo y tipo de efecto para habilidades de aliados (similar a HSR: ST vs área). */
+  function parseAllySkillProfile(u) {
+    const sk = u.skill;
+    if (!sk) return { kind: "none" };
+    const dmg = String(sk.dmg || "");
+    const dl = dmg.toLowerCase();
+    const role = String(u.role || "");
+    if (
+      /\bcura\b|sanaci|restaur|grupo.*hp|hp.*grupo/i.test(dmg) ||
+      (role.indexOf("Healer") >= 0 && /\d+%/.test(dmg) && !/\d+%\s*ma|\d+%\s*stg|daño|dmg/i.test(dmg))
+    ) {
+      const aoe = /grupo|equipo|área|area|todos|todas/i.test(dmg);
+      return { kind: "heal", aoe, pct: allySkillPctFromLine(dmg, 0.22) };
+    }
+    if (/debuff|−\d|vulnerabilidad|precisi[oó]n enem|niebla|rallent|ralenti/i.test(dl))
+      return { kind: "debuff", aoe: /área|area|horda|todos/i.test(dl) };
+    if (/^buff|buff:|\+.*%\s*(ag|def|res|ma|equipo)|res.*mágica|def.*mágica/i.test(dl))
+      return { kind: "buff", aoe: /equipo|grupo|área|area|todos/i.test(dmg) };
+    const aoe = /área|area|horda|todos|todas/i.test(dl);
+    const magical = /\bMA\b|mágico|mágica|cu[aá]ntico/i.test(dmg) || /\d+%\s*MA/i.test(dmg);
+    return { kind: "damage", aoe, magical };
+  }
+
+  function allySkillCoefFromDmg(sk, profile) {
+    const m = String((sk && sk.dmg) || "").match(/(\d+)%/);
+    if (m) return parseInt(m[1], 10) / 100;
+    return profile.magical ? 1.72 : 1.58;
+  }
+
+  function applyAllySkillEffect(u, p, cs, atkMult, profile, enemyIdx, allyTarget) {
+    const sk = u.skill;
+    const st = allyCombatStats(u);
+    const skName = (sk && sk.name) || "habilidad";
+
+    if (profile.kind === "heal") {
+      const pct = profile.pct || 0.22;
+      if (profile.aoe) {
+        p.hpCur = Math.min(cs.hpMax, p.hpCur + Math.floor(cs.hpMax * pct));
+        getPartyUnits().forEach((al) => {
+          const v2 = lotgState.combatAllyVitals[al.uid];
+          if (!v2 || v2.hp <= 0) return;
+          const am = allyCombatStats(al);
+          v2.hp = Math.min(am.hpMax, v2.hp + Math.floor(am.hpMax * pct));
+        });
+        return { log: u.name + ": «" + skName + "» — sanación en grupo." };
+      }
+      if (allyTarget === "protag") {
+        p.hpCur = Math.min(cs.hpMax, p.hpCur + Math.floor(cs.hpMax * pct));
+        return { log: u.name + ": «" + skName + "» — cura al doctor." };
+      }
+      const al = getPartyUnits().find((x) => x.uid === allyTarget);
+      if (!al) return { log: u.name + ": objetivo inválido." };
+      const v2 = lotgState.combatAllyVitals[al.uid];
+      const am = allyCombatStats(al);
+      if (!v2 || v2.hp <= 0) return { log: u.name + ": objetivo caído." };
+      v2.hp = Math.min(am.hpMax, v2.hp + Math.floor(am.hpMax * pct));
+      return { log: u.name + ": «" + skName + "» — cura a " + al.name + "." };
+    }
+
+    if (profile.kind === "buff") {
+      if (profile.aoe) {
+        if (!lotgState.combatBuff) lotgState.combatBuff = { atkMult: 1, turns: 0 };
+        lotgState.combatBuff.atkMult = Math.max(lotgState.combatBuff.atkMult || 1, 1.12);
+        lotgState.combatBuff.turns = Math.max(lotgState.combatBuff.turns || 0, 4);
+        return { log: u.name + ": «" + skName + "» — refuerzo de equipo (4 turnos)." };
+      }
+      if (allyTarget === "protag") return { log: u.name + ": «" + skName + "» — brío al doctor (+temporal)." };
+      const al = getPartyUnits().find((x) => x.uid === allyTarget);
+      if (!al) return { log: u.name + ": objetivo inválido." };
+      return { log: u.name + ": «" + skName + "» — brío a " + al.name + "." };
+    }
+
+    if (profile.kind === "debuff") {
+      const coef = allySkillCoefFromDmg(sk, { magical: true });
+      const rawSmall = (st.atkM * coef * 0.48 + st.atkP * 0.24) * atkMult * (0.92 + Math.random() * 0.22);
+      const aliveN = combatEnemies.filter((x) => x.hp > 0).length;
+      if (profile.aoe) {
+        const parts = [];
+        combatEnemies.forEach((en) => {
+          if (en.hp <= 0) return;
+          let raw = rawSmall * (aliveN > 1 ? 0.62 : 1);
+          let dmg = damageToEnemyMagical(raw, en);
+          dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", en.element || "Neutral"));
+          dmg = Math.max(1, dmg);
+          en.hp -= dmg;
+          parts.push(en.name + " −" + dmg);
+        });
+        return { log: u.name + ": «" + skName + "» — debilitación en área: " + parts.join(", ") + "." };
+      }
+      const en = combatEnemies[enemyIdx];
+      if (!en || en.hp <= 0) return { log: "Sin objetivo." };
+      let dmg = damageToEnemyMagical(rawSmall, en);
+      dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", en.element || "Neutral"));
+      dmg = Math.max(1, dmg);
+      en.hp -= dmg;
+      return { log: u.name + ": «" + skName + "» — debuff a " + en.name + " (" + dmg + ")." };
+    }
+
+    const coef = allySkillCoefFromDmg(sk, profile);
+    const hordeN = combatEnemies.filter((en) => en.hp > 0).length;
+    const spread = hordeN > 1 ? (profile.aoe ? 0.52 : 1) : 1;
+    if (profile.aoe) {
+      const parts = [];
+      const rawBase =
+        (profile.magical ? st.atkM * coef * 0.98 + st.atkP * 0.34 : st.atkP * coef * 1.04 + st.atkM * 0.28) *
+        atkMult *
+        (1.02 + Math.random() * 0.28);
+      combatEnemies.forEach((en) => {
+        if (en.hp <= 0) return;
+        const raw = rawBase * spread;
+        let dmg = profile.magical ? damageToEnemyMagical(raw, en) : damageToEnemyPhysical(raw, en);
+        dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", en.element || "Neutral"));
+        dmg = Math.max(1, dmg);
+        en.hp -= dmg;
+        parts.push(en.name + " −" + dmg);
+      });
+      return { log: u.name + ": «" + skName + "» — " + parts.join(", ") + "." };
+    }
+    const en = combatEnemies[enemyIdx];
+    if (!en || en.hp <= 0) return { log: "Sin objetivo." };
+    const rawOne =
+      (profile.magical ? st.atkM * coef * 1.08 + st.atkP * 0.36 : st.atkP * coef * 1.1 + st.atkM * 0.3) *
+      atkMult *
+      (1.02 + Math.random() * 0.3);
+    let dmg = profile.magical ? damageToEnemyMagical(rawOne, en) : damageToEnemyPhysical(rawOne, en);
+    dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", en.element || "Neutral"));
+    dmg = Math.max(1, dmg);
+    en.hp -= dmg;
+    return { log: u.name + ": «" + skName + "» — " + en.name + " −" + dmg + "." };
+  }
+
+  function cancelCombatPick() {
+    combatPickMode = null;
+    renderLotgGame({ combatBg: combatBgFromWrap() });
+  }
+
+  function handleCombatEnemyPick(enemyIdx) {
+    if (!inLotgCombat() || !lotgState || !combatPickMode) return;
+    const en = combatEnemies[enemyIdx];
+    if (!en || en.hp <= 0) return;
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const atkMult =
+      (lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1) *
+      (lotgState.combatBuff && lotgState.combatBuff.turns > 0 ? lotgState.combatBuff.atkMult || 1 : 1);
+    const cb = lotgState.combatBuff;
+    const buffMult = cb && cb.turns > 0 ? cb.atkMult || 1 : 1;
+    const pd = getProtagDerivedDefense();
+
+    function logLine(s) {
+      combatLog.push(s);
+      if (combatLog.length > 22) combatLog.shift();
+    }
+
+    if (combatPickMode.type === "protag_atk") {
+      tickCombatRoundStart();
+      combatPickMode = null;
+      const raw = lotgProtagPhysicalRaw(cs, atkMult, buffMult);
+      let dmg = damageToEnemyPhysical(raw, en);
+      dmg = Math.floor(dmg * elementalDamageMult(p.lotgElement || "Neutral", en.element || "Neutral"));
+      let crit = false;
+      if (Math.random() < pd.crit) {
+        dmg = Math.floor(dmg * 1.55);
+        crit = true;
+      }
+      en.hp -= dmg;
+      logLine("Ataque físico → " + en.name + ": " + dmg + (crit ? " ¡crítico!" : "") + ".");
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      beginAllyPhaseAfterPlayer();
+      return;
+    }
+
+    if (combatPickMode.type === "ally_atk") {
+      const allies = getPartyUnits();
+      const u = allies.find((x) => x.uid === combatPickMode.uid);
+      const vitals = u && lotgState.combatAllyVitals[u.uid];
+      if (!u || !vitals || vitals.hp <= 0) {
+        combatPickMode = null;
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      combatPickMode = null;
+      const admg = computeAllyDamage(u, en, atkMult);
+      en.hp -= admg;
+      combatLog.push(u.name + " ataca: " + admg + ".");
+      if (combatLog.length > 22) combatLog.shift();
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      combatAllyIndex++;
+      if (!skipToNextAliveAlly(allies)) {
+        combatPhase = "player";
+        combatAllyIndex = 0;
+        enemyCombatTurn();
+      } else renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+
+    if (combatPickMode.type === "ally_skill_enemy") {
+      const allies = getPartyUnits();
+      const u = allies.find((x) => x.uid === combatPickMode.uid);
+      const vitals = u && lotgState.combatAllyVitals[u.uid];
+      const profile = combatPickMode.profile;
+      if (!u || !vitals || !profile) {
+        combatPickMode = null;
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      combatPickMode = null;
+      payAllySkillCost(u, vitals, u.skill);
+      const r = applyAllySkillEffect(u, p, cs, atkMult, profile, enemyIdx, null);
+      combatLog.push(r.log);
+      if (combatLog.length > 22) combatLog.shift();
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      combatAllyIndex++;
+      if (!skipToNextAliveAlly(allies)) {
+        combatPhase = "player";
+        combatAllyIndex = 0;
+        enemyCombatTurn();
+      } else renderLotgGame({ combatBg: combatBgFromWrap() });
+    }
+  }
+
+  function handleCombatAllyPick(allyKey) {
+    if (!inLotgCombat() || !lotgState || !combatPickMode || combatPickMode.type !== "ally_skill_ally") return;
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const atkMult =
+      (lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1) *
+      (lotgState.combatBuff && lotgState.combatBuff.turns > 0 ? lotgState.combatBuff.atkMult || 1 : 1);
+    const allies = getPartyUnits();
+    const u = allies.find((x) => x.uid === combatPickMode.uid);
+    const vitals = u && lotgState.combatAllyVitals[u.uid];
+    const profile = combatPickMode.profile;
+    if (!u || !vitals || !profile) {
+      combatPickMode = null;
+      renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+    combatPickMode = null;
+    payAllySkillCost(u, vitals, u.skill);
+    const r = applyAllySkillEffect(u, p, cs, atkMult, profile, null, allyKey);
+    combatLog.push(r.log);
+    if (combatLog.length > 22) combatLog.shift();
+    if (!anyEnemyAlive()) {
+      endCombat(true);
+      return;
+    }
+    combatAllyIndex++;
+    if (!skipToNextAliveAlly(allies)) {
+      combatPhase = "player";
+      combatAllyIndex = 0;
+      enemyCombatTurn();
+    } else renderLotgGame({ combatBg: combatBgFromWrap() });
+  }
+
+  function skipToNextAliveAlly(allies) {
+    while (combatAllyIndex < allies.length) {
+      const u = allies[combatAllyIndex];
+      const v = lotgState.combatAllyVitals[u.uid];
+      if (v && v.hp > 0) return true;
+      combatAllyIndex++;
+    }
+    return false;
+  }
+
+  function beginAllyPhaseAfterPlayer() {
+    const allies = getPartyUnits();
+    const cbg = combatBgFromWrap();
+    if (!allies.length) {
+      enemyCombatTurn();
+      return;
+    }
+    combatPhase = "ally";
+    combatAllyIndex = 0;
+    if (!skipToNextAliveAlly(allies)) {
+      combatPhase = "player";
+      combatAllyIndex = 0;
+      enemyCombatTurn();
+    } else renderLotgGame({ combatBg: cbg });
+  }
+
+  function enemyCombatTurn() {
+    if (!inLotgCombat() || !lotgState) return;
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const cbg = combatBgFromWrap();
+    function logLine(s) {
+      combatLog.push(s);
+      if (combatLog.length > 28) combatLog.shift();
+    }
+    const wave = combatEnemies.filter((en) => en.hp > 0);
+    for (let wi = 0; wi < wave.length; wi++) {
+      const e = wave[wi];
+      if (p.hpCur <= 0) {
+        endCombat(false);
+        return;
+      }
+      if (e.hp <= 0) continue;
+      const targets = [];
+      if (p.hpCur > 0) targets.push({ kind: "protag", name: p.name, u: null, apply: (dmg) => (p.hpCur -= dmg) });
+      getPartyUnits().forEach((u) => {
+        const v = lotgState.combatAllyVitals[u.uid];
+        if (v && v.hp > 0) targets.push({ kind: "ally", name: u.name, u, apply: (dmg) => (v.hp -= dmg) });
+      });
+      if (!targets.length) {
+        endCombat(false);
+        return;
+      }
+      const pick = targets[Math.floor(Math.random() * targets.length)];
+      const hit = rollEnemyAttackDamage(e, pick.kind === "protag" ? { kind: "protag" } : { kind: "ally", u: pick.u });
+      if (hit.dodge) logLine(e.name + " falla contra " + pick.name + " (esquivado).");
+      else {
+        pick.apply(hit.dmg);
+        const tag = hit.crit ? " ¡crítico!" : "";
+        const elab = hit.mag ? " (mág.)" : " (fís.)";
+        logLine(e.name + " → " + pick.name + elab + ": " + hit.dmg + "." + tag);
+      }
+      if (p.hpCur <= 0) {
+        endCombat(false);
+        return;
+      }
+    }
+    p.spCur = Math.min(cs.spMax, p.spCur + 4);
+    combatPhase = "player";
+    combatAllyIndex = 0;
+    if (p.hpCur <= 0) endCombat(false);
+    else renderLotgGame({ combatBg: cbg });
+  }
+
+  function allyCombatTurn(action) {
+    if (!inLotgCombat() || !lotgState || combatPhase !== "ally") return;
+    const cbg = combatBgFromWrap();
+    if (action === "cancel-pick") {
+      combatPickMode = null;
+      renderLotgGame({ combatBg: cbg });
+      return;
+    }
+    const e = firstAliveEnemy();
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const atkMult =
+      (lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1) *
+      (lotgState.combatBuff && lotgState.combatBuff.turns > 0 ? lotgState.combatBuff.atkMult || 1 : 1);
+    function logLine(s) {
+      combatLog.push(s);
+      if (combatLog.length > 22) combatLog.shift();
+    }
+    const allies = getPartyUnits();
+    if (combatAllyIndex >= allies.length) {
+      combatPhase = "player";
+      combatAllyIndex = 0;
+      enemyCombatTurn();
+      return;
+    }
+    const u = allies[combatAllyIndex];
+    const vitals = lotgState.combatAllyVitals[u.uid];
+    if (!vitals || vitals.hp <= 0) {
+      combatAllyIndex++;
+      if (!skipToNextAliveAlly(allies)) {
+        combatPhase = "player";
+        combatAllyIndex = 0;
+        enemyCombatTurn();
+      } else renderLotgGame({ combatBg: cbg });
+      return;
+    }
+    if (!e) {
+      endCombat(true);
+      return;
+    }
+    if (action === "atk") {
+      const aliveCount = combatEnemies.filter((en) => en.hp > 0).length;
+      if (aliveCount <= 1 && e) {
+        const admg = computeAllyDamage(u, e, atkMult);
+        e.hp -= admg;
+        logLine(u.name + " ataca: " + admg + ".");
+      } else {
+        combatPickMode = { type: "ally_atk", uid: u.uid };
+        renderLotgGame({ combatBg: cbg });
+        return;
+      }
+    } else if (action === "pass") {
+      logLine(u.name + " espera.");
+    } else if (action === "skill") {
+      const pre = allySkillPrecheck(u, vitals);
+      if (!pre.ok) logLine(pre.log);
+      else {
+        const profile = parseAllySkillProfile(u);
+        const needsEnemy =
+          (profile.kind === "damage" && !profile.aoe) || (profile.kind === "debuff" && !profile.aoe);
+        const needsAlly = (profile.kind === "heal" && !profile.aoe) || (profile.kind === "buff" && !profile.aoe);
+        if (needsEnemy) {
+          combatPickMode = { type: "ally_skill_enemy", uid: u.uid, profile };
+          renderLotgGame({ combatBg: cbg });
+          return;
+        }
+        if (needsAlly) {
+          combatPickMode = { type: "ally_skill_ally", uid: u.uid, profile };
+          renderLotgGame({ combatBg: cbg });
+          return;
+        }
+        payAllySkillCost(u, vitals, u.skill);
+        const r = applyAllySkillEffect(u, p, cs, atkMult, profile, null, null);
+        logLine(r.log);
+      }
+    }
+    if (!anyEnemyAlive()) {
+      endCombat(true);
+      return;
+    }
+    combatAllyIndex++;
+    if (!skipToNextAliveAlly(allies)) {
+      combatPhase = "player";
+      combatAllyIndex = 0;
+      enemyCombatTurn();
+    } else renderLotgGame({ combatBg: cbg });
+  }
+
+  function useConsumableOutsideCombat(invIdx) {
+    if (!lotgState || inLotgCombat()) return;
+    const inv = lotgState.inventory || [];
+    if (invIdx < 0 || invIdx >= inv.length) return;
+    const it = inv[invIdx];
+    normalizeInventoryItem(it);
+    if (!["heal", "sp", "buff"].includes(it.type)) return;
+    const cs = applyEquipToProtag();
+    const pr = lotgState.protag;
+    if (it.type === "heal") {
+      const pct = it.healPct != null ? it.healPct : 0.35;
+      pr.hpCur = Math.min(cs.hpMax, pr.hpCur + Math.floor(cs.hpMax * pct));
+    } else if (it.type === "sp") {
+      const pct = it.spPct != null ? it.spPct : 0.28;
+      pr.spCur = Math.min(cs.spMax, pr.spCur + Math.floor(cs.spMax * pct));
+    } else {
+      lotgState.runCombatAtkMult = Math.max(lotgState.runCombatAtkMult || 1, 1 + (it.atkPct != null ? it.atkPct : 0.1));
+      lotgState.runCombatAtkFights = (lotgState.runCombatAtkFights || 0) + (it.turns != null ? it.turns : 4);
+    }
+    inv.splice(invIdx, 1);
+    lotgSave();
+    renderLotgGame();
+  }
+
+  function combatTurnItem(invIdx) {
+    if (!inLotgCombat() || !lotgState || combatPhase !== "player" || combatPickMode) return;
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const inv = lotgState.inventory || [];
+    if (invIdx < 0 || invIdx >= inv.length) return;
+    const it = inv[invIdx];
+    normalizeInventoryItem(it);
+    function logLine(s) {
+      combatLog.push(s);
+      if (combatLog.length > 22) combatLog.shift();
+    }
+    if (!["heal", "sp", "buff"].includes(it.type)) {
+      logLine("«" + (it.name || "Objeto") + "» no es usable en combate.");
+      renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+    tickCombatRoundStart();
+    inv.splice(invIdx, 1);
+    if (it.type === "heal") {
+      const pct = it.healPct != null ? it.healPct : 0.35;
+      const heal = Math.floor(cs.hpMax * pct);
+      p.hpCur = Math.min(cs.hpMax, p.hpCur + heal);
+      logLine("Usas «" + it.name + "»: +" + heal + " HP.");
+    } else if (it.type === "sp") {
+      const pct = it.spPct != null ? it.spPct : 0.28;
+      const sp = Math.floor(cs.spMax * pct);
+      p.spCur = Math.min(cs.spMax, p.spCur + sp);
+      logLine("Usas «" + it.name + "»: +" + sp + " SP.");
+    } else if (it.type === "buff") {
+      if (!lotgState.combatBuff) lotgState.combatBuff = { atkMult: 1, turns: 0 };
+      lotgState.combatBuff.atkMult = 1 + (it.atkPct || 0.1);
+      lotgState.combatBuff.turns = it.turns || 4;
+      logLine(
+        "Usas «" +
+          it.name +
+          "»: +" +
+          Math.round((it.atkPct || 0.1) * 100) +
+          "% daño durante " +
+          lotgState.combatBuff.turns +
+          " turnos propios."
+      );
+    }
+    if (!anyEnemyAlive()) {
+      endCombat(true);
+      return;
+    }
+    beginAllyPhaseAfterPlayer();
+  }
+
+  function combatTurn(action) {
+    if (!inLotgCombat() || !lotgState || combatPhase !== "player") return;
+    if (action === "cancel-pick") {
+      combatPickMode = null;
+      renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+    const aliveDefer = combatEnemies.filter((en) => en.hp > 0).length;
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const atkMult =
+      lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1;
+    const cb = lotgState.combatBuff;
+    const buffMult = cb && cb.turns > 0 ? cb.atkMult || 1 : 1;
+    const pd = getProtagDerivedDefense();
+
+    function logLine(s) {
+      combatLog.push(s);
+      if (combatLog.length > 22) combatLog.shift();
+    }
+
+    if (action === "skill") {
+      if (skillCdPro > 0) {
+        logLine("Habilidad en enfriamiento (" + skillCdPro + " turno(s)). Elige otra acción — no pierdes el turno.");
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      if (p.spCur < 18) {
+        logLine("No tienes suficiente SP.");
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+    }
+
+    if (!(action === "atk" && aliveDefer > 1)) tickCombatRoundStart();
+
+    if (action === "flee") {
+      if (combatEnemies.some((en) => en && en.boss)) {
+        logLine("¡No puedes huir mientras haya un jefe de piso en el campo!");
+      } else if (Math.random() < 0.45 + cs.agi * 0.002) {
+        logLine("Lograste retirarte del encuentro.");
+        if (lotgState) {
+          snapshotPartyVitalsToPersist();
+          lotgState._pendingMapCellKey = null;
+        }
+        combatEnemies = [];
+        if (lotgState.combatAllyVitals) delete lotgState.combatAllyVitals;
+        combatPhase = "player";
+        combatAllyIndex = 0;
+        playLotgTrack("safe", "Safe Area");
+        renderLotgGame();
+        return;
+      } else logLine("Fallaste al huir.");
+    } else if (action === "atk") {
+      const aliveN = combatEnemies.filter((en) => en.hp > 0).length;
+      const e = firstAliveEnemy();
+      if (!e) {
+        endCombat(true);
+        return;
+      }
+      if (aliveN <= 1) {
+        const raw = lotgProtagPhysicalRaw(cs, atkMult, buffMult);
+        let dmg = damageToEnemyPhysical(raw, e);
+        dmg = Math.floor(dmg * elementalDamageMult(p.lotgElement || "Neutral", e.element || "Neutral"));
+        let crit = false;
+        if (Math.random() < pd.crit) {
+          dmg = Math.floor(dmg * 1.55);
+          crit = true;
+        }
+        e.hp -= dmg;
+        logLine("Ataque físico → " + e.name + ": " + dmg + (crit ? " ¡crítico!" : "") + ".");
+      } else {
+        combatPickMode = { type: "protag_atk" };
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+    } else if (action === "skill") {
+      p.spCur -= 18;
+      skillCdPro = 3;
+      const skn = p.skillActive && p.skillActive.name ? p.skillActive.name : "Grúa clínica";
+      const alive = combatEnemies.filter((en) => en.hp > 0);
+      const parts = [];
+      alive.forEach((en) => {
+        const raw = lotgProtagMagicalRaw(cs, atkMult, buffMult, 1.32);
+        const spread = alive.length > 1 ? 0.52 : 1;
+        let dmg = damageToEnemyMagical(raw * spread, en);
+        dmg = Math.floor(dmg * elementalDamageMult(p.lotgElement || "Neutral", en.element || "Neutral"));
+        if (Math.random() < pd.crit * 0.92) dmg = Math.floor(dmg * 1.45);
+        dmg = Math.max(1, dmg);
+        en.hp -= dmg;
+        parts.push(en.name + " −" + dmg);
+      });
+      logLine("«" + skn + "» (área): " + parts.join(" · ") + ".");
+    }
+
+    if (!anyEnemyAlive()) {
+      endCombat(true);
+      return;
+    }
+    beginAllyPhaseAfterPlayer();
+  }
+
+  function renderLotgGame(opts) {
+    const wrap = document.getElementById("lotgGameWrap");
+    if (!lotgState) {
+      clearCombatScene();
+      return;
+    }
+    if (!wrap) return;
+    try {
+    wrap.style.display = "block";
+    wrap.classList.remove("lotg-combat-active");
+    normalizeSoulPointsOnState(lotgState);
+    migrateLotgState(lotgState);
+    const p = lotgState.protag;
+    if (!p || typeof p !== "object" || !p.stats) {
+      console.error("[LOTG] protagonista inválido; reiniciando guardado.");
+      lotgWipe();
+      wrap.innerHTML = "";
+      wrap.style.display = "none";
+      const introEl = document.getElementById("lotgIntro");
+      if (introEl) introEl.style.display = "block";
+      renderLotgCreate();
+      alert("La partida guardada no era válida y se borró. Crea un personaje de nuevo (o usa «Borrar partida guardada» si vuelve a pasar).");
+      return;
+    }
+    const cs = applyEquipToProtag();
+    if (p.hpCur > cs.hpMax) p.hpCur = cs.hpMax;
+    if (p.spCur > cs.spMax) p.spCur = cs.spMax;
+
+    const avatarSrc = p.avatar || "Char/Lawliet.png";
+    if (opts && opts.combatBg) wrap.dataset.cbg = opts.combatBg;
+
+    if (inLotgCombat()) {
+      const cbg = wrap.dataset.cbg || COMBAT_BG[Math.floor(Math.random() * COMBAT_BG.length)];
+      wrap.style.backgroundImage = `linear-gradient(180deg,rgba(6,8,14,.75),rgba(6,8,14,.92)), url("${cbg}")`;
+      const allies = getPartyUnits();
+      const allyV = lotgState.combatAllyVitals || {};
+      const combatHelpTxt = `<p class="smt-combat-help"><strong>Cómo funciona:</strong> primero el doctor (ataque a un enemigo si hay horda; técnica en área); luego cada aliado; después todos los enemigos. <strong>HP máx.</strong> sube con stats <strong>HP</strong> y <strong>VI</strong> (vitalidad) y con el equipo. <strong>SP</strong> es el maná para técnicas (sube con <strong>SP</strong> y <strong>MA</strong>).</p>`;
+      const alliesCombat =
+        allies.length > 0
+          ? `<div class="smt-wing-caption">Aliados — un turno por unidad; revisa la descripción de cada habilidad antes de usarla.</div><div class="lotg-ally-combat-row smt-ally-strip">` +
+            allies
+              .map((a) => {
+                const v = allyV[a.uid];
+                const stA = allyCombatStats(a);
+                const hp = v ? v.hp : stA.hpMax;
+                const sp = v ? v.sp : stA.spMax;
+                const hpPct = stA.hpMax > 0 ? Math.max(0, Math.min(100, (hp / stA.hpMax) * 100)) : 0;
+                const spPct = stA.spMax > 0 ? Math.max(0, Math.min(100, (sp / stA.spMax) * 100)) : 0;
+                const dead = !v || v.hp <= 0;
+                const passTxt = a.passive ? `<div class="muted" style="font-size:0.6rem;margin-top:0.2rem;line-height:1.25">Pasiva: ${escapeHtml(a.passive.name)}</div>` : "";
+                const ask = a.skill;
+                const skBox =
+                  ask && (ask.desc || ask.dmg)
+                    ? `<div class="muted" style="font-size:0.58rem;line-height:1.3;margin-top:0.25rem;padding:0.3rem;border-radius:8px;background:rgba(0,0,0,0.2)"><strong>${escapeHtml(ask.name)}</strong>${ask.dmg ? ` · ${escapeHtml(ask.dmg)}` : ""}${
+                        ask.desc ? `<br/>${escapeHtml(ask.desc)}` : ""
+                      }</div>`
+                    : "";
+                return `<div class="lotg-ally-combat-card${dead ? " ally-down" : ""}">
+                  <img class="unit-face lotg-combat-unit-face" src="${escapeHtml(a.img)}" alt="" onerror="this.style.opacity=0.3"/>
+                  <div class="lotg-ally-combat-name">${escapeHtml(a.name)}</div>
+                  <div class="muted" style="font-size:0.6rem">${escapeHtml(a.element || "Neutral")}</div>
+                  ${passTxt}
+                  ${skBox}
+                  <div class="bar-wrap"><div class="bar-fill" style="width:${hpPct}%"></div></div>
+                  <div class="muted" style="font-size:0.65rem">HP ${Math.max(0, Math.floor(hp))}/${stA.hpMax} <span style="font-size:0.55rem">(VI↑)</span></div>
+                  <div class="bar-wrap"><div class="bar-fill sp" style="width:${spPct}%"></div></div>
+                  <div class="muted" style="font-size:0.65rem">SP ${Math.max(0, Math.floor(sp))}/${stA.spMax} <span style="font-size:0.55rem">(maná)</span></div>
+                </div>`;
+              })
+              .join("") +
+            `</div>`
+          : `<p class="muted" style="font-size:0.78rem;margin:0.25rem 0">Sin aliados en el grupo — configúralos en Exploración.</p>`;
+      const isAllyPhase =
+        combatPhase === "ally" && allies.length > 0 && combatAllyIndex >= 0 && combatAllyIndex < allies.length;
+      const curAlly = isAllyPhase ? allies[combatAllyIndex] : null;
+      const curV = curAlly ? allyV[curAlly.uid] : null;
+      const sk = curAlly && curAlly.skill;
+      const skCost = sk && sk.sp != null ? sk.sp : 16;
+      const skCd = curV ? curV.skillCd : 0;
+      const skillBlocked = !curV || curV.sp < skCost || skCd > 0;
+      const skBtnText = sk
+        ? escapeHtml(sk.name) + " (" + skCost + " SP" + (skCd > 0 ? ", CD " + skCd : "") + ")"
+        : "Habilidad";
+      const skTip =
+        sk && (sk.desc || sk.dmg)
+          ? `<div class="muted" style="font-size:0.76rem;margin:0.35rem 0;line-height:1.45;padding:0.45rem 0.55rem;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.18)"><strong>${escapeHtml(sk.name)}</strong>${
+              sk.dmg ? ` <span class="slot-equip-tag">${escapeHtml(sk.dmg)}</span>` : ""
+            }<br/>${escapeHtml(sk.desc || "")}</div>`
+          : "";
+      const docCombat = "Doctor " + escapeHtml(p.name);
+      const invBattle = lotgState.inventory || [];
+      const itemBtns = invBattle
+        .map((it, idx) => {
+          normalizeInventoryItem(it);
+          if (!["heal", "sp", "buff"].includes(it.type)) return "";
+          return `<button type="button" class="ghost combat-use-item" data-inv-i="${idx}" style="text-align:left;font-size:0.76rem;padding:0.45rem 0.55rem;line-height:1.35">
+            <strong>${escapeHtml(it.name)}</strong> <span class="slot-equip-tag">[${escapeHtml(it.type)}]</span><br/><span class="muted">${escapeHtml(
+            it.desc || ""
+          )}</span>
+          </button>`;
+        })
+        .join("");
+      const usableCount = invBattle.filter((x) => {
+        normalizeInventoryItem(x);
+        return ["heal", "sp", "buff"].includes(x.type);
+      }).length;
+      const buffPill =
+        lotgState.combatBuff && lotgState.combatBuff.turns > 0
+          ? `<div class="combat-buff-pill">Estado — Daño equipo +${Math.round(
+              ((lotgState.combatBuff.atkMult || 1) - 1) * 100
+            )}% · ${lotgState.combatBuff.turns} turno(s) propio(s)</div><div class="combat-triangle-hint">Triángulo elemental: <strong>Fuego</strong> → <strong>Hielo</strong> → <strong>Trueno</strong> → Fuego (+22% / −18% daño).</div>`
+          : `<div class="combat-triangle-hint">Triángulo: Fuego &gt; Hielo &gt; Trueno &gt; Fuego · Imaginario/Luz/etc. = neutro.</div>`;
+      const itemPanel =
+        !isAllyPhase && usableCount
+          ? `<div class="combat-items-wrap"><p class="muted" style="font-size:0.76rem;margin:0.4rem 0 0.35rem"><strong>Objetos</strong> (elige uno; consume el turno):</p><div class="combat-items-grid">${itemBtns}</div></div>`
+          : !isAllyPhase
+            ? `<p class="muted" style="font-size:0.74rem;margin:0.35rem 0">Sin consumibles usables en inventario.</p>`
+            : "";
+      const protagPassive = p.passive
+        ? `<p class="muted" style="font-size:0.72rem;margin:0.35rem 0;line-height:1.35"><strong>Pasiva:</strong> ${escapeHtml(p.passive.name)} — ${escapeHtml(p.passive.desc)}</p>`
+        : "";
+      const protagSkillTip =
+        p.skillActive && (p.skillActive.desc || p.skillActive.name)
+          ? `<div class="muted" style="font-size:0.76rem;margin:0.35rem 0;line-height:1.45;padding:0.45rem 0.55rem;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.18)"><strong>${escapeHtml(
+              p.skillActive.name || "Técnica"
+            )}</strong> <span class="slot-equip-tag">(área · 18 SP · CD 3)</span><br/>${escapeHtml(p.skillActive.desc || "")}</div>`
+          : "";
+      const ultName = p.skillActive && p.skillActive.name ? escapeHtml(p.skillActive.name) : "Grúa clínica";
+      const wantPickEnemy =
+        combatPickMode &&
+        (combatPickMode.type === "protag_atk" ||
+          combatPickMode.type === "ally_atk" ||
+          combatPickMode.type === "ally_skill_enemy");
+      const pickBanner = combatPickMode
+        ? `<div class="combat-pick-banner" style="margin:0.5rem 0;padding:0.55rem 0.7rem;border-radius:10px;border:1px solid rgba(96,165,250,0.45);background:rgba(59,130,246,0.12);font-size:0.82rem;line-height:1.45">
+          ${
+            combatPickMode.type === "ally_skill_ally"
+              ? "<strong>Elige aliado o doctor</strong> para aplicar la habilidad."
+              : "<strong>Elige enemigo</strong> en la horda (clic en su tarjeta)."
+          }
+          <button type="button" class="ghost combat-cancel-pick" style="margin-left:0.5rem;font-size:0.78rem">Cancelar</button>
+        </div>`
+        : "";
+      const enemiesCol = `<div class="lotg-enemy-hord-wrap smt-enemy-stack"><p class="smt-enemy-sub">${combatEnemies.filter((x) => x.hp > 0).length} enemigo(s) activo(s)</p>${combatEnemies
+        .map((en, ei) => {
+          const es = en.stats || emptyStats();
+          const down = en.hp <= 0;
+          const pct = en.hpMax > 0 ? Math.max(0, Math.min(100, (en.hp / en.hpMax) * 100)) : 0;
+          const pickCls = wantPickEnemy && !down ? " combat-pickable-enemy" : "";
+          const pickAttr = wantPickEnemy && !down ? ` data-combat-pick-enemy="${ei}"` : "";
+          return `<div class="lotg-enemy-card${down ? " enemy-down" : ""}${pickCls}"${pickAttr} style="${wantPickEnemy && !down ? "cursor:pointer;box-shadow:0 0 0 1px rgba(96,165,250,0.35)" : ""}">
+            <strong>${escapeHtml(en.name)}</strong> <span class="muted">(${escapeHtml(en.tag)})</span> · <span class="lotg-elem-tag">${escapeHtml(en.element || "Neutral")}</span>
+            ${en.boss ? ' <span class="rarity-SSS">JEFE</span>' : ""}${en.miniboss ? ' <span class="rarity-S">MINI</span>' : ""}
+            <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
+            <div class="muted" style="font-size:0.72rem">HP ${Math.max(0, Math.floor(en.hp))}/${en.hpMax} · Nv.${en.level}</div>
+            <div class="muted" style="font-size:0.68rem;line-height:1.3;margin-top:0.25rem">STG ${es.STG} · DX ${es.DX} · MA ${es.MA} · EN ${es.EN} · AG ${es.AG}</div>
+          </div>`;
+        })
+        .join("")}</div>`;
+      const allyPickRow =
+        combatPickMode && combatPickMode.type === "ally_skill_ally"
+          ? `<div class="combat-ally-pick-row" style="margin:0.5rem 0"><p class="muted" style="font-size:0.78rem;margin:0 0 0.35rem">Objetivo de apoyo / curación:</p><div class="btn-row" style="flex-wrap:wrap">
+          <button type="button" class="primary" data-combat-pick-ally="protag">${docCombat}</button>
+          ${allies
+            .map((a) => {
+              const v = allyV[a.uid];
+              const dead = !v || v.hp <= 0;
+              return `<button type="button" class="ghost" ${dead ? "disabled" : ""} data-combat-pick-ally="${escapeHtml(a.uid)}">${escapeHtml(a.name)}</button>`;
+            })
+            .join("")}
+        </div></div>`
+          : "";
+      const actionBlock = isAllyPhase
+        ? `<div class="combat-phase-banner ally-turn"><strong>Turno de aliado:</strong> ${escapeHtml(curAlly.name)}</div>
+        ${pickBanner}
+        ${skTip}
+        <div class="btn-row">
+          <button type="button" class="primary" data-ally-act="atk" ${combatPickMode ? "disabled" : ""}>Atacar</button>
+          <button type="button" class="ghost" data-ally-act="skill" ${skillBlocked || combatPickMode ? "disabled" : ""}>${skBtnText}</button>
+          <button type="button" class="ghost" data-ally-act="pass" ${combatPickMode ? "disabled" : ""}>Esperar</button>
+        </div>`
+        : `<div class="combat-phase-banner protag-turn"><strong>Turno de ${docCombat}</strong> — luego aliados; cada enemigo actúa en la horda.</div>
+        ${pickBanner}
+        ${buffPill}
+        ${protagPassive}
+        <div class="btn-row">
+          <button type="button" class="primary" data-act="atk" ${combatPickMode ? "disabled" : ""}>Ataque físico (elige enemigo si hay horda)</button>
+          <button type="button" class="ghost" data-act="skill" ${combatPickMode ? "disabled" : ""}>${ultName} — área (18 SP, CD 3)</button>
+          <button type="button" class="ghost danger" data-act="flee" ${combatPickMode ? "disabled" : ""}>Huir</button>
+        </div>
+        ${protagSkillTip}
+        ${itemPanel}`;
+      wrap.classList.add("lotg-combat-active");
+      wrap.innerHTML = `
+        <div class="smt-combat-shell">
+          <header class="smt-combat-header">
+            <div class="smt-combat-header-bar">
+              <span class="smt-combat-venue">FIELD — ANOMALY</span>
+              <h2 class="smt-combat-h1">COMBATE <span class="smt-floor-tag">Piso ${lotgState.floor}</span></h2>
+            </div>
+            ${combatHelpTxt}
+          </header>
+          <div class="smt-combat-grid">
+            <aside class="smt-wing smt-wing--allies">
+              <h3 class="smt-wing-title smt-wing-title--cyan">ALIADOS</h3>
+              ${alliesCombat}
+            </aside>
+            <section class="smt-wing smt-wing--foes">
+              <h3 class="smt-wing-title smt-wing-title--magenta">ENEMIGOS / HORDA</h3>
+              ${enemiesCol}
+            </section>
+            <aside class="smt-wing smt-wing--commander">
+              <h3 class="smt-wing-title smt-wing-title--gold">COMANDANTE</h3>
+              <div class="smt-protag-card lotg-combat-protag-wrap">
+                <img class="lotg-protag-portrait-combat smt-protag-portrait" src="${escapeAttrUrl(avatarSrc)}" alt="" data-lotg-combat-portrait="1" />
+                <div class="smt-protag-id"><strong>${escapeHtml(p.name)}</strong></div>
+                <div class="smt-protag-meta">Lv.${p.level} · ${escapeHtml(p.lotgElement || "Imaginario")}</div>
+                <div class="bar-wrap smt-bar"><div class="bar-fill" style="width:${(p.hpCur / cs.hpMax) * 100}%"></div></div>
+                <div class="smt-stat-line">HP ${p.hpCur}/${cs.hpMax}</div>
+                <div class="bar-wrap smt-bar"><div class="bar-fill sp" style="width:${(p.spCur / cs.spMax) * 100}%"></div></div>
+                <div class="smt-stat-line">SP ${p.spCur}/${cs.spMax}</div>
+              </div>
+            </aside>
+          </div>
+          <footer class="smt-combat-footer">
+            <div class="combat-log smt-combat-log">${escapeHtml(combatLog.join("\n"))}</div>
+            ${allyPickRow}
+            <div class="smt-action-deck">${actionBlock}</div>
+          </footer>
+        </div>`;
+      wrap.querySelectorAll(".combat-cancel-pick").forEach((b) => {
+        b.addEventListener("click", () => {
+          if (combatPhase === "player") combatTurn("cancel-pick");
+          else allyCombatTurn("cancel-pick");
+        });
+      });
+      wrap.querySelectorAll("[data-combat-pick-enemy]").forEach((el) => {
+        el.addEventListener("click", () => {
+          const idx = parseInt(el.getAttribute("data-combat-pick-enemy"), 10);
+          if (!Number.isFinite(idx)) return;
+          handleCombatEnemyPick(idx);
+        });
+      });
+      wrap.querySelectorAll("[data-combat-pick-ally]").forEach((el) => {
+        el.addEventListener("click", () => {
+          if (el.disabled) return;
+          handleCombatAllyPick(el.getAttribute("data-combat-pick-ally"));
+        });
+      });
+      wrap.querySelectorAll("[data-act]").forEach((b) => {
+        b.addEventListener("click", () => combatTurn(b.getAttribute("data-act")));
+      });
+      wrap.querySelectorAll(".combat-use-item").forEach((b) => {
+        b.addEventListener("click", () => combatTurnItem(parseInt(b.getAttribute("data-inv-i"), 10)));
+      });
+      wrap.querySelectorAll("[data-ally-act]").forEach((b) => {
+        b.addEventListener("click", () => allyCombatTurn(b.getAttribute("data-ally-act")));
+      });
+      const combatPortrait = wrap.querySelector("img[data-lotg-combat-portrait]");
+      if (combatPortrait) {
+        combatPortrait.addEventListener("error", function lotgCombatPf() {
+          combatPortrait.removeEventListener("error", lotgCombatPf);
+          combatPortrait.src = LOTG_COMBAT_PROTAG_FALLBACK_DATA_URL;
+        });
+      }
+      return;
+    }
+
+    const hubBgIdx = (Math.max(0, (lotgState.floor || 1) - 1) + (lotgState.combatsCleared || 0)) % LOTG_HUB_BACKGROUNDS.length;
+    const hubBgUrl = LOTG_HUB_BACKGROUNDS[hubBgIdx];
+    wrap.style.backgroundImage = `linear-gradient(180deg,rgba(10,12,22,.91),rgba(8,10,18,.94)), url("${hubBgUrl}")`;
+    wrap.style.backgroundSize = "cover";
+    wrap.style.backgroundPosition = "center";
+    wrap.style.backgroundAttachment = "local";
+    if (!lotgState.lotgView) lotgState.lotgView = "hub";
+    const tab = lotgState.lotgView;
+
+    function subnavHtml() {
+      const v = tab;
+      return `<nav class="lotg-subnav">
+        <button type="button" data-lotg-tab="hub" class="${v === "hub" ? "on" : ""}">Exploración</button>
+        <button type="button" data-lotg-tab="gacha" class="${v === "gacha" ? "on" : ""}">Reclutamiento</button>
+        <button type="button" data-lotg-tab="story" class="${v === "story" ? "on" : ""}">Historia</button>
+      </nav>`;
+    }
+
+    const sp = getSoulPoints();
+    const currencyBar = `<div class="lotg-currency-bar">
+      <span><strong>Zen:</strong> ${lotgState.zen}</span>
+      <span class="lotg-soul-pill" title="Soul Points — para reclutar en el gacha">✦ Soul Points: ${sp}</span>
+      <span><strong>Piso:</strong> ${lotgState.floor}</span>
+    </div>`;
+
+    function attachHubCommon() {
+      bindLotgSubnav(wrap);
+      const btnSaveLotg = document.getElementById("btnSaveLotg");
+      if (btnSaveLotg) {
+        btnSaveLotg.addEventListener("click", () => {
+        lotgSave();
+        alert("Partida guardada.");
+      });
+      }
+      const btnAbandon = document.getElementById("btnAbandon");
+      if (btnAbandon) {
+        btnAbandon.addEventListener("click", () => {
+        if (!confirm("¿Abandonar run y borrar progreso no guardado?")) return;
+        lotgWipe();
+        wrap.innerHTML = "";
+        wrap.style.display = "none";
+        document.getElementById("lotgIntro").style.display = "block";
+        renderLotgCreate();
+        playGlobalClinic();
+      });
+      }
+    }
+
+    /** Solo nodos dentro de #lotgGameWrap — nunca el catálogo Patimon ni el resto de la página. */
+    function bindEquipLists() {
+      if (!wrap || !lotgState) return;
+      if (!Array.isArray(lotgState.partyUids)) lotgState.partyUids = [];
+      if (!lotgState.equipSlots || typeof lotgState.equipSlots !== "object") lotgState.equipSlots = {};
+      const protagSlots = lotgState.equipSlots;
+      wrap.querySelectorAll(".inv-equip-go").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (inLotgCombat()) {
+            alert("No puedes cambiar el equipo durante el combate.");
+            return;
+          }
+          const idx = parseInt(btn.getAttribute("data-stash-idx"), 10);
+          const li = btn.closest("li");
+          const sel = li ? li.querySelector("select.inv-equip-target") : null;
+          const dest = sel && sel.value ? sel.value : "protag";
+          if (applyEquipPieceFromStashToTarget(idx, dest)) {
+            lotgSave();
+            renderLotgGame();
+          }
+        });
+      });
+      wrap.querySelectorAll("[data-unequip-slot]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (inLotgCombat()) {
+            alert("No puedes cambiar el equipo durante el combate.");
+            return;
+          }
+          const sl = btn.getAttribute("data-unequip-slot");
+          if (!EQUIP_SLOTS.includes(sl)) return;
+          const piece = protagSlots[sl];
+          if (!piece) return;
+          protagSlots[sl] = null;
+          if (!lotgState.gearStash) lotgState.gearStash = [];
+          lotgState.gearStash.push(piece);
+          lotgSave();
+          renderLotgGame();
+        });
+      });
+      wrap.querySelectorAll("[data-party-add]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (inLotgCombat()) {
+            alert("No puedes cambiar el grupo durante el combate.");
+            return;
+          }
+          const uid = btn.getAttribute("data-party-add");
+          if (!uid || lotgState.partyUids.includes(uid)) return;
+          if (lotgState.partyUids.length >= MAX_PARTY_ALLIES) {
+            alert("Máximo " + MAX_PARTY_ALLIES + " aliados en combate.");
+            return;
+          }
+          lotgState.partyUids.push(uid);
+          lotgSave();
+          renderLotgGame();
+        });
+      });
+      wrap.querySelectorAll("[data-party-rem]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (inLotgCombat()) {
+            alert("No puedes cambiar el grupo durante el combate.");
+            return;
+          }
+          const uid = btn.getAttribute("data-party-rem");
+          lotgState.partyUids = (lotgState.partyUids || []).filter((id) => id !== uid);
+          lotgSave();
+          renderLotgGame();
+        });
+      });
+      wrap.querySelectorAll(".ally-uneq").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (inLotgCombat()) {
+            alert("No puedes cambiar el equipo durante el combate.");
+            return;
+          }
+          const uid = btn.getAttribute("data-au");
+          const sl = btn.getAttribute("data-asl");
+          const u = (lotgState.roster || []).find((x) => x && x.uid === uid);
+          if (!u || !EQUIP_SLOTS.includes(sl)) return;
+          if (!u.equipSlots || typeof u.equipSlots !== "object") u.equipSlots = {};
+          const piece = u.equipSlots[sl];
+          if (!piece) return;
+          u.equipSlots[sl] = null;
+          if (!lotgState.gearStash) lotgState.gearStash = [];
+          lotgState.gearStash.push(piece);
+          lotgSave();
+          renderLotgGame();
+        });
+      });
+      wrap.querySelectorAll(".lotg-use-consumable").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (inLotgCombat()) return;
+          const idx = parseInt(btn.getAttribute("data-inv-use"), 10);
+          if (Number.isNaN(idx)) return;
+          useConsumableOutsideCombat(idx);
+        });
+      });
+    }
+
+    function runGacha(premium, times) {
+      const gr = document.getElementById("gachaResult");
+      normalizeSoulPointsOnState(lotgState);
+      const { cost1, cost10 } = gachaCosts(premium);
+      const cost = times === 10 ? cost10 : cost1 * times;
+      const have = getSoulPoints();
+      if (have < cost) {
+        if (gr) {
+          gr.textContent =
+            "Necesitas " +
+            cost +
+            " Soul Points para esta tirada. Tienes " +
+            have +
+            ". Gana Soul venciendo enemigos (más si el peligro es alto) o revisa que tu partida cargue bien.";
+        }
+        return;
+      }
+      lotgState.soul = have - cost;
+      if (!Array.isArray(lotgState.gachaLog)) lotgState.gachaLog = [];
+      const stamp = new Date().toLocaleString();
+      const banner = (premium ? "Premium" : "Común") + " ×" + times;
+      const lines = [];
+      const logBlock = ["── " + stamp + " · " + banner + " ──"];
+      for (let t = 0; t < times; t++) {
+        if (Math.random() < (premium ? 0.78 : 0.72)) {
+          const eq = randomEquipItem();
+          if (!lotgState.gearStash) lotgState.gearStash = [];
+          lotgState.gearStash.push(eq);
+          const bEq = formatEquipBonusLine(eq);
+          const ln =
+            "Equipo → " + eq.name + " [" + (eq.equipSlot || "?") + "]" + (bEq ? " · " + bEq : "") + " → almacén";
+          lines.push(ln);
+          logBlock.push("  · " + ln);
+        } else {
+          const r = addOrMergeUnit(pickUnit(premium));
+          let ln;
+          if (r.merged) ln = "Fusión: " + r.name + " → +" + r.rank + "/" + MAX_MERGE_RANK;
+          else if (r.refund) ln = "Copia extra (fusión máx.) → +" + r.zen + " Zen";
+          else {
+            const urec = (lotgState.roster || []).find((x) => x.name === r.name);
+            const el = urec && urec.element ? " · " + urec.element : "";
+            const ps = urec && urec.passive ? " · Pasiva: " + urec.passive.name : "";
+            ln = "Unidad: " + r.name + " [" + r.rarity + "]" + el + ps;
+          }
+          lines.push(ln);
+          logBlock.push("  · " + ln);
+        }
+      }
+      lotgState.gachaLog = logBlock.concat(lotgState.gachaLog);
+      if (lotgState.gachaLog.length > 100) lotgState.gachaLog.length = 100;
+      if (gr) gr.textContent = lines.join(" · ");
+      lotgSave();
+      renderLotgGame();
+    }
+
+    if (tab === "gacha") {
+      const bcf = lotgState.bannerCommonFour;
+      if (!bcf || bcf.length !== 4 || !bcf[0] || typeof bcf[0].img !== "string") {
+        lotgState.bannerCommonFour = pickCommonBannerFour();
+      }
+      const four = lotgState.bannerCommonFour;
+      const bannerCells = four
+        .map(
+          (entry) => `
+        <div class="gacha-banner-face">
+          <img src="${escapeHtml(entry.img)}" alt="${escapeHtml(entry.name)}" loading="lazy" onerror="this.style.opacity=0.35" />
+          <span class="gacha-banner-name">${escapeHtml(entry.name)}</span>
+        </div>`
+        )
+        .join("");
+      wrap.innerHTML =
+        subnavHtml() +
+        currencyBar +
+        `<h2 style="margin-top:0">Centro de reclutamiento</h2>
+        <p class="muted">Los <strong>Soul Points</strong> suben más al vencer enemigos. El gacha prioriza <strong>equipo</strong> frente a unidades (menor tasa de reclutas). Banner común: 4 destacadas al azar.</p>
+        ${buildGachaRecruitmentCatalogHtml()}
+        <div class="gacha-two-col">
+          <div class="gacha-panel">
+            <h3>Gacha común</h3>
+            <p class="muted" style="margin-top:0">Pool A–S; <strong>~28% chance de unidad</strong> por tirada (resto equipo). ×1: <strong>700</strong> SP · ×10: <strong>1600</strong> SP.</p>
+            <div class="gacha-common-banner">${bannerCells}</div>
+            <p class="gacha-common-pool-names"><strong>Pool de reclutas:</strong> ${commonPoolRecruitNamesHtml()}</p>
+            <div class="btn-row">
+              <button type="button" class="primary" id="gachaC1">Común ×1 (700)</button>
+              <button type="button" class="primary" id="gachaC10">Común ×10 (1600)</button>
+            </div>
+          </div>
+          <div class="gacha-panel gacha-panel-premium" style="border-color:rgba(255,110,199,0.4)">
+            <h3>Gacha premium</h3>
+            <p class="muted" style="margin-top:0">Mesa superior. <strong>1%</strong> de chance de unidad SSS promocional (${GACHA_UNITS.filter((u) => u.promo)
+              .map((u) => escapeHtml(u.name))
+              .join(" · ") || "—"}).</p>
+            <div class="gacha-premium-hero">
+              <p class="gacha-premo-eyebrow">Destacado premium</p>
+              <h2 class="gacha-premo-title">Unidades SSS del banner</h2>
+              <p class="gacha-premo-tagline">La voluntad despierta bajo el nudo…</p>
+            </div>
+            <div class="gacha-premium-art gacha-premium-promo-row" style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;align-items:flex-start">
+              ${GACHA_UNITS.filter((u) => u.promo)
+                .map(
+                  (u) =>
+                    `<div class="gacha-promo-unit-card" style="text-align:center;max-width:min(200px,46%)">
+                <img src="${escapeAttrUrl(u.img)}" alt="${escapeHtml(u.name)}" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:2px solid rgba(255,110,199,0.45)" onerror="this.style.opacity=0.35" />
+                <div class="muted" style="font-size:0.75rem;margin-top:0.35rem;line-height:1.25">${escapeHtml(u.name)}</div>
+              </div>`
+                )
+                .join("")}
+            </div>
+            <p class="gacha-premo-grade">Rango SSS · Unidad promocional · tirada premium</p>
+            <p class="muted" style="margin-top:0.75rem"><strong>~22% unidad</strong> por tirada (resto equipo). ×1: <strong>870</strong> SP · ×10: <strong>2500</strong> SP.</p>
+            <div class="btn-row">
+              <button type="button" class="ghost" id="gachaP1">Premium ×1 (870)</button>
+              <button type="button" class="ghost" id="gachaP10">Premium ×10 (2500)</button>
+            </div>
+          </div>
+        </div>
+        <p class="muted" id="gachaResult" style="margin-top:1rem"></p>
+        <h3 style="margin-top:1.25rem;font-size:1rem">Registro de tiradas</h3>
+        <div class="gacha-pull-log" id="gachaPullLog"></div>`;
+      const pullLog = document.getElementById("gachaPullLog");
+      if (pullLog) {
+        const gl = lotgState.gachaLog || [];
+        pullLog.innerHTML = gl.length
+          ? "<ul class='gacha-log-list'>" + gl.map((l) => "<li>" + escapeHtml(l) + "</li>").join("") + "</ul>"
+          : "<p class='muted' style='margin:0'>Sin tiradas registradas aún.</p>";
+      }
+      attachHubCommon();
+      const gachaC1 = document.getElementById("gachaC1");
+      if (gachaC1) gachaC1.addEventListener("click", () => runGacha(false, 1));
+      const gachaC10 = document.getElementById("gachaC10");
+      if (gachaC10) gachaC10.addEventListener("click", () => runGacha(false, 10));
+      const gachaP1 = document.getElementById("gachaP1");
+      if (gachaP1) gachaP1.addEventListener("click", () => runGacha(true, 1));
+      const gachaP10 = document.getElementById("gachaP10");
+      if (gachaP10) gachaP10.addEventListener("click", () => runGacha(true, 10));
+      bindGachaCatalogUi(wrap.querySelector(".gacha-recruit-showcase"));
+      return;
+    }
+
+    if (tab === "story") {
+      const listHtml = STORY_CHAPTERS.map((ch) => {
+        const ok = storyChapterUnlocked(ch);
+        let req =
+          ch.unlockFloor <= 0
+            ? "Disponible desde el inicio"
+            : `Piso ${ch.unlockFloor}+ en Exploración`;
+        if (ch.requiresRosterMin != null) {
+          req += ` · ≥${ch.requiresRosterMin} recluta(s) en roster`;
+        }
+        return `<li class="${ok ? "" : "locked"}">
+          <div>
+            <strong>${escapeHtml(ch.title)}</strong>
+            <div class="muted" style="font-size:0.8rem">${escapeHtml(req)}</div>
+          </div>
+          <button type="button" class="primary" data-story-read="${escapeHtml(ch.id)}" ${ok ? "" : "disabled"} style="opacity:${ok ? 1 : 0.5}">Leer</button>
+        </li>`;
+      }).join("");
+      wrap.innerHTML =
+        subnavHtml() +
+        currencyBar +
+        `<h2 style="margin-top:0">Modo historia</h2>
+        <p class="muted">Prólogo en varias pantallas. <strong>Interludio</strong> (piso 3+): escenas previas y diálogo con la unidad fija del capítulo (<strong>Aozora Lin</strong> por defecto; arte del catálogo aunque aún no la tengas en roster). Capítulos en pisos 5, 10, 15 y 20. Las elecciones quedan registradas.</p>
+        <ul class="story-chapter-list">${listHtml}</ul>
+        <details class="story-skill-codex" style="margin-top:1.25rem">
+          <summary><strong>Referencia breve — habilidades de unidades</strong> (reclutamiento)</summary>
+          <ul style="margin:0.75rem 0 0;padding-left:1.2rem;font-size:0.88rem;line-height:1.5">
+            ${GACHA_UNITS.map((u) => {
+              const ps = u.passive ? " · Pasiva: " + escapeHtml(u.passive.name) : "";
+              return `<li><strong>${escapeHtml(u.name)}</strong> (${escapeHtml(u.element || "")})${ps} — <em>${escapeHtml((u.skill && u.skill.name) || "—")}</em>: ${escapeHtml(
+                (u.skill && u.skill.desc) || ""
+              )}</li>`;
+            }).join("")}
+          </ul>
+        </details>`;
+      attachHubCommon();
+      wrap.querySelectorAll("[data-story-read]").forEach((btn) => {
+        if (btn.disabled) return;
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-story-read");
+          const ch = STORY_CHAPTERS.find((c) => c.id === id);
+          if (!ch) return;
+          const done = () => {
+            playLotgTrack("safe", "Safe Area");
+            renderLotgGame();
+          };
+          if (ch.type === "choice") runChoiceAllyChapter(ch, done);
+          else if (ch.pages && ch.pages.length) showVNSequenceFromBeat(ch, done);
+          else showVN(ch, done);
+        });
+      });
+      return;
+    }
+
+    const fr = lotgState.floorAdvanceRule || "free";
+    const floorExitHint =
+      fr === "boss"
+        ? "<br/><span class=\"muted\" style=\"font-size:0.8rem\">Este piso exige <strong>vencer al jefe</strong> (casilla <strong>💀</strong>) antes de usar la salida ⇊.</span>"
+        : fr === "key"
+          ? "<br/><span class=\"muted\" style=\"font-size:0.8rem\">Este piso exige encontrar la <strong>llave</strong> en eventos (?) para poder bajar por ⇊.</span>"
+          : fr === "relic"
+            ? "<br/><span class=\"muted\" style=\"font-size:0.8rem\">Este piso exige recuperar la <strong>reliquia</strong> en eventos (?) antes de ⇊.</span>"
+            : "";
+    const mapHtml = `
+      <h3>Exploración — mini mapa</h3>
+      <p class="muted">Avanza a celdas <strong>adyacentes</strong>. <strong>Cada piso</strong> el sector se <strong>reordena al azar</strong> (combates, tiendas, eventos y salida). Las celdas <strong class="lotg-done-inline">moradas</strong> ya se completaron. <strong>Salida ⇊</strong> no se marca en morado. Jefe cada <strong>3 pisos</strong> (💀). Combate en <strong>horda</strong>.</p>
+      ${floorExitHint}
+      <p class="muted" style="font-size:0.8rem">⚔ combate normal · 💀 jefe de piso · mini-jefe (casilla violeta) · ? evento · ¤ tienda · ♥ descanso (HP+SP) · ⇊ salida</p>
+      <div class="lotg-map" id="lotgMap"></div>`;
+
+    const rosterUnits = Array.isArray(lotgState.roster) ? lotgState.roster : [];
+    const rosterHtml =
+      `<h3>Unidades reclutadas (${rosterUnits.length}) — grupo activo: ${getPartyUnits().length}/${MAX_PARTY_ALLIES}</h3><p class="muted" style="font-size:0.85rem">Los reclutas ganan <strong>EXP</strong> al vencer combates: suben de nivel solos y reparten stats según su rol. Cada uno tiene <strong>equipo</strong> y combate por turnos. Duplicados se <strong>fusionan</strong> (hasta ${MAX_MERGE_RANK}). Fuera de combate conservan HP/SP entre batallas; <strong>♥ descanso</strong> los cura.</p><div class="flex lotg-roster-grid">` +
+      rosterUnits
+        .map((u) => {
+          const inP = (lotgState.partyUids || []).includes(u.uid);
+          const mergeB =
+            (u.mergeRank || 0) > 0 ? ` <span class="merge-badge">Fusión ${u.mergeRank}/${MAX_MERGE_RANK}</span>` : "";
+          const canAdd = !inP && (lotgState.partyUids || []).length < MAX_PARTY_ALLIES;
+          const ustats = u.stats && typeof u.stats === "object" ? u.stats : emptyStats();
+          const statMini = STAT_KEYS.map((k) => `<span>${k} <strong>${ustats[k] || 0}</strong></span>`).join(" · ");
+          const stFight = allyCombatStats(u);
+          const uxNeed = unitXpThreshold(u.level);
+          const ux = u.xp != null && Number.isFinite(u.xp) ? u.xp : 0;
+          const pv0 = (lotgState.partyVitalsPersist || {})[u.uid];
+          const hx =
+            inP && pv0 && typeof pv0.hp === "number"
+              ? Math.max(0, Math.min(stFight.hpMax, Math.floor(pv0.hp)))
+              : stFight.hpMax;
+          const sx =
+            inP && pv0 && typeof pv0.sp === "number"
+              ? Math.max(0, Math.min(stFight.spMax, Math.floor(pv0.sp)))
+              : stFight.spMax;
+          const uSlots = u.equipSlots && typeof u.equipSlots === "object" ? u.equipSlots : {};
+          const slotsEq = EQUIP_SLOTS.map((sl) => {
+            const eq = uSlots[sl];
+            if (eq) {
+              const bl = formatEquipBonusLine(eq);
+              return `<div class="ally-slot-line"><strong>${escapeHtml(sl)}</strong>: ${escapeHtml(eq.name)}${bl ? ` <span class="muted">(${escapeHtml(bl)})</span>` : ""} <button type="button" class="ghost danger ally-uneq" data-au="${escapeHtml(
+                u.uid
+              )}" data-asl="${escapeHtml(sl)}" style="font-size:0.65rem;padding:0.1rem 0.35rem">Quitar</button></div>`;
+            }
+            return `<div class="ally-slot-line muted"><strong>${escapeHtml(sl)}</strong>: vacío</div>`;
+          }).join("");
+          return `
+        <div class="lotg-roster-card">
+          <img class="unit-face" src="${escapeHtml(u.img)}" alt="" onerror="this.style.background='#333'"/>
+          <div style="font-size:0.8rem"><span class="rarity-${u.rarity}">${escapeHtml(u.rarity)}</span> ${escapeHtml(u.name)}${mergeB}</div>
+          <div class="muted" style="font-size:0.72rem">${escapeHtml(u.element)} · ${escapeHtml(u.role)} · Lv.${u.level} · EXP ${ux}/${uxNeed}</div>
+          <div class="lotg-roster-stats muted">${statMini}</div>
+          <div class="muted" style="font-size:0.68rem;line-height:1.35;margin-top:0.25rem">Máx. combate (stats + equipo): <strong>HP ${stFight.hpMax}</strong> · <strong>SP ${stFight.spMax}</strong> · ATK ${stFight.atkP}/${stFight.atkM}</div>
+          ${
+            inP
+              ? `<div class="muted" style="font-size:0.65rem;line-height:1.3;margin-top:0.2rem">En el mapa: HP ${hx}/${stFight.hpMax} · SP ${sx}/${stFight.spMax}</div>`
+              : ""
+          }
+          <div class="muted" style="font-size:0.72rem;line-height:1.4;margin-top:0.35rem"><strong>Activa:</strong> ${escapeHtml((u.skill && u.skill.name) || "—")}${u.skill && u.skill.dmg ? ` <span class="slot-equip-tag">${escapeHtml(u.skill.dmg)}</span>` : ""} — ${escapeHtml((u.skill && u.skill.desc) || "")}</div>
+          ${u.passive ? `<div class="muted" style="font-size:0.68rem;line-height:1.35;margin-top:0.25rem"><strong>Pasiva:</strong> ${escapeHtml(u.passive.name)} — ${escapeHtml(u.passive.desc)}</div>` : ""}
+          ${inP ? '<span class="party-badge party-badge-active">En combate</span>' : ""}
+          <div class="btn-row" style="margin-top:0.4rem">
+            <button type="button" class="ghost" data-party-add="${escapeHtml(u.uid)}" style="padding:0.25rem 0.5rem;font-size:0.75rem" ${canAdd ? "" : "disabled"}>+ Grupo</button>
+            <button type="button" class="ghost danger" data-party-rem="${escapeHtml(u.uid)}" style="padding:0.25rem 0.5rem;font-size:0.75rem" ${inP ? "" : "disabled"}>− Quitar</button>
+          </div>
+          <div class="ally-equip-block">
+            <div class="muted" style="font-size:0.72rem;margin:0.5rem 0 0.25rem"><strong>Equipo del recluta</strong> (quita con el botón; vuelve al inventario de piezas)</div>
+            <div style="font-size:0.72rem;line-height:1.45">${slotsEq}</div>
+            <div class="muted" style="font-size:0.68rem;margin-top:0.35rem">Para equipar piezas nuevas, usa <strong>Inventario — piezas de equipo</strong> y elige esta unidad como destino.</div>
+          </div>
+        </div>`;
+        })
+        .join("") +
+      `</div>`;
+
+    const stash = lotgState.gearStash || [];
+    const docHub = "Doctor " + escapeHtml(p.name);
+    const invHtml =
+      `<h3>Inventario — consumibles</h3>
+      <p class="muted" style="font-size:0.82rem">Puedes <strong>usar</strong> curas, SP y buffs aquí (exploración) o en combate desde el panel de objetos.</p>
+      <ul id="lotgInvConsumables" style="margin:0;padding-left:0;list-style:none;font-size:0.88rem;line-height:1.45">` +
+      (lotgState.inventory || [])
+        .map((i, idx) => {
+          normalizeInventoryItem(i);
+          const usable = ["heal", "sp", "buff"].includes(i.type);
+          const useBtn = usable
+            ? ` <button type="button" class="ghost lotg-use-consumable" data-inv-use="${idx}" style="font-size:0.75rem;padding:0.2rem 0.45rem;vertical-align:middle">Usar</button>`
+            : "";
+          return `<li style="margin-bottom:0.5rem;padding:0.45rem 0;border-bottom:1px solid rgba(255,255,255,0.06)"><strong>${escapeHtml(i.name)}</strong>${useBtn}<br/><span class="muted">${escapeHtml(i.desc || "")}</span></li>`;
+        })
+        .join("") +
+      (!(lotgState.inventory || []).length ? "<li class='muted'>Vacío</li>" : "") +
+      `</ul>`;
+
+    const stashHtml =
+      `<h3>Inventario — piezas de equipo</h3>
+      <p class="muted" style="font-size:0.82rem">Elige <strong>destino</strong> (${docHub} o un recluta) y equipa. Las piezas del set base u otras se pueden quitar siempre desde las ranuras.</p>` +
+      (stash.length
+        ? `<ul id="stashList" style="margin:0;padding-left:0;list-style:none;font-size:0.88rem">${stash
+            .map((i, idx) => {
+              const sl = i.equipSlot && EQUIP_SLOTS.includes(i.equipSlot) ? i.equipSlot : "Cuerpo";
+              const stL = formatEquipBonusLine(i);
+              return `<li style="margin-bottom:0.65rem;padding:0.55rem;border-radius:10px;border:1px solid rgba(255,255,255,0.08)">
+            <div style="margin-bottom:0.4rem">${escapeHtml(i.name)} <span class="slot-equip-tag">[${escapeHtml(sl)}]</span>${stL ? `<div class="muted" style="font-size:0.76rem;margin-top:0.25rem">${escapeHtml(stL)}</div>` : ""}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+              <span class="muted" style="font-size:0.78rem">Equipar en:</span>
+              <select class="inv-equip-target" data-stash-idx="${idx}" style="max-width:14rem;font-size:0.82rem">
+                <option value="protag">${docHub}</option>
+                ${(lotgState.roster || [])
+                  .map((u) => `<option value="${escapeHtml(u.uid)}">${escapeHtml(u.name)}</option>`)
+                  .join("")}
+              </select>
+              <button type="button" class="ghost inv-equip-go" data-stash-idx="${idx}" style="font-size:0.8rem">Equipar</button>
+            </div>
+          </li>`;
+            })
+            .join("")}</ul>`
+        : `<p class="muted">Nada en el inventario de piezas.</p>`);
+
+    const eqHtml =
+      `<h3>Equipo puesto — ${docHub}</h3><ul style="list-style:none;padding-left:0;margin:0;font-size:0.9rem">` +
+      EQUIP_SLOTS.map((sl) => {
+        const eq = lotgState.equipSlots[sl];
+        if (!eq)
+          return `<li style="margin-bottom:0.4rem"><strong>${escapeHtml(sl)}:</strong> <span class="muted">vacío</span></li>`;
+        const pbl = formatEquipBonusLine(eq);
+        return `<li style="margin-bottom:0.45rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;justify-content:space-between">
+          <span><strong>${escapeHtml(sl)}</strong> · ${escapeHtml(eq.name)}${pbl ? `<br/><span class="muted" style="font-size:0.78rem">${escapeHtml(pbl)}</span>` : ""}</span>
+          <button type="button" class="ghost danger" data-unequip-slot="${escapeHtml(sl)}" style="padding:0.25rem 0.55rem;font-size:0.8rem">Quitar</button>
+        </li>`;
+      }).join("") +
+      `</ul>`;
+
+    const statDist =
+      p.statPoints > 0
+        ? `<div class="card" style="padding:1rem;margin:1rem 0"><strong>Sube de nivel:</strong> reparte ${p.statPoints} puntos.<div class="lotg-stats-create" id="protStatAdd"></div><button type="button" class="primary" id="btnApplyStatPoints">Aplicar</button></div>`
+        : "";
+
+    const protagCard = `<div class="lotg-protagonist-card">
+      <img class="lotg-protag-portrait" src="${escapeAttrUrl(avatarSrc)}" alt="" loading="lazy" data-lotg-hub-portrait="1" />
+      <div class="lotg-protag-meta">
+        <p class="lotg-protag-name">${escapeHtml(p.name)}</p>
+        <p class="lotg-protag-sub">${docHub} en la exploración · Nivel ${p.level} · Piso ${lotgState.floor} · ${escapeHtml(p.lotgElement || "Imaginario")}</p>
+        ${p.passive ? `<p class="muted" style="font-size:0.78rem;margin:0.35rem 0;line-height:1.4"><strong>Pasiva:</strong> ${escapeHtml(p.passive.name)} — ${escapeHtml(p.passive.desc)}</p>` : ""}
+        ${p.skillActive ? `<p class="muted" style="font-size:0.78rem;margin:0;line-height:1.4"><strong>Técnica:</strong> ${escapeHtml(p.skillActive.name)} — ${escapeHtml(p.skillActive.desc)}</p>` : ""}
+        <div class="lotg-protag-bars">
+          <p class="muted" style="font-size:0.72rem;margin:0 0 0.35rem;line-height:1.35">Stats de combate con equipo: <strong>ATK</strong> ${cs.atkP}/${cs.atkM} · <strong>HP máx.</strong> sube con HP y <strong>VI</strong> · <strong>SP</strong> es maná (sube con SP y <strong>MA</strong>).</p>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${(p.hpCur / cs.hpMax) * 100}%"></div></div>
+          <div class="muted" style="font-size:0.75rem">HP ${p.hpCur} / ${cs.hpMax} <span style="font-size:0.65rem">(vitalidad)</span></div>
+          <div class="bar-wrap" style="margin-top:0.35rem"><div class="bar-fill sp" style="width:${(p.spCur / cs.spMax) * 100}%"></div></div>
+          <div class="muted" style="font-size:0.75rem">SP ${p.spCur} / ${cs.spMax} <span style="font-size:0.65rem">(maná)</span></div>
+        </div>
+      </div>
+    </div>`;
+
+    wrap.innerHTML =
+      subnavHtml() +
+      currencyBar +
+      protagCard +
+      `<h2 style="margin-top:0">Exploración — Piso ${lotgState.floor}</h2>
+      ${statDist}
+      <div class="btn-row">
+        <button type="button" class="ghost" id="btnSaveLotg">Guardar partida</button>
+        <button type="button" class="ghost danger" id="btnAbandon">Abandonar run</button>
+      </div>
+      <p class="muted">Combate, tiendas y curación: solo desde el <strong>mapa</strong>. Gacha e historia: pestañas superiores. Soul inicial <strong>${INITIAL_SOUL}</strong>.</p>
+      ${mapHtml}
+      ${rosterHtml}
+      ${invHtml}
+      ${stashHtml}
+      ${eqHtml}`;
+
+    const hubPortrait = wrap.querySelector("img[data-lotg-hub-portrait]");
+    if (hubPortrait) {
+      hubPortrait.addEventListener("error", function lotgHubPf() {
+        hubPortrait.removeEventListener("error", lotgHubPf);
+        hubPortrait.src = LOTG_PROTAG_FALLBACK_DATA_URL;
+      });
+    }
+
+    attachHubCommon();
+    bindEquipLists();
+
+    if (p.statPoints > 0) {
+      const pw = document.getElementById("protStatAdd");
+      if (pw) {
+        STAT_KEYS.forEach((k) => {
+          const d = document.createElement("div");
+          d.innerHTML = `<label>+${k}</label><input type="number" min="0" max="${p.statPoints}" value="0" data-add="${k}" />`;
+          pw.appendChild(d);
+        });
+        const btnApplyStatPoints = document.getElementById("btnApplyStatPoints");
+        if (btnApplyStatPoints) {
+          btnApplyStatPoints.addEventListener("click", () => {
+          let sum = 0;
+          const add = {};
+          STAT_KEYS.forEach((k) => {
+            const v = parseInt(pw.querySelector(`[data-add="${k}"]`).value, 10) || 0;
+            add[k] = v;
+            sum += v;
+          });
+          if (sum !== p.statPoints) {
+            alert("Debes repartir exactamente " + p.statPoints + " puntos.");
+            return;
+          }
+          STAT_KEYS.forEach((k) => (p.stats[k] += add[k]));
+          p.statPoints = 0;
+          const ncs = applyEquipToProtag();
+          p.hpCur = Math.min(ncs.hpMax, p.hpCur + Math.floor(ncs.hpMax * 0.15));
+          lotgSave();
+          renderLotgGame();
+        });
+        }
+      }
+    }
+
+    buildMiniMap();
+    } catch (e) {
+      console.error("[LOTG — renderLotgGame]", e);
+      wrap.style.backgroundImage = "";
+      wrap.innerHTML =
+        '<div style="padding:1.25rem;line-height:1.5">' +
+        '<p style="margin:0 0 0.75rem;color:var(--danger)"><strong>Error al mostrar la partida</strong></p>' +
+        '<p class="muted" style="margin:0 0 1rem;font-size:0.85rem;white-space:pre-wrap;word-break:break-word">' +
+        escapeHtml(String(e && e.message ? e.message : e)) +
+        "</p>" +
+        '<div class="btn-row"><button type="button" class="primary" id="lotgRenderRetry">Reintentar</button> ' +
+        '<button type="button" class="ghost danger" id="lotgRenderWipe">Borrar guardado y volver al menú</button></div></div>';
+      const btnRetry = document.getElementById("lotgRenderRetry");
+      if (btnRetry) {
+        btnRetry.addEventListener("click", function () {
+          try {
+            renderLotgGame(opts);
+          } catch (e2) {
+            console.error(e2);
+          }
+        });
+      }
+      const btnWipe = document.getElementById("lotgRenderWipe");
+      if (btnWipe) {
+        btnWipe.addEventListener("click", function () {
+          lotgWipe();
+          wrap.innerHTML = "";
+          wrap.style.display = "none";
+          const intro = document.getElementById("lotgIntro");
+          if (intro) intro.style.display = "block";
+          renderLotgCreate();
+          playGlobalClinic();
+        });
+      }
+    }
+  }
+
+  function runRoguelikeMapEvent(cellKey) {
+    if (Math.random() < 0.16) {
+      openAnomalyShop(cellKey);
+      return "";
+    }
+    let msg = "";
+    const roll = Math.random();
+    if (roll < 0.14) {
+      const z = 95 + Math.floor(Math.random() * 200);
+      lotgState.zen += z;
+      msg = "Recolectas chatarra y datos vendibles: +" + z + " Zen.";
+    } else if (roll < 0.26) {
+      const s = 58 + Math.floor(Math.random() * 120);
+      normalizeSoulPointsOnState(lotgState);
+      lotgState.soul += s;
+      msg = "Ecos de alma condensados en el Nudo: +" + s + " Soul Points.";
+    } else if (roll < 0.34) {
+      lotgState.inventory.push({
+        type: "heal",
+        name: "Kit de vendajes del sector",
+        healPct: 0.38,
+        desc: "Restaura ≈38% HP (combate o exploración).",
+      });
+      msg = "Puesto médico abandonado: kit de vendajes (consumible).";
+    } else if (roll < 0.4) {
+      lotgState.inventory.push({
+        type: "buff",
+        name: "Inyector de adrenalina urbana",
+        atkPct: 0.16,
+        turns: 3,
+        desc: "+16% daño del equipo durante 3 turnos propios en combate.",
+      });
+      msg = "Caja táctica sellada: inyector de adrenalina (consumible).";
+    } else if (roll < 0.46) {
+      lotgState.inventory.push({
+        type: "sp",
+        name: "Jarabe de sintetizador",
+        spPct: 0.36,
+        desc: "Restaura ≈36% SP máximo.",
+      });
+      msg = "Laboratorio improvisado: jarabe de sintetizador (consumible).";
+    } else if (roll < 0.52) {
+      const ok = confirm(
+        "Mercenario herido\n\n" +
+          "Aceptar: pagas 90 Zen y recibes una pieza de equipo aleatoria.\n" +
+          "Cancelar: sigues de largo (nada)."
+      );
+      if (ok) {
+        if (lotgState.zen >= 90) {
+          lotgState.zen -= 90;
+          if (!lotgState.gearStash) lotgState.gearStash = [];
+          lotgState.gearStash.push(randomEquipItem());
+          msg = "Pagas 90 Zen. El mercenario te entrega equipo urbano.";
+        } else {
+          msg = "No tienes 90 Zen. Te niega el trato.";
+        }
+      } else {
+        msg = "No negocias. Continúas sin cambios.";
+      }
+    } else if (roll < 0.58) {
+      const ok = confirm(
+        "Reliquia pulsante\n\n" +
+          "Aceptar: absorbes el eco (+190 Soul) pero el doctor pierde ~15% HP actual.\n" +
+          "Cancelar: destruyes el objeto con cuidado (+75 Zen, sin riesgo)."
+      );
+      if (ok) {
+        normalizeSoulPointsOnState(lotgState);
+        lotgState.soul += 190;
+        const csR = applyEquipToProtag();
+        lotgState.protag.hpCur = Math.max(1, Math.floor(lotgState.protag.hpCur - csR.hpMax * 0.15));
+        msg = "Absorbes el eco: +190 Soul. El vínculo te desgasta (~15% HP).";
+      } else {
+        lotgState.zen += 75;
+        msg = "Destruyes la reliquia con precaución: +75 Zen.";
+      }
+    } else if (roll < 0.64) {
+      const ok = confirm(
+        "Terminal de datos robados\n\n" +
+          "Aceptar: hackeo arriesgado → 50% +170 Zen / 50% alarma (−28% HP doctor).\n" +
+          "Cancelar: extracción segura (+40 Zen)."
+      );
+      if (ok) {
+        if (Math.random() < 0.5) {
+          lotgState.zen += 170;
+          msg = "Hackeo limpio: +170 Zen.";
+        } else {
+          const csT = applyEquipToProtag();
+          lotgState.protag.hpCur = Math.max(1, Math.floor(lotgState.protag.hpCur - csT.hpMax * 0.28));
+          msg = "¡Alarma del sistema! Huyes herido: pierdes ~28% HP; sin Zen extra.";
+        }
+      } else {
+        lotgState.zen += 40;
+        msg = "Extracción mínima: +40 Zen.";
+      }
+    } else if (roll < 0.72) {
+      const csF = applyEquipToProtag();
+      if (!lotgState.partyVitalsPersist) lotgState.partyVitalsPersist = {};
+      lotgState.protag.hpCur = Math.min(csF.hpMax, Math.floor(lotgState.protag.hpCur + csF.hpMax * 0.2));
+      lotgState.protag.spCur = Math.min(csF.spMax, Math.floor(lotgState.protag.spCur + csF.spMax * 0.22));
+      getPartyUnits().forEach((u) => {
+        const st = allyCombatStats(u);
+        let pv = lotgState.partyVitalsPersist[u.uid] || { hp: st.hpMax, sp: st.spMax };
+        pv.hp = Math.min(st.hpMax, Math.floor(pv.hp + st.hpMax * 0.2));
+        pv.sp = Math.min(st.spMax, Math.floor(pv.sp + st.spMax * 0.22));
+        lotgState.partyVitalsPersist[u.uid] = pv;
+      });
+      msg = "Fuente de Ether estable: doctor y aliados en grupo recuperan HP y SP.";
+    } else if (roll < 0.78) {
+      const ok = confirm(
+        "Cofre oxidado con candado biológico\n\n" +
+          "Aceptar: forzar → 55% +130 Soul / 45% gas tóxico (−18% HP doctor).\n" +
+          "Cancelar: dejarlo (+25 Zen por no arriesgar)."
+      );
+      if (ok) {
+        if (Math.random() < 0.55) {
+          normalizeSoulPointsOnState(lotgState);
+          lotgState.soul += 130;
+          msg = "El candado cede: +130 Soul.";
+        } else {
+          const csC = applyEquipToProtag();
+          lotgState.protag.hpCur = Math.max(1, Math.floor(lotgState.protag.hpCur - csC.hpMax * 0.18));
+          msg = "Gas residual: toses sangre (~18% HP). El cofre queda inútil.";
+        }
+      } else {
+        lotgState.zen += 25;
+        msg = "No tocas el cofre: encuentras monedas sueltas (+25 Zen).";
+      }
+    } else if (roll < 0.84) {
+      const ok = confirm(
+        "Puesto de trueque fantasma\n\n" +
+          "Aceptar: cambias 120 Soul por un consumible aleatorio útil.\n" +
+          "Cancelar: te marchas."
+      );
+      if (ok) {
+        normalizeSoulPointsOnState(lotgState);
+        if (lotgState.soul >= 120) {
+          lotgState.soul -= 120;
+          const pick = Math.random();
+          if (pick < 0.34) {
+            lotgState.inventory.push({
+              type: "heal",
+              name: "Suero de calle 9",
+              healPct: 0.42,
+              desc: "≈42% HP máximo.",
+            });
+            msg = "Intercambio: −120 Soul por suero de calle 9.";
+          } else if (pick < 0.67) {
+            lotgState.inventory.push({ type: "sp", name: "Célula de éter comprimido", spPct: 0.4, desc: "≈40% SP." });
+            msg = "Intercambio: −120 Soul por célula de éter comprimido.";
+          } else {
+            lotgState.inventory.push({
+              type: "buff",
+              name: "Modulador de daño",
+              atkPct: 0.18,
+              turns: 4,
+              desc: "+18% daño durante 4 turnos propios.",
+            });
+            msg = "Intercambio: −120 Soul por modulador de daño.";
+          }
+        } else {
+          msg = "No tienes 120 Soul. El puesto se desvanece.";
+        }
+      } else {
+        msg = "Prefieres conservar tu Soul.";
+      }
+    } else {
+      const ok = confirm(
+        "Conducto de Ether inestable\n\n" +
+          "Aceptar: inyectar al equipo → +14% daño en las próximas 2 batallas.\n" +
+          "Cancelar: sellar el conducto → curas al doctor un 22% del HP máx. ahora."
+      );
+      if (ok) {
+        lotgState.runCombatAtkMult = Math.max(lotgState.runCombatAtkMult || 1, 1.14);
+        lotgState.runCombatAtkFights = (lotgState.runCombatAtkFights || 0) + 2;
+        msg = "Inyección aceptada: buff de daño +14% en las próximas 2 peleas.";
+      } else {
+        const cs2 = applyEquipToProtag();
+        lotgState.protag.hpCur = Math.min(cs2.hpMax, Math.floor(lotgState.protag.hpCur + cs2.hpMax * 0.22));
+        msg = "Conducto sellado: doctor recupera ~22% HP.";
+      }
+    }
+    if (lotgState.floorAdvanceRule === "key" && !lotgState.floorExitKey && Math.random() < 0.44) {
+      lotgState.floorExitKey = true;
+      msg = (msg ? msg + "\n\n" : "") + "Encuentras la llave maestra del sector (puedes usar la salida ⇊ si corresponde).";
+    }
+    if (lotgState.floorAdvanceRule === "relic" && !lotgState.floorRelicFound && Math.random() < 0.44) {
+      lotgState.floorRelicFound = true;
+      msg = (msg ? msg + "\n\n" : "") + "Recuperas la reliquia de registro del piso.";
+    }
+    if (!lotgState.mapCellDone) lotgState.mapCellDone = {};
+    lotgState.mapCellDone[cellKey] = true;
+    return msg;
+  }
+
+  function shuffleArrayLotg(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
+  }
+
+  /** Mapa 5×5 nuevo por piso: posición de salida, combates, tiendas, etc. aleatorias (roguelike). */
+  function randomizeLotgFloorLayout() {
+    if (!lotgState) return;
+    if (!lotgState.mapCellTypes) lotgState.mapCellTypes = {};
+    if (!lotgState.mapCellMeta) lotgState.mapCellMeta = {};
+    const allKeys = [];
+    for (let yy = 0; yy < 5; yy++) {
+      for (let xx = 0; xx < 5; xx++) {
+        allKeys.push(xx + "," + yy);
+      }
+    }
+    const shuffled = shuffleArrayLotg(allKeys);
+    const nonCenter = shuffled.filter((k) => k !== "2,2");
+    lotgState.mapExitCoord = nonCenter[Math.floor(Math.random() * nonCenter.length)];
+    const contentKeys = shuffleArrayLotg(allKeys.filter((k) => k !== lotgState.mapExitCoord));
+    const typesList = [];
+    for (let i = 0; i < 6; i++) typesList.push("enemy");
+    for (let i = 0; i < 8; i++) typesList.push("event");
+    for (let i = 0; i < 4; i++) typesList.push("shop");
+    for (let i = 0; i < 6; i++) typesList.push("rest");
+    const typesShuffled = shuffleArrayLotg(typesList);
+    lotgState.mapCellTypes = {};
+    lotgState.mapCellMeta = {};
+    lotgState.mapBossCellKey = null;
+    lotgState.mapCellTypes[lotgState.mapExitCoord] = "exit";
+    contentKeys.forEach((k, i) => {
+      const t = typesShuffled[i];
+      lotgState.mapCellTypes[k] = t;
+      if (t === "enemy") {
+        lotgState.mapCellMeta[k] = {};
+        if (Math.random() < 0.24) lotgState.mapCellMeta[k].miniboss = true;
+      }
+    });
+    const fl = Number.isFinite(lotgState.floor) ? lotgState.floor : 1;
+    if (fl % 3 === 0) {
+      const enemyKeys = contentKeys.filter((k) => lotgState.mapCellTypes[k] === "enemy");
+      const candidates = enemyKeys.filter((k) => k !== lotgState.mapExitCoord);
+      if (candidates.length) {
+        const bk = candidates[Math.floor(Math.random() * candidates.length)];
+        if (!lotgState.mapCellMeta[bk]) lotgState.mapCellMeta[bk] = {};
+        lotgState.mapCellMeta[bk].boss = true;
+        lotgState.mapCellMeta[bk].miniboss = false;
+        lotgState.mapBossCellKey = bk;
+      }
+    }
+    lotgState.mapFloorForExitCoord = fl;
+  }
+
+  function buildMiniMap() {
+    const el = document.getElementById("lotgMap");
+    if (!el || !lotgState) return;
+    migrateLotgState(lotgState);
+    ensureFloorExitConditions();
+    const posParts = String(lotgState.mapPos || "2,2")
+      .split(",")
+      .map((x) => parseInt(String(x).trim(), 10));
+    const px = Number.isFinite(posParts[0]) ? posParts[0] : 2;
+    const py = Number.isFinite(posParts[1]) ? posParts[1] : 2;
+    el.innerHTML = "";
+    const needNewLayout =
+      lotgState.mapLayoutFloor !== lotgState.floor ||
+      Object.keys(lotgState.mapCellTypes || {}).length === 0;
+    if (needNewLayout) {
+      randomizeLotgFloorLayout();
+      lotgState.mapLayoutFloor = lotgState.floor;
+    }
+    if (!lotgState.mapExitCoord) {
+      const coords = [];
+      for (let yy = 0; yy < 5; yy++) {
+        for (let xx = 0; xx < 5; xx++) {
+          if (xx === 2 && yy === 2) continue;
+          coords.push(xx + "," + yy);
+        }
+      }
+      lotgState.mapExitCoord = coords[Math.floor(Math.random() * coords.length)];
+      if (lotgState.mapCellTypes && !lotgState.mapCellTypes[lotgState.mapExitCoord]) {
+        lotgState.mapCellTypes[lotgState.mapExitCoord] = "exit";
+      }
+    }
+    for (let y = 0; y < 5; y++) {
+      for (let x = 0; x < 5; x++) {
+        const key = x + "," + y;
+        const cell = document.createElement("div");
+        cell.className = "map-cell";
+        const dist = Math.abs(x - px) + Math.abs(y - py);
+        const revealed = lotgState.mapRevealed[key] || dist <= 1;
+        if (revealed) {
+          lotgState.mapRevealed[key] = true;
+          cell.classList.add("revealed");
+          if (!lotgState.mapCellTypes[key]) {
+            lotgState.mapCellTypes[key] = key === lotgState.mapExitCoord ? "exit" : "event";
+          }
+          cell.dataset.type = lotgState.mapCellTypes[key];
+          cell.classList.add(cell.dataset.type);
+          const metaMap = (lotgState.mapCellMeta && lotgState.mapCellMeta[key]) || {};
+          if (cell.dataset.type === "enemy") {
+            if (metaMap.boss) {
+              cell.classList.add("map-enemy-boss");
+              cell.dataset.enemyTier = "boss";
+            } else if (metaMap.miniboss) {
+              cell.classList.add("map-enemy-miniboss");
+              cell.dataset.enemyTier = "miniboss";
+            }
+          }
+          if (lotgState.mapCellDone && lotgState.mapCellDone[key]) cell.classList.add("done");
+          let glyph =
+            cell.dataset.type === "enemy"
+              ? metaMap.boss
+                ? "💀"
+                : "⚔"
+              : cell.dataset.type === "event"
+                ? "?"
+                : cell.dataset.type === "shop"
+                  ? "¤"
+                  : cell.dataset.type === "exit"
+                    ? "⇊"
+                    : "♥";
+          cell.textContent = glyph;
+        } else cell.textContent = "·";
+        if (x === px && y === py) {
+          cell.classList.add("player");
+          cell.textContent = "Tú";
+        }
+        cell.addEventListener("click", () => {
+          if (Math.abs(x - px) + Math.abs(y - py) !== 1) return;
+          const t = lotgState.mapCellTypes[key];
+          const done = lotgState.mapCellDone && lotgState.mapCellDone[key];
+          if (done && t !== "exit") {
+            lotgState.mapPos = key;
+            lotgSave();
+            renderLotgGame();
+            return;
+          }
+          if (t === "enemy") {
+            const meta = (lotgState.mapCellMeta && lotgState.mapCellMeta[key]) || {};
+            if (meta.boss || meta.miniboss) {
+              const ok = confirm(
+                (meta.boss
+                  ? "💀 Jefe de piso — amenaza máxima.\n\n"
+                  : "⚔ Mini-jefe de zona — enemigo reforzado (casilla violeta).\n\n") +
+                  "Aceptar: luchar ahora.\nCancelar: posponer (no te mueves de casilla)."
+              );
+              if (!ok) {
+                lotgSave();
+                renderLotgGame();
+                return;
+              }
+            }
+            lotgState.mapPos = key;
+            lotgState._pendingMapCellKey = key;
+            lotgState._combatIsBoss = !!meta.boss;
+            lotgState._combatIsMiniboss = !!meta.miniboss && !meta.boss;
+            startCombat();
+            return;
+          }
+          lotgState.mapPos = key;
+          if (t === "event") {
+            const msg = runRoguelikeMapEvent(key);
+            if (msg) alert("Evento\n\n" + msg);
+            lotgSave();
+            renderLotgGame();
+          } else if (t === "shop") {
+            openAnomalyShop(key);
+            lotgSave();
+            renderLotgGame();
+          } else if (t === "rest") {
+            const cs2 = applyEquipToProtag();
+            const pct = 0.32;
+            lotgState.protag.hpCur = Math.min(cs2.hpMax, Math.floor(lotgState.protag.hpCur + cs2.hpMax * pct));
+            lotgState.protag.spCur = Math.min(cs2.spMax, Math.floor(lotgState.protag.spCur + cs2.spMax * pct));
+            if (!lotgState.partyVitalsPersist) lotgState.partyVitalsPersist = {};
+            getPartyUnits().forEach((u) => {
+              const st = allyCombatStats(u);
+              let pv = lotgState.partyVitalsPersist[u.uid];
+              if (!pv || typeof pv.hp !== "number" || typeof pv.sp !== "number") {
+                pv = { hp: st.hpMax, sp: st.spMax };
+              }
+              pv.hp = Math.min(st.hpMax, Math.floor(pv.hp + st.hpMax * pct));
+              pv.sp = Math.min(st.spMax, Math.floor(pv.sp + st.spMax * pct));
+              lotgState.partyVitalsPersist[u.uid] = pv;
+            });
+            if (!lotgState.mapCellDone) lotgState.mapCellDone = {};
+            lotgState.mapCellDone[key] = true;
+            alert("Zona de descanso: recuperas ~32% HP y SP (doctor y aliados en el grupo). Sector completado.");
+            lotgSave();
+            renderLotgGame();
+          } else if (t === "exit") {
+            const advance = confirm(
+              "Salida del sector (⇊).\n\nAceptar: intentar bajar al siguiente piso (se cumplen condiciones del piso).\nCancelar: quedarte en este piso; puedes volver a esta casilla cuando quieras."
+            );
+            if (advance) {
+              const rule = lotgState.floorAdvanceRule || "free";
+              if (rule === "boss" && !lotgState.floorBossCleared) {
+                lotgState.mapPos = px + "," + py;
+                alert("El nudo no afloja: derrota al jefe de piso (casilla 💀) antes de avanzar.");
+              } else if (rule === "key" && !lotgState.floorExitKey) {
+                lotgState.mapPos = px + "," + py;
+                alert("La salida está sellada. Explora eventos (?) para hallar la llave del sector.");
+              } else if (rule === "relic" && !lotgState.floorRelicFound) {
+                lotgState.mapPos = px + "," + py;
+                alert("Falta la reliquia de registro. Sigue explorando eventos en el mapa.");
+              } else {
+                lotgState.floor++;
+                lotgState.mapCellTypes = {};
+                lotgState.mapRevealed = {};
+                lotgState.mapCellDone = {};
+                lotgState.mapCellMeta = {};
+                lotgState.mapBossCellKey = null;
+                lotgState.mapPos = "2,2";
+                alert("Avanzas al piso " + lotgState.floor + ". El sector se reconfigura.");
+              }
+            }
+            lotgSave();
+            renderLotgGame();
+          } else renderLotgGame();
+        });
+        el.appendChild(cell);
+      }
+    }
+    const ex = lotgState.mapExitCoord;
+    if (ex && lotgState.mapCellTypes[ex] !== "exit") {
+      const prev = lotgState.mapCellTypes[ex];
+      if (prev === "enemy" && lotgState.mapBossCellKey === ex) {
+        lotgState.mapBossCellKey = null;
+        if (lotgState.mapCellMeta && lotgState.mapCellMeta[ex]) delete lotgState.mapCellMeta[ex].boss;
+      }
+      lotgState.mapCellTypes[ex] = "exit";
+      if (lotgState.mapCellMeta && lotgState.mapCellMeta[ex]) {
+        delete lotgState.mapCellMeta[ex].miniboss;
+        delete lotgState.mapCellMeta[ex].boss;
+      }
+    }
+    const flBoss = lotgState.floor || 1;
+    if (flBoss % 3 === 0) {
+      let bossHere = false;
+      Object.keys(lotgState.mapCellTypes || {}).forEach((k) => {
+        if (lotgState.mapCellTypes[k] !== "enemy") return;
+        const m = lotgState.mapCellMeta && lotgState.mapCellMeta[k];
+        if (m && m.boss) bossHere = true;
+      });
+      if (!bossHere) {
+        outerBoss: for (let y2 = 0; y2 < 5; y2++) {
+          for (let x2 = 0; x2 < 5; x2++) {
+            const k2 = x2 + "," + y2;
+            if (lotgState.mapCellTypes[k2] !== "enemy") continue;
+            if (k2 === lotgState.mapExitCoord) continue;
+            if (!lotgState.mapCellMeta[k2]) lotgState.mapCellMeta[k2] = {};
+            lotgState.mapCellMeta[k2].boss = true;
+            lotgState.mapBossCellKey = k2;
+            break outerBoss;
+          }
+        }
+      }
+    }
+  }
+
+  /* init: catálogo Patimon y shell primero; LOTG aparte para que un fallo allí no rompa el resto */
+  function initApp() {
+    try {
+      buildStatForm();
+      renderSlotFilters();
+      renderEquipGrid();
+    } catch (e) {
+      console.error("[Patimon — catálogo de equipos]", e);
+    }
+    try {
+      setBodyBg();
+      setVol();
+      playGlobalClinic();
+    } catch (e) {
+      console.error("[Música / fondo]", e);
+    }
+    try {
+      renderLotgCreate();
+    } catch (e) {
+      console.error("[Legend of the Gathering — pantalla inicial]", e);
+    }
+  }
+  initApp();
+})();
