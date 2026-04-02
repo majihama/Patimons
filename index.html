@@ -141,6 +141,19 @@
       font-family: inherit;
     }
     .filter-row button.on { border-color: var(--accent); background: rgba(80, 120, 200, 0.25); }
+    .patimon-sync-box {
+      margin: 0 0 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(94, 224, 160, 0.28);
+      background: linear-gradient(135deg, rgba(20, 50, 40, 0.35), rgba(12, 18, 28, 0.75));
+    }
+    .patimon-sync-box code {
+      font-size: 0.85em;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.35);
+    }
     .equip-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1108,6 +1121,16 @@
         <p class="muted" style="margin:0 0 0.75rem">
           Aquí defines el <strong>equipamiento Patimon</strong>: piezas por ranura (Cabeza, Cuerpo, Arma, Accesorio) con stats y textos de set, pensadas para armar builds y roles de combate en tu mesa o narrativa — independientes del minijuego <em>Legend of the Gathering</em>.
         </p>
+        <div class="patimon-sync-box">
+          <p class="muted" style="margin:0 0 0.5rem">
+            <strong>GitHub Pages:</strong> las piezas que crees se guardan en <em>este navegador</em>. Para que <strong>otros visitantes</strong> las vean, descarga el JSON, colócalo en el repo como <code>data/patimon-catalog.json</code> y haz <code>git push</code>. La web carga ese archivo al abrir la página (no hace falta base de datos).
+          </p>
+          <p id="patimonCatalogStatus" class="muted" style="margin:0 0 0.65rem;font-size:0.82rem;line-height:1.45"></p>
+          <div class="btn-row" style="flex-wrap:wrap">
+            <button type="button" class="primary" id="btnExportPatimonJson">Descargar patimon-catalog.json (para subir al repo)</button>
+            <button type="button" class="ghost" id="btnReloadPatimonCatalog">Recargar catálogo desde el servidor</button>
+          </div>
+        </div>
         <div class="filter-row" id="slotFilters"></div>
         <div class="btn-row">
           <button type="button" class="primary" id="btnAddEquip">+ Añadir pieza</button>
