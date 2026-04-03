@@ -20,6 +20,7 @@
     miniboss: ["Music/DungeonLv4.mp3", "music/DungeonLv4.mp3", "music/dungeonlv4.mp3"],
     youthful: ["Music/Youthful.mp3", "music/Youthful.mp3"],
     chill: ["Music/Chill out.mp3", "music/Chill out.mp3", "music/Chill%20out.mp3"],
+    pinkun: ["Music/Pinkun.mp3", "music/Pinkun.mp3", "music/pinkun.mp3"],
     omen: ["Music/Omen.mp3", "music/Omen.mp3"],
   };
   const BG_PAGE = ["Fondo/Fondo.png", "Fondo/fondo.png", "Fondo/fondo.jpg", "Fondo/bg.jpg"];
@@ -607,20 +608,20 @@
     {
       name: "Mizuno Sora",
       img: "Char/Corin.png",
-      rarity: "B",
+      rarity: "A",
       element: "Hielo",
       role: "Soporte",
-      passive: { name: "Humedad anclada", desc: "+5% reducción de daño físico recibido por aliados adyacentes en combate." },
-      skill: { name: "Niebla de registro clínico", sp: 14, cd: 3, dmg: "Debuff: −10% precisión enemiga (3 turnos)", desc: "Aplica Niebla; el siguiente ataque aliado +15% daño." },
+      passive: { name: "Humedad anclada", desc: "+6% reducción de daño físico recibido por aliados en combate." },
+      skill: { name: "Tarot XIV — niebla de hielo", sp: 14, cd: 3, dmg: "Debuff: −10% precisión enemiga (3 turnos)", desc: "Persona-tir: Niebla clínica; el siguiente ataque aliado +15% daño." },
     },
     {
       name: "Tachibana Ken",
       img: "Char/Dekota.png",
-      rarity: "B",
+      rarity: "A",
       element: "Fuego",
       role: "DPS Físico",
-      passive: { name: "Ímpetu de callejón", desc: "+10% daño físico contra enemigos por debajo del 50% HP." },
-      skill: { name: "Combo — derribo cívico", sp: 14, cd: 2, dmg: "2× 95% STG ígneo", desc: "Dos golpes; el segundo +20% si el primero impacta." },
+      passive: { name: "Ímpetu de callejón", desc: "+12% daño físico contra enemigos por debajo del 50% HP." },
+      skill: { name: "Agneyastra — derribo cívico", sp: 14, cd: 2, dmg: "2× 98% STG ígneo", desc: "Ráfaga ígnea; el segundo golpe +22% si el primero impacta." },
     },
     {
       name: "Shirase Mio",
@@ -643,11 +644,11 @@
     {
       name: "Fujita Anna",
       img: "Char/Thoma.png",
-      rarity: "B",
+      rarity: "S",
       element: "Fuego",
       role: "DPS Físico",
-      passive: { name: "Seguro roto", desc: "+5% daño por cada enemigo vivo en la horda (máx. +15%)." },
-      skill: { name: "Disparo sellado — perímetro cero", sp: 16, cd: 3, dmg: "160% STG ígneo", desc: "Ataque en línea; ignora 10% de DEF física." },
+      passive: { name: "Seguro roto", desc: "+6% daño por cada enemigo vivo en la horda (máx. +18%)." },
+      skill: { name: "Rastro de Kafka — perímetro cero", sp: 16, cd: 3, dmg: "168% STG ígneo", desc: "Disparo sellado; ignora 12% de DEF física." },
     },
     {
       name: "Aozora Lin",
@@ -662,9 +663,9 @@
     { name: "Kisaragi Eve", img: "Char/LawlietG.png", rarity: "A", element: "Hielo", role: "DPS Mágico",
       passive: { name: "Cristal de contrato", desc: "+10% MA si hay 2+ enemigos en campo." },
       skill: { name: "Sentencia — subcero urbano", sp: 19, cd: 4, dmg: "195% MA hielo", desc: "Golpe focal; aplica Vulnerabilidad mágica +8% (2 turnos)." } },
-    { name: "Morimoto Vex", img: "Char/Firefly.png", rarity: "S", element: "Neutral", role: "DPS Mágico",
-      passive: { name: "Motor de anomalía", desc: "Cada habilidad aliada usada +2% daño mágico acumulable (máx. 18%)." },
-      skill: { name: "Colapso de fase — calle 7", sp: 22, cd: 5, dmg: "240% MA área", desc: "Daño cuántico masivo; consume 5% HP propio para +15% penetración." } },
+    { name: "Morimoto Vex", img: "Char/Firefly.png", rarity: "SS", element: "Neutral", role: "DPS Mágico",
+      passive: { name: "Motor de anomalía", desc: "Cada habilidad aliada usada +2% daño mágico acumulable (máx. 22%)." },
+      skill: { name: "Stellaron — colapso de fase (calle 7)", sp: 22, cd: 5, dmg: "255% MA área", desc: "Daño cuántico masivo; consume 5% HP propio para +18% penetración." } },
     {
       name: "Ventura Aoi",
       img: "Char/Aventurino.png",
@@ -723,20 +724,20 @@
     {
       name: "Hayasaka Mirei",
       img: "Char/Hayasaka.png",
-      rarity: "B",
+      rarity: "A",
       element: "Trueno",
       role: "DPS Mágico",
-      passive: { name: "Pulsos paralelos", desc: "+7% MA en el primer turno de combate." },
-      skill: { name: "Cableado invertido", sp: 16, cd: 3, dmg: "165% MA trueno", desc: "Encadena al segundo enemigo vivo por 35% del daño." },
+      passive: { name: "Pulsos paralelos", desc: "+9% MA en el primer turno de combate." },
+      skill: { name: "Myriad Celestia — cableado invertido", sp: 16, cd: 3, dmg: "172% MA trueno", desc: "Encadena al segundo enemigo vivo por 38% del daño." },
     },
     {
       name: "Hintake Ren",
       img: "Char/Hintake.png",
-      rarity: "B",
+      rarity: "A",
       element: "Hielo",
       role: "Soporte",
-      passive: { name: "Capa de aguanieve", desc: "+5% reducción de daño ígneo recibido por el grupo." },
-      skill: { name: "Barrera de deshielo", sp: 13, cd: 3, dmg: "Buff: +10% RES mágica (3 turnos)", desc: "Mitiga estallidos elementales; siguiente ataque enemigo −8% si es Fuego." },
+      passive: { name: "Capa de aguanieve", desc: "+7% reducción de daño ígneo recibido por el grupo." },
+      skill: { name: "Marcha del traidor — barrera de deshielo", sp: 13, cd: 3, dmg: "Buff: +12% RES mágica (3 turnos)", desc: "Mitiga estallidos; siguiente ataque enemigo −10% si es Fuego." },
     },
     {
       name: "Hintoki Sou",
@@ -1008,7 +1009,252 @@
     { name: "Mancha de neón persistente", tag: "Distrito sin ley", element: "Fuego" },
     { name: "Archivo mojado del sótano", tag: "Biblioteca sumergida", element: "Hielo" },
     { name: "Vigía de perro mecánico", tag: "Patrulla oxidada", element: "Neutral" },
+    { name: "Semilla de Fragmentum errante", tag: "Coral cuántico", element: "Neutral" },
+    { name: "Ecos de Viento estelar", tag: "Expedición perdida", element: "Trueno" },
+    { name: "Gólem de datos Imaginarios", tag: "Archivo sellado", element: "Neutral" },
+    { name: "Lámpara de Abundancia rota", tag: "Oración estática", element: "Hielo" },
+    { name: "Fagocito de la Nihilidad", tag: "Vacío municipal", element: "Fuego" },
   ];
+
+  /** Habilidades equipables (tienda ◆, gacha habilidades). Máx. 4 por personaje; incluyen activas y pasivas. */
+  const LOTG_BATTLE_SKILLS = [
+    {
+      id: "bs_coral_annih",
+      name: "Lente tiene — aniquilación coralina",
+      rarity: "SSS",
+      desc: "Ola de daño cuántico (inspirada en HSR) usando tu MA contra toda la horda. En combate: 22 SP, enfriamiento 4.",
+      shopSoul: 1050,
+      combat: { kind: "dmg_mag_aoe", sp: 22, cd: 4, coef: 0.96 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_fimbul",
+      name: "Fimbulvetr — confesión helada",
+      rarity: "SS",
+      desc: "Hielo extremo sobre un enemigo; coeficiente ~1,9× MA. 17 SP, CD 3.",
+      shopSoul: 760,
+      combat: { kind: "dmg_mag_1", sp: 17, cd: 3, coef: 1.9 },
+      element: "Hielo",
+    },
+    {
+      id: "bs_blaze_trail",
+      name: "Cicatriz ígnea — core Kafka",
+      rarity: "SS",
+      desc: "Latigazo de 55% MA a todos y DoT ígneo (≈4,5% HP máx. del enemigo, 3 turnos). 18 SP, CD 3.",
+      shopSoul: 740,
+      combat: { kind: "dot_aoe", sp: 18, cd: 3, coef: 0.55, dotTurns: 3, dotHpPct: 0.045 },
+      element: "Fuego",
+    },
+    {
+      id: "bs_sevens_bolt",
+      name: "Recorte celeste — trueno errante",
+      rarity: "S",
+      desc: "Rayo focal; ~1,7× MA a un objetivo. 15 SP, CD 2.",
+      shopSoul: 520,
+      combat: { kind: "dmg_mag_1", sp: 15, cd: 2, coef: 1.7 },
+      element: "Trueno",
+    },
+    {
+      id: "bs_jade_synergy",
+      name: "Sinergia contable — mesa de Jade",
+      rarity: "S",
+      desc: "Refuerza al equipo: +10% daño durante 4 turnos propios del doctor. 14 SP, CD 4.",
+      shopSoul: 480,
+      combat: { kind: "buff_team", sp: 14, cd: 4, buffPct: 0.1, buffTurns: 4 },
+    },
+    {
+      id: "bs_natasha_song",
+      name: "Balada de sector 9",
+      rarity: "S",
+      desc: "Sanación en grupo (~18% HP máx. por aliado). 16 SP, CD 3.",
+      shopSoul: 490,
+      combat: { kind: "heal_all", sp: 16, cd: 3, healPct: 0.18 },
+    },
+    {
+      id: "bs_muelsyse_sap",
+      name: "Savia Rhinelab — transmutación",
+      rarity: "S",
+      desc: "Golpe ~0,9× MA al principal y DoT (≈4% HP máx., 3 turnos) al mismo. 19 SP, CD 4.",
+      shopSoul: 560,
+      combat: { kind: "dot_main", sp: 19, cd: 4, coef: 0.9, dotTurns: 3, dotHpPct: 0.04 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_skull_crusher",
+      name: "Marauder — cráneo estrella",
+      rarity: "A",
+      desc: "Daño físico brutal a un enemigo (~1,65× STG del portador). 12 SP, CD 2.",
+      shopSoul: 360,
+      combat: { kind: "dmg_phys_1", sp: 12, cd: 2, coef: 1.65 },
+    },
+    {
+      id: "bs_p5_eiga",
+      name: "Eiga — sombra Neo-Feathermen",
+      rarity: "A",
+      desc: "Golpe mágico oscuro ~1,4× MA con sabor Persona. 14 SP, CD 3.",
+      shopSoul: 340,
+      combat: { kind: "dmg_mag_1", sp: 14, cd: 3, coef: 1.42 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_lushen_clear",
+      name: "Lushen EX — despertar limpio",
+      rarity: "A",
+      desc: "Limpia en un aliado o en ti: silencio, sueño, parálisis, quemadura y congelación. 10 SP, CD 2.",
+      shopSoul: 310,
+      combat: { kind: "cleanse_1", sp: 10, cd: 2 },
+    },
+    {
+      id: "bs_tempest_wind",
+      name: "Tornado imaginario",
+      rarity: "A",
+      desc: "Viento cortante; ~0,72× MA a cada enemigo. 13 SP, CD 2.",
+      shopSoul: 330,
+      combat: { kind: "dmg_mag_aoe", sp: 13, cd: 2, coef: 0.72 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_mika_chime",
+      name: "Campanilla Mika — eco sagrado",
+      rarity: "B",
+      desc: "Cura intensiva a un aliado o a ti (~22% HP máx.). 11 SP, CD 2.",
+      shopSoul: 220,
+      combat: { kind: "heal_1", sp: 11, cd: 2, healPct: 0.22 },
+    },
+    {
+      id: "bs_trace_res",
+      name: "Rastro de RES — guardián",
+      rarity: "B",
+      desc: "Pasiva: +4% HP máx. y ligera reducción de daño recibido (~2%). No gasta turno ni SP.",
+      shopSoul: 260,
+      combat: { kind: "passive", sp: 0, cd: 0 },
+      passiveBonus: { hpPct: 0.04, defFlat: 0.02 },
+    },
+    {
+      id: "bs_ether_wake",
+      name: "Despertar de éter",
+      rarity: "B",
+      desc: "Pasiva: +6% daño mágico del portador.",
+      shopSoul: 240,
+      combat: { kind: "passive", sp: 0, cd: 0 },
+      passiveBonus: { magDmgPct: 0.06 },
+    },
+    {
+      id: "bs_yukari_snipe",
+      name: "Full Moon — snipe dimensional",
+      rarity: "A",
+      desc: "Disparo preciso; ~1,55× MA ignorando parte de la mitigación narrativa. 13 SP, CD 3.",
+      shopSoul: 350,
+      combat: { kind: "dmg_mag_1", sp: 13, cd: 3, coef: 1.55 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_clamp_silence",
+      name: "Clamp urbano — silencio administrativo",
+      rarity: "A",
+      desc: "Golpe mágico leve y silencio en un enemigo (3 rondas enemigas: no usa técnicas de estado). 12 SP, CD 3.",
+      shopSoul: 320,
+      combat: { kind: "status_enemy_1", sp: 12, cd: 3, ailment: "silence", duration: 3, coef: 0.42 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_hypnos_tick",
+      name: "Latido Hipnos — sueño de contador",
+      rarity: "A",
+      desc: "Sueño 3 rondas enemigas en un objetivo; el enemigo pierde turnos. 14 SP, CD 3.",
+      shopSoul: 335,
+      combat: { kind: "status_enemy_1", sp: 14, cd: 3, ailment: "sleep", duration: 3, coef: 0.38 },
+    },
+    {
+      id: "bs_static_snare",
+      name: "Trampa estática — parálisis de cable",
+      rarity: "S",
+      desc: "Parálisis 3 rondas: fallos frecuentes al actuar. ~0,45× MA. 15 SP, CD 3.",
+      shopSoul: 470,
+      combat: { kind: "status_enemy_1", sp: 15, cd: 3, ailment: "para", duration: 3, coef: 0.45 },
+      element: "Trueno",
+    },
+    {
+      id: "bs_rime_contract",
+      name: "Contrato escarcha — congelación municipal",
+      rarity: "S",
+      desc: "Congelación 3 rondas: el enemigo falla o se resbala al golpear. 16 SP, CD 3.",
+      shopSoul: 485,
+      combat: { kind: "status_enemy_1", sp: 16, cd: 3, ailment: "freeze", duration: 3, coef: 0.48 },
+      element: "Hielo",
+    },
+    {
+      id: "bs_cinder_mark",
+      name: "Marca de ceniza — quemadura breve",
+      rarity: "A",
+      desc: "Quemadura 3 rondas (DoT cada oleada enemiga) más impacto ígneo. 13 SP, CD 3.",
+      shopSoul: 328,
+      combat: { kind: "status_enemy_1", sp: 13, cd: 3, ailment: "burn", duration: 3, coef: 0.44 },
+      element: "Fuego",
+    },
+    {
+      id: "bs_status_volley",
+      name: "Salva de protocolos — área",
+      rarity: "SS",
+      desc: "A cada enemigo: quemadura o parálisis (3 rondas), al azar; daño mágico moderado. 20 SP, CD 4.",
+      shopSoul: 720,
+      combat: { kind: "status_enemy_aoe", sp: 20, cd: 4, coef: 0.35, duration: 3 },
+      element: "Neutral",
+    },
+  ];
+
+  function getLotgBattleSkill(id) {
+    if (!id) return null;
+    return LOTG_BATTLE_SKILLS.find((x) => x && x.id === id) || null;
+  }
+
+  function lotgAbilityGachaPool() {
+    return LOTG_BATTLE_SKILLS.filter((x) => x && ["A", "S", "SS", "SSS"].includes(x.rarity));
+  }
+
+  function pickRandomAbilityFromGacha() {
+    const pool = lotgAbilityGachaPool();
+    if (!pool.length) return null;
+    const r = Math.random() * 100;
+    let tier;
+    if (r < 0.35) tier = "SSS";
+    else if (r < 2.2) tier = "SS";
+    else if (r < 12) tier = "S";
+    else tier = "A";
+    const sub = pool.filter((x) => x.rarity === tier);
+    const pickFrom = sub.length ? sub : pool;
+    return pickFrom[Math.floor(Math.random() * pickFrom.length)];
+  }
+
+  function sumLotgEquippedPassivesForUnit(u) {
+    const b = { hpPct: 0, magDmgPct: 0, physDmgPct: 0, defFlat: 0 };
+    const ids = (u ? u.equippedSkills : null) || [];
+    ids.slice(0, 4).forEach((id) => {
+      const sk = getLotgBattleSkill(id);
+      if (sk && sk.combat && sk.combat.kind === "passive" && sk.passiveBonus) {
+        b.hpPct += sk.passiveBonus.hpPct || 0;
+        b.magDmgPct += sk.passiveBonus.magDmgPct || 0;
+        b.physDmgPct += sk.passiveBonus.physDmgPct || 0;
+        b.defFlat += sk.passiveBonus.defFlat || 0;
+      }
+    });
+    return b;
+  }
+
+  function sumLotgEquippedPassivesProtag() {
+    const b = { hpPct: 0, magDmgPct: 0, physDmgPct: 0, defFlat: 0 };
+    const ids = (lotgState && lotgState.equippedSkillsProtag) || [];
+    ids.slice(0, 4).forEach((id) => {
+      const sk = getLotgBattleSkill(id);
+      if (sk && sk.combat && sk.combat.kind === "passive" && sk.passiveBonus) {
+        b.hpPct += sk.passiveBonus.hpPct || 0;
+        b.magDmgPct += sk.passiveBonus.magDmgPct || 0;
+        b.physDmgPct += sk.passiveBonus.physDmgPct || 0;
+        b.defFlat += sk.passiveBonus.defFlat || 0;
+      }
+    });
+    return b;
+  }
 
   let filterSlot = "all";
   let lotgState = null;
@@ -1025,6 +1271,156 @@
 
   function anyEnemyAlive() {
     return combatEnemies.some((e) => e && e.hp > 0);
+  }
+
+  const LOTG_AILMENT_KEYS = ["silence", "sleep", "burn", "freeze", "para"];
+  const LOTG_AILMENT_LABELS = {
+    silence: "Silencio",
+    sleep: "Sueño",
+    burn: "Quemadura",
+    freeze: "Congelación",
+    para: "Parálisis",
+  };
+  const LOTG_ENEMY_STATUS_BY_ELEMENT = {
+    Fuego: ["burn", "burn", "silence", "para"],
+    Hielo: ["freeze", "freeze", "sleep", "silence"],
+    Trueno: ["para", "para", "silence", "burn"],
+    Neutral: ["silence", "sleep", "para", "freeze", "burn"],
+    Imaginario: ["sleep", "silence", "para"],
+  };
+
+  function emptyAilments() {
+    return { silence: 0, sleep: 0, burn: 0, freeze: 0, para: 0 };
+  }
+
+  function mergeAilments(obj) {
+    const z = emptyAilments();
+    if (!obj || typeof obj !== "object") return z;
+    LOTG_AILMENT_KEYS.forEach((k) => {
+      const n = Math.max(0, Math.floor(Number(obj[k]) || 0));
+      z[k] = n;
+    });
+    return z;
+  }
+
+  function ensureEnemyAilments(en) {
+    if (!en) return emptyAilments();
+    en.ailments = mergeAilments(en.ailments);
+    return en.ailments;
+  }
+
+  function applyAilmentToTargetParty(tk, key, turns) {
+    if (!lotgState) return;
+    const t = Math.max(1, Math.min(9, turns || 3));
+    const k = key && LOTG_AILMENT_KEYS.includes(key) ? key : "burn";
+    if (tk === "protag") {
+      lotgState.protagAilments = mergeAilments(lotgState.protagAilments);
+      lotgState.protagAilments[k] = Math.max(lotgState.protagAilments[k] || 0, t);
+      return;
+    }
+    const v = lotgState.combatAllyVitals && lotgState.combatAllyVitals[tk];
+    if (!v) return;
+    v.ailments = mergeAilments(v.ailments);
+    v.ailments[k] = Math.max(v.ailments[k] || 0, t);
+  }
+
+  function applyAilmentToEnemy(en, key, turns) {
+    if (!en || en.hp <= 0) return;
+    const a = ensureEnemyAilments(en);
+    const k = key && LOTG_AILMENT_KEYS.includes(key) ? key : "silence";
+    const t = Math.max(1, Math.min(9, turns || 3));
+    a[k] = Math.max(a[k] || 0, t);
+  }
+
+  function allyFreezeDamageMult(vitals) {
+    if (!vitals || !vitals.ailments) return 1;
+    return (vitals.ailments.freeze || 0) > 0 ? 0.78 : 1;
+  }
+
+  function protagFreezeDamageMult() {
+    const a = lotgState && lotgState.protagAilments ? mergeAilments(lotgState.protagAilments) : emptyAilments();
+    return a.freeze > 0 ? 0.78 : 1;
+  }
+
+  function formatAilmentsShort(a) {
+    const z = mergeAilments(a);
+    const parts = LOTG_AILMENT_KEYS.filter((k) => z[k] > 0).map((k) => LOTG_AILMENT_LABELS[k] + " ×" + z[k]);
+    return parts.length ? parts.join(" · ") : "";
+  }
+
+  function lotgPartyBurnTick(logLine) {
+    if (!lotgState || !inLotgCombat()) return;
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const pa = mergeAilments(lotgState.protagAilments);
+    if (pa.burn > 0 && p.hpCur > 0) {
+      const d = Math.max(1, Math.floor(cs.hpMax * 0.038));
+      p.hpCur = Math.max(0, p.hpCur - d);
+      logLine("Quemadura → " + p.name + ": −" + d + ".");
+    }
+    getPartyUnits().forEach((u) => {
+      const v = lotgState.combatAllyVitals && lotgState.combatAllyVitals[u.uid];
+      if (!v || v.hp <= 0) return;
+      const ax = mergeAilments(v.ailments);
+      if (ax.burn > 0) {
+        const am = allyCombatStats(u);
+        const d = Math.max(1, Math.floor(am.hpMax * 0.038));
+        v.hp = Math.max(0, v.hp - d);
+        logLine("Quemadura → " + u.name + ": −" + d + ".");
+      }
+    });
+    combatEnemies.forEach((en) => {
+      if (!en || en.hp <= 0) return;
+      const ax = mergeAilments(en.ailments);
+      if (ax.burn > 0) {
+        const d = Math.max(1, Math.floor(en.hpMax * 0.034));
+        en.hp -= d;
+        logLine("Quemadura → " + en.name + ": −" + d + ".");
+      }
+    });
+  }
+
+  function lotgDecrementAllAilmentTurns() {
+    if (!lotgState) return;
+    const dec = (obj) => {
+      if (!obj) return;
+      LOTG_AILMENT_KEYS.forEach((k) => {
+        if ((obj[k] || 0) > 0) obj[k] = (obj[k] || 0) - 1;
+      });
+    };
+    if (lotgState.protagAilments) dec(lotgState.protagAilments);
+    getPartyUnits().forEach((u) => {
+      const v = lotgState.combatAllyVitals && lotgState.combatAllyVitals[u.uid];
+      if (v && v.ailments) dec(v.ailments);
+    });
+    combatEnemies.forEach((en) => {
+      if (en && en.ailments) dec(en.ailments);
+    });
+  }
+
+  function pickEnemyStatusAilment(en) {
+    const el = en.element || "Neutral";
+    const pool = LOTG_ENEMY_STATUS_BY_ELEMENT[el] || LOTG_ENEMY_STATUS_BY_ELEMENT.Neutral;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function protagBlockedBySleepPara(action) {
+    const pa = mergeAilments(lotgState && lotgState.protagAilments);
+    if (action === "flee") return null;
+    if ((pa.sleep || 0) > 0) {
+      return "Sueño: no podés atacar ni usar técnicas del doctor; los objetos siguen disponibles o podés huir.";
+    }
+    const heavy = action === "atk" || action === "skill" || (typeof action === "string" && action.indexOf("lotgextra:") === 0);
+    if (!heavy) return null;
+    if ((pa.para || 0) > 0 && Math.random() < 0.36) return "¡Parálisis! El cuerpo no responde y el turno pasa a los aliados.";
+    return null;
+  }
+
+  function allyBlockedByPara(vitals, kind) {
+    if (kind === "pass") return null;
+    const ax = mergeAilments(vitals && vitals.ailments);
+    if ((ax.para || 0) > 0 && Math.random() < 0.36) return "Parálisis: no actúa a tiempo.";
+    return null;
   }
 
   function normalizeLotgElement(el) {
@@ -1226,6 +1622,13 @@
       if (it.atkPct == null) it.atkPct = 0.1;
       if (it.turns == null) it.turns = 4;
       if (!it.desc) it.desc = "+" + Math.round(it.atkPct * 100) + "% daño temporal durante varios turnos propios.";
+    } else if (it.type === "cleanse") {
+      if (!it.desc)
+        it.desc = "Elimina silencio, sueño, parálisis, quemadura y congelación en el objetivo.";
+    } else if (it.type === "stat") {
+      if (it.statBuffPct == null) it.statBuffPct = 0.08;
+      if (it.turns == null) it.turns = 5;
+      if (!it.desc) it.desc = "Aumenta temporalmente el daño infligido (~+" + Math.round((it.statBuffPct || 0.08) * 100) + "%) varios combates.";
     }
   }
 
@@ -1246,6 +1649,9 @@
     if (s.mapBossCellKey != null && typeof s.mapBossCellKey !== "string") s.mapBossCellKey = null;
     if (typeof s.mapFloorForExitCoord !== "number" || !Number.isFinite(s.mapFloorForExitCoord)) s.mapFloorForExitCoord = -1;
     if (!Array.isArray(s.shopPurchaseLog)) s.shopPurchaseLog = [];
+    if (s.stagingAllyItemBuff != null && (typeof s.stagingAllyItemBuff !== "object" || !s.stagingAllyItemBuff.uid)) {
+      s.stagingAllyItemBuff = null;
+    }
     if (typeof s.runCombatAtkMult !== "number" || !Number.isFinite(s.runCombatAtkMult)) s.runCombatAtkMult = 1;
     if (typeof s.runCombatAtkFights !== "number" || !Number.isFinite(s.runCombatAtkFights)) s.runCombatAtkFights = 0;
     if (typeof s.mapPos !== "string" || !/^\s*\d+\s*,\s*\d+\s*$/.test(s.mapPos)) s.mapPos = "2,2";
@@ -1273,6 +1679,9 @@
           name: "Trazado Aónico — Grúa clínica",
           desc: "Daño cuántico (MA×1.35). Si hay horda, el daño se reparte con ligera eficiencia de área.",
         };
+      }
+      if (!s.protagAilments || typeof s.protagAilments !== "object") {
+        s.protagAilments = { silence: 0, sleep: 0, burn: 0, freeze: 0, para: 0 };
       }
     }
     if (!s.equipSlots || typeof s.equipSlots !== "object") s.equipSlots = {};
@@ -1335,6 +1744,18 @@
     if (s.mapLayoutFloor == null && Object.keys(s.mapCellTypes || {}).length > 0) {
       s.mapLayoutFloor = s.floor || 1;
     }
+    if (!Array.isArray(s.ownedSkillIds)) s.ownedSkillIds = [];
+    if (!Array.isArray(s.equippedSkillsProtag)) s.equippedSkillsProtag = [];
+    s.equippedSkillsProtag = s.equippedSkillsProtag.filter((id) => typeof id === "string").slice(0, 4);
+    if (!s.socialLinks || typeof s.socialLinks !== "object") s.socialLinks = {};
+    if (!Array.isArray(s.activeSideQuests)) s.activeSideQuests = [];
+    if (!Array.isArray(s.completedQuestIds)) s.completedQuestIds = [];
+    if (typeof s.shopSoulPurchases !== "number" || !Number.isFinite(s.shopSoulPurchases)) s.shopSoulPurchases = 0;
+    if (!s.giftInventory || typeof s.giftInventory !== "object") s.giftInventory = {};
+    (s.roster || []).forEach((u) => {
+      if (!Array.isArray(u.equippedSkills)) u.equippedSkills = [];
+      u.equippedSkills = u.equippedSkills.filter((id) => typeof id === "string").slice(0, 4);
+    });
   }
 
   /** Reglas de salida de piso (jefe cada 3 pisos, llave, reliquia o libre). */
@@ -1877,6 +2298,25 @@
     return s;
   }
 
+  /** Bonus extra al ATK de combate si hay arma equipada (las stats del arma ya suman al STG/DX/MA). */
+  function equipWeaponDamageMultiplier(slots) {
+    const w = slots && slots.Arma;
+    if (!w) return 1;
+    const fp = w.forgePlus != null ? Math.min(10, Math.max(0, Math.floor(Number(w.forgePlus) || 0))) : 0;
+    const forgeMul = fp > 0 ? 1 + fp * 0.035 : 1;
+    if (!w.bonus) return forgeMul;
+    const b = w.bonus;
+    const n = (Number(b.STG) || 0) + (Number(b.DX) || 0) + (Number(b.MA) || 0);
+    let m = 1.12 + n * 0.014;
+    if (w.qual === "S" || w.qual === "SS" || w.qual === "SSS") m += 0.055;
+    return Math.min(1.62, Math.min(1.45, m) * forgeMul);
+  }
+
+  function allyConsumableBuffMult(vitals) {
+    if (!vitals || !vitals.consumableBuffTurns || vitals.consumableBuffTurns <= 0) return 1;
+    return vitals.consumableBuffMult > 0 ? vitals.consumableBuffMult : 1;
+  }
+
   function mitigationPhysFromStats(st, lvMult) {
     const m = lvMult || 1;
     return Math.min(
@@ -1958,14 +2398,14 @@
    * físico ≈ atkP × mult × variación; mágico ≈ atkM × mult × variación (ligeramente más alto en coef).
    */
   function lotgProtagPhysicalRaw(cs, atkMult, buffMult) {
-    const m = (atkMult || 1) * (buffMult || 1);
-    return cs.atkP * m * (0.88 + Math.random() * 0.26);
+    const m = (atkMult || 1) * (buffMult || 1) * 1.07;
+    return cs.atkP * m * (0.94 + Math.random() * 0.3);
   }
 
   function lotgProtagMagicalRaw(cs, atkMult, buffMult, skillCoef) {
     const c = skillCoef != null ? skillCoef : 1.35;
-    const m = (atkMult || 1) * (buffMult || 1);
-    return cs.atkM * c * m * (1.02 + Math.random() * 0.28);
+    const m = (atkMult || 1) * (buffMult || 1) * 1.07;
+    return cs.atkM * c * m * (1.08 + Math.random() * 0.32);
   }
 
   function rollEnemyAttackDamage(enemy, target) {
@@ -2021,13 +2461,22 @@
     const baseAtkM = 5 + (st.MA || 0) * 2.35 + (st.SP || 0) * 0.38;
     const baseDef = 3 + (st.VI || 0) + (st.EN || 0) * 0.75 + (st.DX || 0) * 0.25;
     const rareAmp =
-      u.rarity === "SSS" ? 1.09 : u.rarity === "SS" ? 1.065 : u.rarity === "S" ? 1.048 : u.rarity === "A" ? 1.032 : 1.018;
+      u.rarity === "SSS" ? 1.1 : u.rarity === "SS" ? 1.078 : u.rarity === "S" ? 1.058 : u.rarity === "A" ? 1.04 : 1.025;
+    const wpn = equipWeaponDamageMultiplier(u.equipSlots || {});
+    const pb = sumLotgEquippedPassivesForUnit(u);
+    const sl = (lotgState && lotgState.socialLinks && lotgState.socialLinks[u.uid]) || {};
+    const linkLv = Math.min(10, Math.max(0, Math.floor(Number(sl.level) || 0)));
+    const linkAmp = sl.partner ? 2 : 1 + linkLv * 0.015;
+    const pMag = 1 + (pb.magDmgPct || 0);
+    const pPhys = 1 + (pb.physDmgPct || 0);
+    const pHp = 1 + (pb.hpPct || 0);
+    const pDef = 1 + (pb.defFlat || 0);
     return {
-      hpMax: Math.floor(baseHp * mult * mrg * rareAmp),
-      spMax: Math.floor(baseSp * mult * mrg * rareAmp),
-      atkP: Math.floor(baseAtkP * mult * mrg * rareAmp),
-      atkM: Math.floor(baseAtkM * mult * mrg * rareAmp),
-      def: Math.floor(baseDef * mult * mrg * rareAmp),
+      hpMax: Math.floor(baseHp * mult * mrg * rareAmp * linkAmp * pHp),
+      spMax: Math.floor(baseSp * mult * mrg * rareAmp * linkAmp),
+      atkP: Math.floor(baseAtkP * mult * mrg * rareAmp * linkAmp * wpn * pPhys),
+      atkM: Math.floor(baseAtkM * mult * mrg * rareAmp * linkAmp * wpn * pMag),
+      def: Math.floor(baseDef * mult * mrg * rareAmp * linkAmp * pDef),
     };
   }
 
@@ -2047,9 +2496,9 @@
   }
 
   function computeAllyDamage(u, e, extraMult) {
-    const em = extraMult || 1;
+    const em = (extraMult || 1) * 1.06;
     const st = allyCombatStats(u);
-    const raw = st.atkP * (0.9 + Math.random() * 0.26) * 0.98 * em;
+    const raw = st.atkP * (0.96 + Math.random() * 0.28) * 1.1 * em;
     let dmg = damageToEnemyPhysical(raw, e);
     dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", e.element || "Neutral"));
     return Math.max(1, dmg);
@@ -2061,7 +2510,7 @@
     const miniboss = !!extra.miniboss;
     const t = ENEMY_TEMPLATES[(floor + Math.floor(Math.random() * 3)) % ENEMY_TEMPLATES.length];
     const streak = Math.max(0, (lotgState && lotgState.combatsCleared) || 0);
-    const danger = 1 + floor * 0.14 + streak * 0.04;
+    const danger = (1 + floor * 0.105 + streak * 0.034) * (boss || miniboss ? 1 : 0.94);
     const level = Math.max(
       1,
       1 + Math.floor(floor * 0.72 + streak * 0.14 + (boss ? 4 : miniboss ? 3 : 0))
@@ -2107,6 +2556,8 @@
       hp: hpMax,
       spMax,
       spCur: spMax,
+      ailments: emptyAilments(),
+      statusSkillInternalCd: 0,
     };
   }
 
@@ -2278,7 +2729,9 @@
       return promos[Math.floor(Math.random() * promos.length)];
     }
     const pool = GACHA_UNITS.filter((u) => !u.promo);
-    const weights = pool.map((u) => (u.rarity === "S" ? 5 : u.rarity === "A" ? 18 : 42));
+    const weights = pool.map((u) =>
+      u.rarity === "SS" ? 3 : u.rarity === "S" ? 7 : u.rarity === "A" ? 20 : 38
+    );
     let r = Math.random() * weights.reduce((a, b) => a + b, 0);
     for (let i = 0; i < pool.length; i++) {
       r -= weights[i];
@@ -2328,19 +2781,19 @@
     let extraPool;
     if (rarity === "SSS") {
       minEach = 4;
-      extraPool = 62;
+      extraPool = 70;
     } else if (rarity === "SS") {
       minEach = 3;
-      extraPool = 54;
+      extraPool = 60;
     } else if (rarity === "S") {
       minEach = 3;
-      extraPool = 46;
+      extraPool = 52;
     } else if (rarity === "A") {
       minEach = 2;
-      extraPool = 36;
+      extraPool = 42;
     } else if (rarity === "B") {
       minEach = 2;
-      extraPool = 30;
+      extraPool = 34;
     } else {
       minEach = 2;
       extraPool = 24;
@@ -2584,6 +3037,13 @@
           combatBuff: { atkMult: 1, turns: 0 },
           partyVitalsPersist: {},
           mapLayoutFloor: null,
+          ownedSkillIds: [],
+          equippedSkillsProtag: [],
+          socialLinks: {},
+          activeSideQuests: [],
+          completedQuestIds: [],
+          shopSoulPurchases: 0,
+          giftInventory: {},
         };
         const cs = protagCombatStats(lotgState.protag);
         lotgState.protag.hpCur = cs.hpMax;
@@ -2615,12 +3075,18 @@
     const merged = mergeStatsWithEquipSlots(p.stats || {}, lotgState.equipSlots || {});
     const base = protagCombatStats({ ...p, stats: merged });
     const ab = allyBonusFromParty();
+    const wpn = equipWeaponDamageMultiplier(lotgState.equipSlots || {});
+    const pb = sumLotgEquippedPassivesProtag();
+    const hpM = 1 + ab.hp + (pb.hpPct || 0);
+    const atkM1 = (1 + ab.atk) * wpn * (1 + (pb.physDmgPct || 0));
+    const atkM2 = (1 + ab.atk) * wpn * (1 + (pb.magDmgPct || 0));
+    const defM = (1 + ab.def) * (1 + (pb.defFlat || 0));
     return {
-      hpMax: Math.floor(base.hpMax * (1 + ab.hp)),
-      spMax: Math.floor(base.spMax * (1 + ab.hp * 0.12)),
-      atkP: Math.floor(base.atkP * (1 + ab.atk)),
-      atkM: Math.floor(base.atkM * (1 + ab.atk)),
-      def: Math.floor(base.def * (1 + ab.def)),
+      hpMax: Math.floor(base.hpMax * hpM),
+      spMax: Math.floor(base.spMax * (1 + ab.hp * 0.12 + (pb.hpPct || 0) * 0.5)),
+      atkP: Math.floor(base.atkP * atkM1),
+      atkM: Math.floor(base.atkM * atkM2),
+      def: Math.floor(base.def * defM),
       agi: base.agi,
     };
   }
@@ -2848,51 +3314,351 @@
     if (lotgState.shopPurchaseLog.length > 40) lotgState.shopPurchaseLog.length = 40;
   }
 
-  function openAnomalyShop(mapCellKey) {
+  const LOTG_SIDE_QUEST_TEMPLATES = [
+    {
+      id: "sq_kill6",
+      title: "Cazar anomalías menores",
+      desc: "Derrota a 6 enemigos en combates del mapa (acumulativo).",
+      kind: "kills",
+      need: 6,
+      reward: { zen: 280, soul: 55 },
+    },
+    {
+      id: "sq_kill12",
+      title: "Limpieza profunda del sector",
+      desc: "Elimina 12 enemigos en total en esta run.",
+      kind: "kills",
+      need: 12,
+      reward: { zen: 420, soul: 120 },
+    },
+    {
+      id: "sq_floor5",
+      title: "Reconocimiento inferior",
+      desc: "Alcanza el piso 5 o superior.",
+      kind: "floor",
+      need: 5,
+      reward: { zen: 350, soul: 70 },
+    },
+    {
+      id: "sq_boss1",
+      title: "Prueba de valor",
+      desc: "Derrota a 1 jefe de piso (casilla 💀).",
+      kind: "boss",
+      need: 1,
+      reward: { zen: 500, soul: 150 },
+    },
+  ];
+
+  const LOTG_GIFT_CATALOG = [
+    { id: "gf_choco", name: "Caja de chocolates del nudo", tags: ["sweet", "cute"], price: 120 },
+    { id: "gf_book", name: "Novela de ciencia-ficción usada", tags: ["calm", "smart"], price: 95 },
+    { id: "gf_flower", name: "Ramo de flores de neón", tags: ["romantic", "cute"], price: 140 },
+    { id: "gf_game", name: "Cartucho retro importado", tags: ["playful", "smart"], price: 200 },
+    { id: "gf_tea", name: "Té medicinal premium", tags: ["calm", "sweet"], price: 110 },
+    { id: "gf_chain", name: "Colgante de cable pulido", tags: ["cool", "edgy"], price: 165 },
+  ];
+
+  function runQuestNpcCell(cellKey) {
+    if (!lotgState) return "";
+    migrateLotgState(lotgState);
+    const active = lotgState.activeSideQuests || [];
+    const taken = new Set(active.map((q) => q.tid));
+    const pool = LOTG_SIDE_QUEST_TEMPLATES.filter((t) => !taken.has(t.id));
+    if (!pool.length) {
+      lotgState.mapCellDone[cellKey] = true;
+      return "El informante ya no tiene encargos nuevos por ahora. Vuelve en otro piso.";
+    }
+    const t = pool[Math.floor(Math.random() * pool.length)];
+    const ok = confirm(
+      "NPC del sector — misión secundaria\n\n«" +
+        t.title +
+        "»\n\n" +
+        t.desc +
+        "\n\nRecompensa aproximada: Zen y Soul Points.\n\n¿Aceptas?"
+    );
+    if (!ok) return "Prefieres no comprometerte. La casilla queda sin completar; puedes volver.";
+    active.push({ tid: t.id, title: t.title, kind: t.kind, need: t.need, prog: 0, reward: t.reward });
+    lotgState.activeSideQuests = active;
+    lotgState.mapCellDone[cellKey] = true;
+    lotgSave();
+    return "Misión aceptada. Abre «Vínculos y misiones» en el menú superior para ver el progreso y entregarla al completarla.";
+  }
+
+  function lotgRollGiftShopStock() {
+    const a = LOTG_GIFT_CATALOG.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a.slice(0, 4);
+  }
+
+  function lotgRollSkillShopOffer() {
+    const a = LOTG_BATTLE_SKILLS.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a.slice(0, 4);
+  }
+
+  function buildRotatingItemShopStock() {
+    const roll = Date.now();
+    const healPool = [
+      { healPct: 0.32, price: 155, name: "Spray coagulante HIA", desc: "≈32% HP máx. en combate o mapa." },
+      { healPct: 0.42, price: 205, name: "Kit médico de campo (HIA)", desc: "≈42% HP máx." },
+      { healPct: 0.52, price: 268, name: "Bolsa de suero de calle 12", desc: "≈52% HP máx." },
+    ];
+    const spPool = [
+      { spPct: 0.3, price: 148, name: "Célula de éter (débil)", desc: "≈30% SP máx." },
+      { spPct: 0.42, price: 198, name: "Célula de éter comprimido", desc: "≈42% SP máx." },
+      { spPct: 0.55, price: 255, name: "Ampolla de maná urbano", desc: "≈55% SP máx." },
+    ];
+    const pick = (arr, n) => {
+      const x = arr.slice();
+      for (let i = x.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = x[i];
+        x[i] = x[j];
+        x[j] = t;
+      }
+      return x.slice(0, n);
+    };
+    const stock = [];
+    pick(healPool, 2).forEach((h, i) => {
+      stock.push({
+        id: "h-" + roll + "-" + i,
+        name: h.name,
+        detail: h.desc,
+        price: h.price,
+        heal: true,
+        healPct: h.healPct,
+        invName: h.name,
+      });
+    });
+    pick(spPool, 2).forEach((h, i) => {
+      stock.push({
+        id: "s-" + roll + "-" + i,
+        name: h.name,
+        detail: h.desc,
+        price: h.price,
+        spItem: true,
+        spPct: h.spPct,
+        invName: h.name,
+      });
+    });
+    const buffRoll = Math.random();
+    stock.push({
+      id: "b-" + roll,
+      name: buffRoll < 0.5 ? "Inyector de Ether inestable" : "Modulador de daño Mk.II",
+      detail: buffRoll < 0.5 ? "+12% daño, 6 turnos propios" : "+16% daño, 4 turnos propios",
+      price: buffRoll < 0.5 ? 238 : 265,
+      buffConsumable: true,
+      atkPct: buffRoll < 0.5 ? 0.12 : 0.16,
+      turns: buffRoll < 0.5 ? 6 : 4,
+    });
+    stock.push({
+      id: "c-" + roll,
+      name: "Neutralizador de estados (lote)",
+      detail: "Cura silencio, sueño, parálisis, quemadura y congelación en combate.",
+      price: 228,
+      cleanseItem: true,
+    });
+    stock.push({
+      id: "st-" + roll,
+      name: "Tónico de reacción (+AGI)",
+      detail: "+9% daño infligido durante 5 turnos propios del doctor.",
+      price: 252,
+      statItem: true,
+      statBuffPct: 0.09,
+      statTurns: 5,
+    });
+    for (let g = 0; g < 3; g++) {
+      const eq = randomEquipItem();
+      stock.push({
+        id: "g-" + roll + "-" + g,
+        name: eq.name + " (oferta)",
+        detail: (eq.equipSlot || "?") + " · " + formatEquipBonusLine(eq),
+        price: 320 + Math.floor(Math.random() * 220) + (eq.qual === "S" ? 80 : 0),
+        gearObj: eq,
+      });
+    }
+    const sc = lotgState.shopSoulPurchases || 0;
+    stock.push({
+      id: "soul-" + roll,
+      name: "Residuo de alma comprimido",
+      detail: "+80 Soul Points (el precio sube cada compra en esta run).",
+      price: 395 + sc * 88,
+      soul: 80,
+    });
+    return stock;
+  }
+
+  function openGiftShop(mapCellKey) {
     const ov = document.getElementById("anomalyShopOverlay");
     const body = document.getElementById("shopBody");
+    const title = document.getElementById("shopTitle");
+    const desc = document.getElementById("shopDesc");
     if (!ov || !body || !lotgState) return;
+    if (title) title.textContent = "Boutique de regalos";
+    if (desc) desc.textContent = "Objetos para el modo Vínculos. El surtido cambia al entrar.";
     if (mapCellKey) lotgState._shopFromCellKey = mapCellKey;
-    const stock = [
-      {
-        id: "med",
-        name: "Kit médico de campo (HIA)",
-        detail: "Cura ~40% HP en combate",
-        price: 175,
-        heal: true,
-      },
-      { id: "soul", name: "Residuo de alma comprimido", detail: "+80 Soul Points", price: 395, soul: 80 },
-      {
-        id: "buff",
-        name: "Inyector de Ether inestable",
-        detail: "Buff +12% daño, 6 turnos propios",
-        price: 245,
-        buffConsumable: true,
-      },
-      {
-        id: "w1",
-        name: "W-Engine — núcleo oxidado",
-        detail: "Arma · " + formatEquipBonusLine({ bonus: { STG: 5, DX: 3, HP: 4 } }),
-        price: 520,
-        gear: { equipSlot: "Arma", name: "W-Engine oxidado (tienda)", qual: "A", bonus: { STG: 5, DX: 3, HP: 4 } },
-      },
-      {
-        id: "w2",
-        name: "Placa Hollow — segmento A",
-        detail: "Cuerpo · " + formatEquipBonusLine({ bonus: { VI: 6, EN: 5, HP: 6 } }),
-        price: 480,
-        gear: { equipSlot: "Cuerpo", name: "Placa Hollow A", qual: "A", bonus: { VI: 6, EN: 5, HP: 6 } },
-      },
-      {
-        id: "w3",
-        name: "Disco Bangboo (accesorio)",
-        detail: "Accesorio · " + formatEquipBonusLine({ bonus: { LUK: 4, AG: 4, SP: 3 } }),
-        price: 340,
-        gear: { equipSlot: "Accesorio", name: "Disco Bangboo", qual: "A", bonus: { LUK: 4, AG: 4, SP: 3 } },
-      },
-    ];
+    const gifts = lotgRollGiftShopStock();
     function render() {
-      let html = "<p><strong>Tienda ambulante</strong> — Zen actual: <strong>" + lotgState.zen + "</strong></p>";
+      let html = "<p><strong>Regalos</strong> — Zen: <strong>" + lotgState.zen + "</strong></p><ul style='list-style:none;padding:0'>";
+      gifts.forEach((g) => {
+        html += `<li style="margin:0.5rem 0;padding:0.5rem;border-radius:10px;border:1px solid rgba(255,80,120,0.25)">
+          <div style="font-weight:600">${escapeHtml(g.name)}</div>
+          <div class="muted" style="font-size:0.76rem">${escapeHtml(g.tags.join(", "))}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.35rem">
+            <strong>${g.price} Z</strong>
+            <button type="button" class="ghost shop-gift-buy" data-gift-id="${escapeHtml(g.id)}">Comprar</button>
+          </div></li>`;
+      });
+      html += "</ul>";
+      body.innerHTML = html;
+      body.querySelectorAll(".shop-gift-buy").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const gid = btn.getAttribute("data-gift-id");
+          const it = gifts.find((x) => x.id === gid);
+          if (!it || lotgState.zen < it.price) {
+            alert("No tienes suficiente Zen.");
+            return;
+          }
+          lotgState.zen -= it.price;
+          if (!lotgState.giftInventory || typeof lotgState.giftInventory !== "object") lotgState.giftInventory = {};
+          lotgState.giftInventory[it.id] = (lotgState.giftInventory[it.id] || 0) + 1;
+          pushShopPurchaseLog("Regalo: " + it.name + " · −" + it.price + " Z");
+          lotgSave();
+          render();
+        });
+      });
+    }
+    render();
+    ov.style.display = "flex";
+    const close = () => {
+      ov.style.display = "none";
+      document.getElementById("shopClose").onclick = null;
+      if (lotgState._shopFromCellKey) {
+        lotgState.mapCellDone[lotgState._shopFromCellKey] = true;
+        lotgState._shopFromCellKey = null;
+        lotgSave();
+        renderLotgGame();
+      }
+    };
+    document.getElementById("shopClose").onclick = close;
+  }
+
+  function openSkillSoulShop(mapCellKey) {
+    const ov = document.getElementById("anomalyShopOverlay");
+    const body = document.getElementById("shopBody");
+    const title = document.getElementById("shopTitle");
+    const desc = document.getElementById("shopDesc");
+    if (!ov || !body || !lotgState) return;
+    if (title) title.textContent = "Tienda de técnicas (Soul)";
+    if (desc) desc.textContent = "Ofertas que rotan al visitar. Compra con Soul Points; luego equípalas (máx. 4).";
+    if (mapCellKey) lotgState._shopFromCellKey = mapCellKey;
+    normalizeSoulPointsOnState(lotgState);
+    const offers = lotgRollSkillShopOffer();
+    function render() {
+      const sp = lotgState.soul;
+      let html = "<p><strong>Soul Points:</strong> " + sp + "</p><ul style='list-style:none;padding:0'>";
+      offers.forEach((sk) => {
+        const own = (lotgState.ownedSkillIds || []).includes(sk.id);
+        html += `<li style="margin:0.55rem 0;padding:0.5rem;border-radius:10px;border:1px solid rgba(255,105,180,0.35);background:rgba(80,20,60,0.2)">
+          <div style="font-weight:600">${escapeHtml(sk.name)} <span class="slot-equip-tag">${escapeHtml(sk.rarity)}</span></div>
+          <div class="muted" style="font-size:0.76rem;margin:0.25rem 0;line-height:1.4">${escapeHtml(sk.desc)}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.35rem">
+            <span><strong>${sk.shopSoul}</strong> SP</span>
+            <button type="button" class="ghost shop-skill-buy" data-skill-id="${escapeHtml(sk.id)}" ${own ? "disabled" : ""}>${own ? "Ya en colección" : "Comprar"}</button>
+          </div></li>`;
+      });
+      html += "</ul>";
+      body.innerHTML = html;
+      body.querySelectorAll(".shop-skill-buy").forEach((btn) => {
+        if (btn.disabled) return;
+        btn.addEventListener("click", () => {
+          const sid = btn.getAttribute("data-skill-id");
+          const sk = getLotgBattleSkill(sid);
+          if (!sk) return;
+          normalizeSoulPointsOnState(lotgState);
+          if (lotgState.soul < sk.shopSoul) {
+            alert("No tienes suficientes Soul Points.");
+            return;
+          }
+          lotgState.soul -= sk.shopSoul;
+          if (!Array.isArray(lotgState.ownedSkillIds)) lotgState.ownedSkillIds = [];
+          if (!lotgState.ownedSkillIds.includes(sk.id)) lotgState.ownedSkillIds.push(sk.id);
+          pushShopPurchaseLog("Técnica: " + sk.name + " · −" + sk.shopSoul + " SP");
+          lotgSave();
+          render();
+        });
+      });
+    }
+    render();
+    ov.style.display = "flex";
+    const close = () => {
+      ov.style.display = "none";
+      document.getElementById("shopClose").onclick = null;
+      if (lotgState._shopFromCellKey) {
+        lotgState.mapCellDone[lotgState._shopFromCellKey] = true;
+        lotgState._shopFromCellKey = null;
+        lotgSave();
+        renderLotgGame();
+      }
+    };
+    document.getElementById("shopClose").onclick = close;
+  }
+
+  function tryForgeWeaponOnProtag() {
+    if (!lotgState || !lotgState.equipSlots) return "Sin estado.";
+    const w = lotgState.equipSlots.Arma;
+    if (!w) return "Equipa un arma en la ranura Arma del doctor para forjar.";
+    migrateLotgState(lotgState);
+    const cur = w.forgePlus != null ? Math.min(10, Math.max(0, Math.floor(w.forgePlus))) : 0;
+    if (cur >= 10) return "El arma ya está en +10.";
+    const cost = 70 + cur * 48;
+    normalizeSoulPointsOnState(lotgState);
+    if (lotgState.soul < cost) return "Necesitas " + cost + " Soul Points para este intento.";
+    lotgState.soul -= cost;
+    const failP = Math.min(0.62, 0.12 + cur * 0.055);
+    const roll = Math.random();
+    if (roll < failP) {
+      if (Math.random() < 0.38 && cur > 0) {
+        w.forgePlus = cur - 1;
+        pushShopPurchaseLog("Forja fallida crítica: arma " + (cur - 1) + "+.");
+        lotgSave();
+        return "¡La forja retrocede! Tu arma baja a +" + w.forgePlus + ".";
+      }
+      pushShopPurchaseLog("Forja fallida (sin pérdida de nivel).");
+      lotgSave();
+      return "La forja chispea pero no avanza. Pierdes el Soul de este intento.";
+    }
+    w.forgePlus = cur + 1;
+    pushShopPurchaseLog("Forja exitosa: arma +" + w.forgePlus + ".");
+    lotgSave();
+    return "¡Éxito! Arma ahora +" + w.forgePlus + ". Daño de arma mejorado.";
+  }
+
+  function openItemShop(mapCellKey) {
+    const ov = document.getElementById("anomalyShopOverlay");
+    const body = document.getElementById("shopBody");
+    const title = document.getElementById("shopTitle");
+    const desc = document.getElementById("shopDesc");
+    if (!ov || !body || !lotgState) return;
+    if (title) title.textContent = "Tienda ambulante (rotativa)";
+    if (desc) desc.textContent = "El surtido y precios de Soul cambian al entrar. Forja el arma equipada del doctor con Soul.";
+    if (mapCellKey) lotgState._shopFromCellKey = mapCellKey;
+    const stock = buildRotatingItemShopStock();
+    function render() {
+      const wNow = lotgState.equipSlots && lotgState.equipSlots.Arma;
+      const forgeLv = wNow && wNow.forgePlus != null ? Math.min(10, Math.max(0, Math.floor(wNow.forgePlus))) : 0;
+      const forgeCost = 70 + forgeLv * 48;
+      let html = "<p><strong>Zen:</strong> " + lotgState.zen + " · <strong>Soul:</strong> " + getSoulPoints() + "</p>";
       html += "<ul style='list-style:none;padding:0;margin:0.5rem 0 1rem'>";
       stock.forEach((it) => {
         html += `<li style="margin:0.55rem 0;padding:0.5rem;border-radius:10px;border:1px solid rgba(255,255,255,0.08)">
@@ -2905,14 +3671,23 @@
         </li>`;
       });
       html += "</ul>";
+      html +=
+        "<div style='margin:1rem 0;padding:0.75rem;border-radius:10px;border:1px solid rgba(250,204,21,0.35);background:rgba(40,35,10,0.35)'>" +
+        "<strong>Forja de arma</strong> (ranura <em>Arma</em> del doctor)<br/>" +
+        "<span class='muted' style='font-size:0.78rem'>Nivel actual: +" +
+        forgeLv +
+        "/10 · Próximo intento: <strong>" +
+        forgeCost +
+        "</strong> Soul · riesgo de fallo sube con el nivel.</span><br/>" +
+        "<button type='button' class='primary shop-forge' style='margin-top:0.5rem'>Intentar forjar (+1)</button></div>";
       const log = lotgState.shopPurchaseLog || [];
       html +=
-        "<p class='muted' style='font-size:0.78rem;margin:0 0 0.5rem'><strong>Últimas compras</strong></p><ul style='font-size:0.72rem;margin:0;padding-left:1rem;max-height:100px;overflow:auto'>" +
-        (log.length ? log.map((l) => "<li>" + escapeHtml(l) + "</li>").join("") : "<li class='muted'>Aún no hay compras registradas.</li>") +
+        "<p class='muted' style='font-size:0.78rem;margin:0 0 0.5rem'><strong>Últimas compras</strong></p><ul style='font-size:0.72rem;margin:0;padding-left:1rem;max-height:80px;overflow:auto'>" +
+        (log.length ? log.map((l) => "<li>" + escapeHtml(l) + "</li>").join("") : "<li class='muted'>—</li>") +
         "</ul>";
       const stash = lotgState.gearStash || [];
       if (stash.length) {
-        html += "<p><strong>Vender</strong> desde almacén</p><ul style='list-style:none;padding:0'>";
+        html += "<p><strong>Vender</strong> almacén</p><ul style='list-style:none;padding:0'>";
         stash.forEach((eq, idx) => {
           const sell = gearSellPrice(eq);
           const bl = formatEquipBonusLine(eq);
@@ -2922,8 +3697,15 @@
           </li>`;
         });
         html += "</ul>";
-      } else html += "<p class='muted'>Sin objetos para vender en el almacén.</p>";
+      } else html += "<p class='muted'>Sin piezas en almacén.</p>";
       body.innerHTML = html;
+      const forgeBtn = body.querySelector(".shop-forge");
+      if (forgeBtn) {
+        forgeBtn.addEventListener("click", () => {
+          alert(tryForgeWeaponOnProtag());
+          render();
+        });
+      }
       body.querySelectorAll(".shop-buy").forEach((btn) => {
         btn.addEventListener("click", () => {
           const id = btn.getAttribute("data-shop-id");
@@ -2938,35 +3720,49 @@
           if (it.heal) {
             lotgState.inventory.push({
               type: "heal",
-              name: "Kit médico de campo (HIA)",
-              healPct: 0.4,
-              desc: "Restaura ≈40% del HP máximo en combate.",
+              name: it.invName || it.name,
+              healPct: it.healPct != null ? it.healPct : 0.35,
+              desc: it.detail || "",
             });
             pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · " + stamp);
           }
           if (it.soul) {
             normalizeSoulPointsOnState(lotgState);
             lotgState.soul += it.soul;
+            lotgState.shopSoulPurchases = (lotgState.shopSoulPurchases || 0) + 1;
             pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · +" + it.soul + " SP · " + stamp);
           }
           if (it.buffConsumable) {
             lotgState.inventory.push({
               type: "buff",
-              name: "Inyector Ether inestable",
-              atkPct: 0.12,
-              turns: 6,
-              desc: "+12% daño durante 6 turnos propios (estado de combate).",
+              name: it.name,
+              atkPct: it.atkPct != null ? it.atkPct : 0.12,
+              turns: it.turns != null ? it.turns : 4,
+              desc: it.detail || "",
             });
             pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · " + stamp);
           }
-          if (it.gear) {
-            const g = {
-              eid: "shop-" + Date.now(),
-              name: it.gear.name,
-              equipSlot: it.gear.equipSlot,
-              qual: it.gear.qual,
-              bonus: it.gear.bonus || {},
-            };
+          if (it.cleanseItem) {
+            lotgState.inventory.push({
+              type: "cleanse",
+              name: it.name,
+              desc: it.detail || "Limpia estados alterados.",
+            });
+            pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · " + stamp);
+          }
+          if (it.statItem) {
+            lotgState.inventory.push({
+              type: "stat",
+              name: it.name,
+              statBuffPct: it.statBuffPct != null ? it.statBuffPct : 0.08,
+              turns: it.statTurns != null ? it.statTurns : 5,
+              desc: it.detail || "",
+            });
+            pushShopPurchaseLog("Compra: " + it.name + " · −" + (zenBefore - lotgState.zen) + " Z · " + stamp);
+          }
+          if (it.gearObj) {
+            const g = JSON.parse(JSON.stringify(it.gearObj));
+            g.eid = "shop-" + Date.now();
             if (!lotgState.gearStash) lotgState.gearStash = [];
             lotgState.gearStash.push(g);
             pushShopPurchaseLog(
@@ -3039,8 +3835,25 @@
         hp = Math.max(0, Math.min(st.hpMax, Math.floor(pv.hp)));
         sp = Math.max(0, Math.min(st.spMax, Math.floor(pv.sp)));
       }
-      lotgState.combatAllyVitals[u.uid] = { hp, sp, skillCd: 0 };
+      lotgState.combatAllyVitals[u.uid] = {
+        hp,
+        sp,
+        skillCd: 0,
+        consumableBuffMult: 1,
+        consumableBuffTurns: 0,
+        extraSkillCd: {},
+        ailments: emptyAilments(),
+      };
     });
+    lotgState.protagExtraSkillCd = {};
+    lotgState.protagAilments = emptyAilments();
+    const stg = lotgState.stagingAllyItemBuff;
+    if (stg && stg.uid && lotgState.combatAllyVitals[stg.uid]) {
+      const v0 = lotgState.combatAllyVitals[stg.uid];
+      v0.consumableBuffMult = stg.mult > 0 ? stg.mult : 1;
+      v0.consumableBuffTurns = stg.turns > 0 ? stg.turns : 4;
+      lotgState.stagingAllyItemBuff = null;
+    }
     lotgState.combatBuff = { atkMult: 1, turns: 0 };
     if (lotgState.runCombatAtkFights > 0) {
       lotgState.runCombatAtkFights--;
@@ -3070,6 +3883,7 @@
   }
 
   function endCombat(win) {
+    const nKilled = combatEnemies.filter((e) => e).length;
     const wasBoss = combatEnemies.some((e) => e && e.boss);
     const wasMiniboss = combatEnemies.some((e) => e && e.miniboss);
     if (win && lotgState) snapshotPartyVitalsToPersist();
@@ -3095,6 +3909,12 @@
       getPartyUnits().forEach((u) => gainXpUnit(u, Math.floor(xpGain * 0.72)));
       if (wasBoss) lotgState.floorBossCleared = true;
       lotgState.combatsCleared++;
+      if (Array.isArray(lotgState.activeSideQuests)) {
+        lotgState.activeSideQuests.forEach((q) => {
+          if (q.kind === "kills") q.prog = Math.min(q.need, (q.prog || 0) + nKilled);
+          if (q.kind === "boss" && wasBoss) q.prog = Math.min(q.need, (q.prog || 0) + 1);
+        });
+      }
     } else {
       if (lotgState) lotgState._pendingMapCellKey = null;
       lotgWipe();
@@ -3151,10 +3971,256 @@
       lotgState.combatBuff.turns--;
       if (lotgState.combatBuff.turns <= 0) lotgState.combatBuff.atkMult = 1;
     }
+    getPartyUnits().forEach((u) => {
+      const v = lotgState.combatAllyVitals && lotgState.combatAllyVitals[u.uid];
+      if (!v) return;
+      const bt = v.consumableBuffTurns || 0;
+      if (bt > 0) {
+        v.consumableBuffTurns = bt - 1;
+        if (v.consumableBuffTurns <= 0) {
+          v.consumableBuffMult = 1;
+        }
+      }
+    });
     if (inLotgCombat() && lotgState.protag && lotgState.protag.passive) {
       const cs = applyEquipToProtag();
       lotgState.protag.spCur = Math.min(cs.spMax, lotgState.protag.spCur + 2);
     }
+    if (lotgState && lotgState.protagExtraSkillCd && typeof lotgState.protagExtraSkillCd === "object") {
+      Object.keys(lotgState.protagExtraSkillCd).forEach((k) => {
+        const n = lotgState.protagExtraSkillCd[k] || 0;
+        if (n > 0) lotgState.protagExtraSkillCd[k] = n - 1;
+      });
+    }
+    if (lotgState && lotgState.combatAllyVitals) {
+      getPartyUnits().forEach((u) => {
+        const v = lotgState.combatAllyVitals[u.uid];
+        if (!v || !v.extraSkillCd) return;
+        Object.keys(v.extraSkillCd).forEach((k) => {
+          const n = v.extraSkillCd[k] || 0;
+          if (n > 0) v.extraSkillCd[k] = n - 1;
+        });
+      });
+    }
+  }
+
+  function clearTargetAilments(tk) {
+    const z = emptyAilments();
+    if (tk === "protag") {
+      lotgState.protagAilments = z;
+      return;
+    }
+    const v = lotgState.combatAllyVitals && lotgState.combatAllyVitals[tk];
+    if (v) v.ailments = z;
+  }
+
+  function applyLotgEquippedSkill(skillId, whoUid, enemyIdx, allyKey) {
+    const sk = getLotgBattleSkill(skillId);
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    if (!sk || !sk.combat || sk.combat.kind === "passive") return { ok: false, log: "Técnica inválida." };
+    const c = sk.combat;
+    const isPro = whoUid === "protag";
+    const u = !isPro ? getPartyUnits().find((x) => x.uid === whoUid) : null;
+    const vitals = !isPro && u ? lotgState.combatAllyVitals[u.uid] : null;
+    if (!isPro && (!u || !vitals || vitals.hp <= 0)) return { ok: false, log: "Unidad no disponible." };
+    const cdMap = isPro ? lotgState.protagExtraSkillCd : vitals.extraSkillCd;
+    if ((cdMap[skillId] || 0) > 0) return { ok: false, log: "«" + sk.name + "» en enfriamiento." };
+    const cost = c.sp || 0;
+    if (isPro) {
+      if (p.spCur < cost) return { ok: false, log: "SP insuficiente para «" + sk.name + "»." };
+    } else if (vitals.sp < cost) return { ok: false, log: u.name + " sin SP para «" + sk.name + "»." };
+    const atkZone = lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1;
+    const cb = lotgState.combatBuff && lotgState.combatBuff.turns > 0 ? lotgState.combatBuff.atkMult || 1 : 1;
+    const allyM = !isPro ? atkZone * allyConsumableBuffMult(vitals) * 1.1 : 1;
+    const pd = getProtagDerivedDefense();
+
+    function payCost() {
+      if (isPro) {
+        p.spCur -= cost;
+        lotgState.protagExtraSkillCd[skillId] = c.cd || 0;
+      } else {
+        vitals.sp -= cost;
+        vitals.extraSkillCd[skillId] = c.cd || 0;
+      }
+    }
+
+    if (c.kind === "dmg_mag_aoe") {
+      payCost();
+      const alive = combatEnemies.filter((e) => e.hp > 0);
+      const parts = [];
+      const coef = c.coef || 0.85;
+      alive.forEach((en) => {
+        const raw = isPro
+          ? lotgProtagMagicalRaw(cs, atkZone, cb, coef * 0.92)
+          : allyCombatStats(u).atkM * coef * allyM * (0.95 + Math.random() * 0.25);
+        const sp = alive.length > 1 ? 0.56 : 1;
+        let dmg = damageToEnemyMagical(raw * sp, en);
+        const el = sk.element || (isPro ? p.lotgElement : u.element) || "Neutral";
+        dmg = Math.floor(dmg * elementalDamageMult(el, en.element || "Neutral"));
+        dmg = Math.max(1, dmg);
+        en.hp -= dmg;
+        parts.push(en.name + " −" + dmg);
+      });
+      return { ok: true, log: (isPro ? p.name : u.name) + ": «" + sk.name + "» — " + parts.join(", ") + "." };
+    }
+    if (c.kind === "dmg_mag_1") {
+      const en = combatEnemies[enemyIdx];
+      if (!en || en.hp <= 0) return { ok: false, log: "Sin objetivo." };
+      payCost();
+      const coef = c.coef || 1.5;
+      const raw = isPro
+        ? lotgProtagMagicalRaw(cs, atkZone, cb, coef * 0.88)
+        : allyCombatStats(u).atkM * coef * allyM * (0.98 + Math.random() * 0.22);
+      let dmg = damageToEnemyMagical(raw, en);
+      const el = sk.element || (isPro ? p.lotgElement : u.element) || "Neutral";
+      dmg = Math.floor(dmg * elementalDamageMult(el, en.element || "Neutral"));
+      if (Math.random() < pd.crit * 0.85) dmg = Math.floor(dmg * 1.42);
+      dmg = Math.max(1, dmg);
+      en.hp -= dmg;
+      return { ok: true, log: (isPro ? p.name : u.name) + ": «" + sk.name + "» — " + en.name + " −" + dmg + "." };
+    }
+    if (c.kind === "dmg_phys_1") {
+      const en = combatEnemies[enemyIdx];
+      if (!en || en.hp <= 0) return { ok: false, log: "Sin objetivo." };
+      payCost();
+      const coef = c.coef || 1.5;
+      const raw = isPro
+        ? lotgProtagPhysicalRaw(cs, atkZone, cb) * coef * 0.52
+        : allyCombatStats(u).atkP * coef * allyM * (0.96 + Math.random() * 0.24);
+      let dmg = damageToEnemyPhysical(raw, en);
+      dmg = Math.floor(dmg * elementalDamageMult(isPro ? p.lotgElement : u.element || "Neutral", en.element || "Neutral"));
+      dmg = Math.max(1, dmg);
+      en.hp -= dmg;
+      return { ok: true, log: (isPro ? p.name : u.name) + ": «" + sk.name + "» — " + en.name + " −" + dmg + "." };
+    }
+    if (c.kind === "heal_all") {
+      payCost();
+      const pct = c.healPct || 0.18;
+      p.hpCur = Math.min(cs.hpMax, p.hpCur + Math.floor(cs.hpMax * pct));
+      getPartyUnits().forEach((al) => {
+        const v2 = lotgState.combatAllyVitals[al.uid];
+        if (!v2 || v2.hp <= 0) return;
+        const am = allyCombatStats(al);
+        v2.hp = Math.min(am.hpMax, v2.hp + Math.floor(am.hpMax * pct));
+      });
+      return { ok: true, log: "«" + sk.name + "» — sanación grupal." };
+    }
+    if (c.kind === "heal_1") {
+      payCost();
+      const pct = c.healPct || 0.2;
+      const tk = allyKey === "protag" ? "protag" : allyKey;
+      if (tk === "protag") {
+        p.hpCur = Math.min(cs.hpMax, p.hpCur + Math.floor(cs.hpMax * pct));
+      } else {
+        const al = getPartyUnits().find((x) => x.uid === tk);
+        const v2 = al && lotgState.combatAllyVitals[al.uid];
+        const am = allyCombatStats(al);
+        if (!v2 || v2.hp <= 0) return { ok: false, log: "Objetivo inválido." };
+        v2.hp = Math.min(am.hpMax, v2.hp + Math.floor(am.hpMax * pct));
+      }
+      return { ok: true, log: "«" + sk.name + "» — curación focal." };
+    }
+    if (c.kind === "buff_team") {
+      payCost();
+      if (!lotgState.combatBuff) lotgState.combatBuff = { atkMult: 1, turns: 0 };
+      const bm = 1 + (c.buffPct || 0.1);
+      lotgState.combatBuff.atkMult = Math.max(lotgState.combatBuff.atkMult || 1, bm);
+      lotgState.combatBuff.turns = Math.max(lotgState.combatBuff.turns || 0, c.buffTurns || 4);
+      return { ok: true, log: "«" + sk.name + "» — refuerzo de equipo (" + (c.buffTurns || 4) + " t.)." };
+    }
+    if (c.kind === "cleanse_1") {
+      payCost();
+      const tk = allyKey === "protag" ? "protag" : allyKey;
+      clearTargetAilments(tk);
+      return { ok: true, log: "«" + sk.name + "» — estados limpiados." };
+    }
+    if (c.kind === "dot_aoe") {
+      payCost();
+      const alive = combatEnemies.filter((e) => e.hp > 0);
+      alive.forEach((en) => {
+        const raw = isPro
+          ? lotgProtagMagicalRaw(cs, atkZone, cb, (c.coef || 0.5) * 0.9)
+          : allyCombatStats(u).atkM * (c.coef || 0.5) * allyM;
+        let dmg = damageToEnemyMagical(raw * 0.65, en);
+        dmg = Math.floor(dmg * elementalDamageMult(sk.element || "Fuego", en.element || "Neutral"));
+        dmg = Math.max(1, dmg);
+        en.hp -= dmg;
+        const dotD = Math.max(2, Math.floor(en.hpMax * (c.dotHpPct || 0.045)));
+        en.lotgDotDmg = dotD;
+        en.lotgDotTurns = Math.max(en.lotgDotTurns || 0, c.dotTurns || 3);
+      });
+      return { ok: true, log: "«" + sk.name + "» — impacto + DoT en horda." };
+    }
+    if (c.kind === "dot_main") {
+      const en = combatEnemies[enemyIdx];
+      if (!en || en.hp <= 0) return { ok: false, log: "Sin objetivo." };
+      payCost();
+      const raw = isPro
+        ? lotgProtagMagicalRaw(cs, atkZone, cb, (c.coef || 0.85) * 0.9)
+        : allyCombatStats(u).atkM * (c.coef || 0.85) * allyM;
+      let dmg = damageToEnemyMagical(raw, en);
+      dmg = Math.max(1, dmg);
+      en.hp -= dmg;
+      en.lotgDotDmg = Math.max(2, Math.floor(en.hpMax * (c.dotHpPct || 0.04)));
+      en.lotgDotTurns = c.dotTurns || 3;
+      return { ok: true, log: "«" + sk.name + "» — " + en.name + " marcado con DoT." };
+    }
+    if (c.kind === "status_enemy_1") {
+      const en = combatEnemies[enemyIdx];
+      if (!en || en.hp <= 0) return { ok: false, log: "Sin objetivo." };
+      payCost();
+      const coef = c.coef || 0.4;
+      const raw = isPro
+        ? lotgProtagMagicalRaw(cs, atkZone, cb, coef * 0.88)
+        : allyCombatStats(u).atkM * coef * allyM * (0.96 + Math.random() * 0.22);
+      let dmg = damageToEnemyMagical(raw, en);
+      const el = sk.element || (isPro ? p.lotgElement : u.element) || "Neutral";
+      dmg = Math.floor(dmg * elementalDamageMult(el, en.element || "Neutral"));
+      dmg = Math.max(1, dmg);
+      en.hp -= dmg;
+      applyAilmentToEnemy(en, c.ailment, c.duration || 3);
+      const lab = LOTG_AILMENT_LABELS[c.ailment] || c.ailment;
+      return {
+        ok: true,
+        log:
+          (isPro ? p.name : u.name) +
+          ": «" +
+          sk.name +
+          "» — " +
+          en.name +
+          " −" +
+          dmg +
+          "; " +
+          lab +
+          " (" +
+          (c.duration || 3) +
+          " rondas enemigas).",
+      };
+    }
+    if (c.kind === "status_enemy_aoe") {
+      payCost();
+      const alive = combatEnemies.filter((e) => e.hp > 0);
+      const parts = [];
+      const dur = c.duration || 3;
+      const coef = c.coef || 0.35;
+      alive.forEach((en) => {
+        const raw = isPro
+          ? lotgProtagMagicalRaw(cs, atkZone, cb, coef * 0.88)
+          : allyCombatStats(u).atkM * coef * allyM * (0.94 + Math.random() * 0.2);
+        const sp = alive.length > 1 ? 0.55 : 1;
+        let dmg = damageToEnemyMagical(raw * sp, en);
+        const el = sk.element || (isPro ? p.lotgElement : u.element) || "Neutral";
+        dmg = Math.floor(dmg * elementalDamageMult(el, en.element || "Neutral"));
+        dmg = Math.max(1, dmg);
+        en.hp -= dmg;
+        const aff = Math.random() < 0.5 ? "burn" : "para";
+        applyAilmentToEnemy(en, aff, dur);
+        parts.push(en.name + " −" + dmg + " (" + LOTG_AILMENT_LABELS[aff] + ")");
+      });
+      return { ok: true, log: (isPro ? p.name : u.name) + ": «" + sk.name + "» — " + parts.join(", ") + "." };
+    }
+    return { ok: false, log: "Técnica no implementada." };
   }
 
   function allySkillPrecheck(u, vitals) {
@@ -3251,8 +4317,9 @@
     }
 
     if (profile.kind === "debuff") {
+      const am = (atkMult || 1) * 1.13;
       const coef = allySkillCoefFromDmg(sk, { magical: true });
-      const rawSmall = (st.atkM * coef * 0.48 + st.atkP * 0.24) * atkMult * (0.92 + Math.random() * 0.22);
+      const rawSmall = (st.atkM * coef * 0.48 + st.atkP * 0.24) * am * (0.92 + Math.random() * 0.22);
       const aliveN = combatEnemies.filter((x) => x.hp > 0).length;
       if (profile.aoe) {
         const parts = [];
@@ -3276,6 +4343,7 @@
       return { log: u.name + ": «" + skName + "» — debuff a " + en.name + " (" + dmg + ")." };
     }
 
+    const am = (atkMult || 1) * 1.13;
     const coef = allySkillCoefFromDmg(sk, profile);
     const hordeN = combatEnemies.filter((en) => en.hp > 0).length;
     const spread = hordeN > 1 ? (profile.aoe ? 0.52 : 1) : 1;
@@ -3283,7 +4351,7 @@
       const parts = [];
       const rawBase =
         (profile.magical ? st.atkM * coef * 0.98 + st.atkP * 0.34 : st.atkP * coef * 1.04 + st.atkM * 0.28) *
-        atkMult *
+        am *
         (1.02 + Math.random() * 0.28);
       combatEnemies.forEach((en) => {
         if (en.hp <= 0) return;
@@ -3300,7 +4368,7 @@
     if (!en || en.hp <= 0) return { log: "Sin objetivo." };
     const rawOne =
       (profile.magical ? st.atkM * coef * 1.08 + st.atkP * 0.36 : st.atkP * coef * 1.1 + st.atkM * 0.3) *
-      atkMult *
+      am *
       (1.02 + Math.random() * 0.3);
     let dmg = profile.magical ? damageToEnemyMagical(rawOne, en) : damageToEnemyPhysical(rawOne, en);
     dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", en.element || "Neutral"));
@@ -3320,9 +4388,8 @@
     if (!en || en.hp <= 0) return;
     const p = lotgState.protag;
     const cs = applyEquipToProtag();
-    const atkMult =
-      (lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1) *
-      (lotgState.combatBuff && lotgState.combatBuff.turns > 0 ? lotgState.combatBuff.atkMult || 1 : 1);
+    const anomalyOnly =
+      lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1;
     const cb = lotgState.combatBuff;
     const buffMult = cb && cb.turns > 0 ? cb.atkMult || 1 : 1;
     const pd = getProtagDerivedDefense();
@@ -3335,7 +4402,7 @@
     if (combatPickMode.type === "protag_atk") {
       tickCombatRoundStart();
       combatPickMode = null;
-      const raw = lotgProtagPhysicalRaw(cs, atkMult, buffMult);
+      const raw = lotgProtagPhysicalRaw(cs, anomalyOnly, buffMult * protagFreezeDamageMult());
       let dmg = damageToEnemyPhysical(raw, en);
       dmg = Math.floor(dmg * elementalDamageMult(p.lotgElement || "Neutral", en.element || "Neutral"));
       let crit = false;
@@ -3362,8 +4429,24 @@
         renderLotgGame({ combatBg: combatBgFromWrap() });
         return;
       }
+      const blP = allyBlockedByPara(vitals, "atk");
+      if (blP) {
+        combatPickMode = null;
+        combatLog.push(u.name + ": " + blP);
+        if (combatLog.length > 22) combatLog.shift();
+        combatAllyIndex = allies.indexOf(u) + 1;
+        if (!skipToNextAliveAlly(allies)) {
+          combatPhase = "player";
+          combatAllyIndex = 0;
+          enemyCombatTurn();
+        } else renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
       combatPickMode = null;
-      const admg = computeAllyDamage(u, en, atkMult);
+      const anomalyA =
+        lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1;
+      const allyAtk = anomalyA * allyConsumableBuffMult(vitals) * allyFreezeDamageMult(vitals) * 1.1;
+      const admg = computeAllyDamage(u, en, allyAtk);
       en.hp -= admg;
       combatLog.push(u.name + " ataca: " + admg + ".");
       if (combatLog.length > 22) combatLog.shift();
@@ -3392,7 +4475,10 @@
       }
       combatPickMode = null;
       payAllySkillCost(u, vitals, u.skill);
-      const r = applyAllySkillEffect(u, p, cs, atkMult, profile, enemyIdx, null);
+      const anomalyS =
+        lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1;
+      const allySkMult = anomalyS * allyConsumableBuffMult(vitals) * 1.1;
+      const r = applyAllySkillEffect(u, p, cs, allySkMult, profile, enemyIdx, null);
       combatLog.push(r.log);
       if (combatLog.length > 22) combatLog.shift();
       if (!anyEnemyAlive()) {
@@ -3405,16 +4491,104 @@
         combatAllyIndex = 0;
         enemyCombatTurn();
       } else renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+
+    if (combatPickMode.type === "lotg_skill_enemy") {
+      tickCombatRoundStart();
+      const skillId = combatPickMode.skillId;
+      const who = combatPickMode.who;
+      combatPickMode = null;
+      const r = applyLotgEquippedSkill(skillId, who, enemyIdx, null);
+      combatLog.push(r.ok ? r.log : r.log);
+      if (combatLog.length > 22) combatLog.shift();
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      if (who === "protag") beginAllyPhaseAfterPlayer();
+      else {
+        const allies2 = getPartyUnits();
+        const u2 = allies2.find((x) => x.uid === who);
+        if (!u2) {
+          renderLotgGame({ combatBg: combatBgFromWrap() });
+          return;
+        }
+        combatAllyIndex = allies2.indexOf(u2) + 1;
+        if (!skipToNextAliveAlly(allies2)) {
+          combatPhase = "player";
+          combatAllyIndex = 0;
+          enemyCombatTurn();
+        } else renderLotgGame({ combatBg: combatBgFromWrap() });
+      }
+      return;
+    }
+
+    if (combatPickMode.type === "lotg_ally_skill_enemy") {
+      tickCombatRoundStart();
+      const skillId = combatPickMode.skillId;
+      const uid = combatPickMode.uid;
+      combatPickMode = null;
+      const r = applyLotgEquippedSkill(skillId, uid, enemyIdx, null);
+      combatLog.push(r.log);
+      if (combatLog.length > 22) combatLog.shift();
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      const allies2 = getPartyUnits();
+      const u2 = allies2.find((x) => x.uid === uid);
+      combatAllyIndex = u2 ? allies2.indexOf(u2) + 1 : combatAllyIndex + 1;
+      if (!skipToNextAliveAlly(allies2)) {
+        combatPhase = "player";
+        combatAllyIndex = 0;
+        enemyCombatTurn();
+      } else renderLotgGame({ combatBg: combatBgFromWrap() });
     }
   }
 
   function handleCombatAllyPick(allyKey) {
-    if (!inLotgCombat() || !lotgState || !combatPickMode || combatPickMode.type !== "ally_skill_ally") return;
+    if (!inLotgCombat() || !lotgState || !combatPickMode) return;
+    if (combatPickMode.type === "lotg_skill_ally") {
+      tickCombatRoundStart();
+      const skillId = combatPickMode.skillId;
+      const who = combatPickMode.who;
+      combatPickMode = null;
+      const r = applyLotgEquippedSkill(skillId, who, null, allyKey);
+      combatLog.push(r.log);
+      if (combatLog.length > 22) combatLog.shift();
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      beginAllyPhaseAfterPlayer();
+      return;
+    }
+    if (combatPickMode.type === "lotg_ally_skill_ally") {
+      tickCombatRoundStart();
+      const skillId = combatPickMode.skillId;
+      const uid = combatPickMode.uid;
+      combatPickMode = null;
+      const r = applyLotgEquippedSkill(skillId, uid, null, allyKey);
+      combatLog.push(r.log);
+      if (combatLog.length > 22) combatLog.shift();
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      const allies = getPartyUnits();
+      const u = allies.find((x) => x.uid === uid);
+      combatAllyIndex = u ? allies.indexOf(u) + 1 : combatAllyIndex + 1;
+      if (!skipToNextAliveAlly(allies)) {
+        combatPhase = "player";
+        combatAllyIndex = 0;
+        enemyCombatTurn();
+      } else renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+    if (combatPickMode.type !== "ally_skill_ally") return;
     const p = lotgState.protag;
     const cs = applyEquipToProtag();
-    const atkMult =
-      (lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1) *
-      (lotgState.combatBuff && lotgState.combatBuff.turns > 0 ? lotgState.combatBuff.atkMult || 1 : 1);
     const allies = getPartyUnits();
     const u = allies.find((x) => x.uid === combatPickMode.uid);
     const vitals = u && lotgState.combatAllyVitals[u.uid];
@@ -3426,7 +4600,10 @@
     }
     combatPickMode = null;
     payAllySkillCost(u, vitals, u.skill);
-    const r = applyAllySkillEffect(u, p, cs, atkMult, profile, null, allyKey);
+    const anomalyS =
+      lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1;
+    const allySkMult = anomalyS * allyConsumableBuffMult(vitals) * 1.1;
+    const r = applyAllySkillEffect(u, p, cs, allySkMult, profile, null, allyKey);
     combatLog.push(r.log);
     if (combatLog.length > 22) combatLog.shift();
     if (!anyEnemyAlive()) {
@@ -3467,14 +4644,45 @@
     } else renderLotgGame({ combatBg: cbg });
   }
 
+  function tickEnemyDotDamage() {
+    if (!combatEnemies.length) return;
+    function logLine(s) {
+      combatLog.push(s);
+      if (combatLog.length > 28) combatLog.shift();
+    }
+    combatEnemies.forEach((en) => {
+      if (!en || en.hp <= 0) return;
+      if (en.lotgDotTurns > 0 && en.lotgDotDmg > 0) {
+        const d = Math.max(1, Math.floor(en.lotgDotDmg));
+        en.hp -= d;
+        en.lotgDotTurns--;
+        logLine("DoT → " + en.name + ": −" + d + (en.lotgDotTurns > 0 ? " (" + en.lotgDotTurns + "t rest.)" : "") + ".");
+      }
+    });
+  }
+
   function enemyCombatTurn() {
     if (!inLotgCombat() || !lotgState) return;
+    tickEnemyDotDamage();
+    if (!anyEnemyAlive()) {
+      endCombat(true);
+      return;
+    }
     const p = lotgState.protag;
     const cs = applyEquipToProtag();
     const cbg = combatBgFromWrap();
     function logLine(s) {
       combatLog.push(s);
       if (combatLog.length > 28) combatLog.shift();
+    }
+    lotgPartyBurnTick(logLine);
+    if (p.hpCur <= 0) {
+      endCombat(false);
+      return;
+    }
+    if (!anyEnemyAlive()) {
+      endCombat(true);
+      return;
     }
     const wave = combatEnemies.filter((en) => en.hp > 0);
     for (let wi = 0; wi < wave.length; wi++) {
@@ -3484,6 +4692,20 @@
         return;
       }
       if (e.hp <= 0) continue;
+      ensureEnemyAilments(e);
+      const ea = e.ailments;
+      if ((ea.sleep || 0) > 0) {
+        logLine(e.name + " duerme y no actúa.");
+        continue;
+      }
+      if ((ea.para || 0) > 0 && Math.random() < 0.38) {
+        logLine(e.name + " está paralizado y no puede moverse.");
+        continue;
+      }
+      if ((ea.freeze || 0) > 0 && Math.random() < 0.26) {
+        logLine(e.name + " resbala bajo congelación y pierde el turno.");
+        continue;
+      }
       const targets = [];
       if (p.hpCur > 0) targets.push({ kind: "protag", name: p.name, u: null, apply: (dmg) => (p.hpCur -= dmg) });
       getPartyUnits().forEach((u) => {
@@ -3494,20 +4716,51 @@
         endCombat(false);
         return;
       }
+      let didStatus = false;
+      if ((e.statusSkillInternalCd || 0) > 0) {
+        e.statusSkillInternalCd--;
+      } else if ((ea.silence || 0) <= 0 && Math.random() < (e.boss ? 0.36 : e.miniboss ? 0.33 : 0.27)) {
+        e.statusSkillInternalCd = 2;
+        const pickT = targets[Math.floor(Math.random() * targets.length)];
+        const aff = pickEnemyStatusAilment(e);
+        const tk = pickT.kind === "protag" ? "protag" : pickT.u.uid;
+        applyAilmentToTargetParty(tk, aff, 3);
+        logLine(
+          e.name +
+            " — técnica " +
+            String(LOTG_AILMENT_LABELS[aff] || aff).toLowerCase() +
+            " → " +
+            pickT.name +
+            " (3 rondas enemigas)."
+        );
+        didStatus = true;
+      }
+      if (didStatus) {
+        if (p.hpCur <= 0) {
+          endCombat(false);
+          return;
+        }
+        continue;
+      }
       const pick = targets[Math.floor(Math.random() * targets.length)];
       const hit = rollEnemyAttackDamage(e, pick.kind === "protag" ? { kind: "protag" } : { kind: "ally", u: pick.u });
       if (hit.dodge) logLine(e.name + " falla contra " + pick.name + " (esquivado).");
       else {
-        pick.apply(hit.dmg);
-        const tag = hit.crit ? " ¡crítico!" : "";
-        const elab = hit.mag ? " (mág.)" : " (fís.)";
-        logLine(e.name + " → " + pick.name + elab + ": " + hit.dmg + "." + tag);
+        if ((ea.freeze || 0) > 0 && Math.random() < 0.22) {
+          logLine(e.name + " falla bajo congelación contra " + pick.name + ".");
+        } else {
+          pick.apply(hit.dmg);
+          const tag = hit.crit ? " ¡crítico!" : "";
+          const elab = hit.mag ? " (mág.)" : " (fís.)";
+          logLine(e.name + " → " + pick.name + elab + ": " + hit.dmg + "." + tag);
+        }
       }
       if (p.hpCur <= 0) {
         endCombat(false);
         return;
       }
     }
+    lotgDecrementAllAilmentTurns();
     p.spCur = Math.min(cs.spMax, p.spCur + 4);
     combatPhase = "player";
     combatAllyIndex = 0;
@@ -3526,9 +4779,8 @@
     const e = firstAliveEnemy();
     const p = lotgState.protag;
     const cs = applyEquipToProtag();
-    const atkMult =
-      (lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1) *
-      (lotgState.combatBuff && lotgState.combatBuff.turns > 0 ? lotgState.combatBuff.atkMult || 1 : 1);
+    const anomaly =
+      lotgState.anomalyBuffFloor === lotgState.floor && lotgState.anomalyBuffAmt ? 1 + lotgState.anomalyBuffAmt : 1;
     function logLine(s) {
       combatLog.push(s);
       if (combatLog.length > 22) combatLog.shift();
@@ -3542,7 +4794,18 @@
     }
     const u = allies[combatAllyIndex];
     const vitals = lotgState.combatAllyVitals[u.uid];
+    const atkMult = anomaly * allyConsumableBuffMult(vitals) * allyFreezeDamageMult(vitals) * 1.1;
     if (!vitals || vitals.hp <= 0) {
+      combatAllyIndex++;
+      if (!skipToNextAliveAlly(allies)) {
+        combatPhase = "player";
+        combatAllyIndex = 0;
+        enemyCombatTurn();
+      } else renderLotgGame({ combatBg: cbg });
+      return;
+    }
+    if ((mergeAilments(vitals.ailments).sleep || 0) > 0) {
+      logLine(u.name + " duerme y no puede actuar.");
       combatAllyIndex++;
       if (!skipToNextAliveAlly(allies)) {
         combatPhase = "player";
@@ -3556,6 +4819,17 @@
       return;
     }
     if (action === "atk") {
+      const bl = allyBlockedByPara(vitals, "atk");
+      if (bl) {
+        logLine(u.name + ": " + bl);
+        combatAllyIndex++;
+        if (!skipToNextAliveAlly(allies)) {
+          combatPhase = "player";
+          combatAllyIndex = 0;
+          enemyCombatTurn();
+        } else renderLotgGame({ combatBg: cbg });
+        return;
+      }
       const aliveCount = combatEnemies.filter((en) => en.hp > 0).length;
       if (aliveCount <= 1 && e) {
         const admg = computeAllyDamage(u, e, atkMult);
@@ -3569,6 +4843,27 @@
     } else if (action === "pass") {
       logLine(u.name + " espera.");
     } else if (action === "skill") {
+      if ((mergeAilments(vitals.ailments).silence || 0) > 0) {
+        logLine(u.name + ": silenciada/o — no puede usar su habilidad.");
+        combatAllyIndex++;
+        if (!skipToNextAliveAlly(allies)) {
+          combatPhase = "player";
+          combatAllyIndex = 0;
+          enemyCombatTurn();
+        } else renderLotgGame({ combatBg: cbg });
+        return;
+      }
+      const blS = allyBlockedByPara(vitals, "skill");
+      if (blS) {
+        logLine(u.name + ": " + blS);
+        combatAllyIndex++;
+        if (!skipToNextAliveAlly(allies)) {
+          combatPhase = "player";
+          combatAllyIndex = 0;
+          enemyCombatTurn();
+        } else renderLotgGame({ combatBg: cbg });
+        return;
+      }
       const pre = allySkillPrecheck(u, vitals);
       if (!pre.ok) logLine(pre.log);
       else {
@@ -3590,6 +4885,41 @@
         const r = applyAllySkillEffect(u, p, cs, atkMult, profile, null, null);
         logLine(r.log);
       }
+    } else if (typeof action === "string" && action.indexOf("allylotg:") === 0) {
+      const skillId = action.slice("allylotg:".length);
+      const sk = getLotgBattleSkill(skillId);
+      if (!sk || !sk.combat || sk.combat.kind === "passive") {
+        logLine("Técnica no disponible.");
+      } else if ((mergeAilments(vitals.ailments).silence || 0) > 0) {
+        logLine(u.name + ": silenciada/o — técnica equipada bloqueada.");
+      } else {
+        const blL = allyBlockedByPara(vitals, "skill");
+        if (blL) {
+          logLine(u.name + ": " + blL);
+        } else {
+        const k = sk.combat.kind;
+        const aliveN = combatEnemies.filter((en) => en.hp > 0).length;
+        if ((k === "dmg_mag_1" || k === "dmg_phys_1" || k === "dot_main" || k === "status_enemy_1") && aliveN > 1) {
+          combatPickMode = { type: "lotg_ally_skill_enemy", uid: u.uid, skillId };
+          renderLotgGame({ combatBg: cbg });
+          return;
+        }
+        if (k === "heal_1" || k === "cleanse_1") {
+          combatPickMode = { type: "lotg_ally_skill_ally", uid: u.uid, skillId };
+          renderLotgGame({ combatBg: cbg });
+          return;
+        }
+        tickCombatRoundStart();
+        const idx = combatEnemies.findIndex((x) => x.hp > 0);
+        const r = applyLotgEquippedSkill(skillId, u.uid, idx >= 0 ? idx : 0, null);
+        if (!r.ok) {
+          logLine(r.log);
+          renderLotgGame({ combatBg: cbg });
+          return;
+        }
+        logLine(r.log);
+        }
+      }
     }
     if (!anyEnemyAlive()) {
       endCombat(true);
@@ -3603,72 +4933,205 @@
     } else renderLotgGame({ combatBg: cbg });
   }
 
-  function useConsumableOutsideCombat(invIdx) {
+  function useConsumableOutsideCombat(invIdx, targetKey) {
     if (!lotgState || inLotgCombat()) return;
     const inv = lotgState.inventory || [];
     if (invIdx < 0 || invIdx >= inv.length) return;
     const it = inv[invIdx];
     normalizeInventoryItem(it);
-    if (!["heal", "sp", "buff"].includes(it.type)) return;
+    if (!["heal", "sp", "buff", "cleanse", "stat"].includes(it.type)) return;
+    const tk = targetKey === "protag" ? "protag" : targetKey;
     const cs = applyEquipToProtag();
     const pr = lotgState.protag;
+    if (!lotgState.partyVitalsPersist) lotgState.partyVitalsPersist = {};
+    if (tk !== "protag") {
+      const u = (lotgState.roster || []).find((x) => x && x.uid === tk);
+      if (!u) return;
+    }
     if (it.type === "heal") {
       const pct = it.healPct != null ? it.healPct : 0.35;
-      pr.hpCur = Math.min(cs.hpMax, pr.hpCur + Math.floor(cs.hpMax * pct));
+      if (tk === "protag") {
+        pr.hpCur = Math.min(cs.hpMax, pr.hpCur + Math.floor(cs.hpMax * pct));
+      } else {
+        const u = (lotgState.roster || []).find((x) => x.uid === tk);
+        const stA = allyCombatStats(u);
+        let pv = lotgState.partyVitalsPersist[tk] || { hp: stA.hpMax, sp: stA.spMax };
+        pv.hp = Math.min(stA.hpMax, (pv.hp != null ? pv.hp : stA.hpMax) + Math.floor(stA.hpMax * pct));
+        lotgState.partyVitalsPersist[tk] = pv;
+      }
     } else if (it.type === "sp") {
       const pct = it.spPct != null ? it.spPct : 0.28;
-      pr.spCur = Math.min(cs.spMax, pr.spCur + Math.floor(cs.spMax * pct));
-    } else {
-      lotgState.runCombatAtkMult = Math.max(lotgState.runCombatAtkMult || 1, 1 + (it.atkPct != null ? it.atkPct : 0.1));
-      lotgState.runCombatAtkFights = (lotgState.runCombatAtkFights || 0) + (it.turns != null ? it.turns : 4);
+      if (tk === "protag") {
+        pr.spCur = Math.min(cs.spMax, pr.spCur + Math.floor(cs.spMax * pct));
+      } else {
+        const u = (lotgState.roster || []).find((x) => x.uid === tk);
+        const stA = allyCombatStats(u);
+        let pv = lotgState.partyVitalsPersist[tk] || { hp: stA.hpMax, sp: stA.spMax };
+        pv.sp = Math.min(stA.spMax, (pv.sp != null ? pv.sp : stA.spMax) + Math.floor(stA.spMax * pct));
+        lotgState.partyVitalsPersist[tk] = pv;
+      }
+    } else if (it.type === "buff") {
+      const mult = 1 + (it.atkPct != null ? it.atkPct : 0.1);
+      const turns = it.turns != null ? it.turns : 4;
+      if (tk === "protag") {
+        lotgState.runCombatAtkMult = Math.max(lotgState.runCombatAtkMult || 1, mult);
+        lotgState.runCombatAtkFights = (lotgState.runCombatAtkFights || 0) + (it.turns != null ? it.turns : 4);
+      } else {
+        lotgState.stagingAllyItemBuff = { uid: tk, mult: mult, turns: turns };
+      }
+    } else if (it.type === "cleanse") {
+      /* Fuera de combate: limpia marcas narrativas; en combate usa el flujo de objetivo. */
+      if (tk === "protag") lotgState.protagAilments = { silence: 0, sleep: 0, burn: 0, freeze: 0, para: 0 };
+    } else if (it.type === "stat") {
+      const mult = 1 + (it.statBuffPct != null ? it.statBuffPct : 0.08);
+      const turns = it.turns != null ? it.turns : 5;
+      if (tk === "protag") {
+        lotgState.runCombatAtkMult = Math.max(lotgState.runCombatAtkMult || 1, mult);
+        lotgState.runCombatAtkFights = (lotgState.runCombatAtkFights || 0) + turns;
+      } else {
+        lotgState.stagingAllyItemBuff = { uid: tk, mult: mult, turns: turns };
+      }
     }
     inv.splice(invIdx, 1);
+    lotgState._consumablePickIdx = null;
     lotgSave();
     renderLotgGame();
   }
 
   function combatTurnItem(invIdx) {
     if (!inLotgCombat() || !lotgState || combatPhase !== "player" || combatPickMode) return;
-    const p = lotgState.protag;
-    const cs = applyEquipToProtag();
     const inv = lotgState.inventory || [];
     if (invIdx < 0 || invIdx >= inv.length) return;
     const it = inv[invIdx];
     normalizeInventoryItem(it);
+    if (!["heal", "sp", "buff", "cleanse", "stat"].includes(it.type)) {
+      combatLog.push("«" + (it.name || "Objeto") + "» no es usable en combate.");
+      if (combatLog.length > 22) combatLog.shift();
+      renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+    combatPickMode = { type: "consumable_target", invIdx: invIdx };
+    renderLotgGame({ combatBg: combatBgFromWrap() });
+  }
+
+  function handleCombatConsumableTarget(targetKey) {
+    if (!inLotgCombat() || !lotgState || combatPhase !== "player" || !combatPickMode || combatPickMode.type !== "consumable_target")
+      return;
+    const invIdx = combatPickMode.invIdx;
+    const p = lotgState.protag;
+    const cs = applyEquipToProtag();
+    const inv = lotgState.inventory || [];
+    if (invIdx < 0 || invIdx >= inv.length) {
+      combatPickMode = null;
+      renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
+    const it = inv[invIdx];
+    normalizeInventoryItem(it);
+    if (!["heal", "sp", "buff", "cleanse", "stat"].includes(it.type)) {
+      combatPickMode = null;
+      renderLotgGame({ combatBg: combatBgFromWrap() });
+      return;
+    }
     function logLine(s) {
       combatLog.push(s);
       if (combatLog.length > 22) combatLog.shift();
     }
-    if (!["heal", "sp", "buff"].includes(it.type)) {
-      logLine("«" + (it.name || "Objeto") + "» no es usable en combate.");
-      renderLotgGame({ combatBg: combatBgFromWrap() });
-      return;
+    const tk = targetKey === "protag" ? "protag" : targetKey;
+    if (tk !== "protag") {
+      const u = getPartyUnits().find((x) => x.uid === tk);
+      const vitals = u && lotgState.combatAllyVitals[u.uid];
+      if (!u || !vitals || vitals.hp <= 0) {
+        logLine("Objetivo no válido o caído.");
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
     }
     tickCombatRoundStart();
+    combatPickMode = null;
     inv.splice(invIdx, 1);
+    const tName = tk === "protag" ? p.name : getPartyUnits().find((x) => x.uid === tk).name;
     if (it.type === "heal") {
       const pct = it.healPct != null ? it.healPct : 0.35;
-      const heal = Math.floor(cs.hpMax * pct);
-      p.hpCur = Math.min(cs.hpMax, p.hpCur + heal);
-      logLine("Usas «" + it.name + "»: +" + heal + " HP.");
+      if (tk === "protag") {
+        const heal = Math.floor(cs.hpMax * pct);
+        p.hpCur = Math.min(cs.hpMax, p.hpCur + heal);
+        logLine("Usas «" + it.name + "» en " + tName + ": +" + heal + " HP.");
+      } else {
+        const u = getPartyUnits().find((x) => x.uid === tk);
+        const vitals = lotgState.combatAllyVitals[u.uid];
+        const stA = allyCombatStats(u);
+        const heal = Math.floor(stA.hpMax * pct);
+        vitals.hp = Math.min(stA.hpMax, vitals.hp + heal);
+        logLine("Usas «" + it.name + "» en " + tName + ": +" + heal + " HP.");
+      }
     } else if (it.type === "sp") {
       const pct = it.spPct != null ? it.spPct : 0.28;
-      const sp = Math.floor(cs.spMax * pct);
-      p.spCur = Math.min(cs.spMax, p.spCur + sp);
-      logLine("Usas «" + it.name + "»: +" + sp + " SP.");
+      if (tk === "protag") {
+        const sp = Math.floor(cs.spMax * pct);
+        p.spCur = Math.min(cs.spMax, p.spCur + sp);
+        logLine("Usas «" + it.name + "» en " + tName + ": +" + sp + " SP.");
+      } else {
+        const u = getPartyUnits().find((x) => x.uid === tk);
+        const vitals = lotgState.combatAllyVitals[u.uid];
+        const stA = allyCombatStats(u);
+        const sp = Math.floor(stA.spMax * pct);
+        vitals.sp = Math.min(stA.spMax, vitals.sp + sp);
+        logLine("Usas «" + it.name + "» en " + tName + ": +" + sp + " SP.");
+      }
     } else if (it.type === "buff") {
-      if (!lotgState.combatBuff) lotgState.combatBuff = { atkMult: 1, turns: 0 };
-      lotgState.combatBuff.atkMult = 1 + (it.atkPct || 0.1);
-      lotgState.combatBuff.turns = it.turns || 4;
-      logLine(
-        "Usas «" +
-          it.name +
-          "»: +" +
-          Math.round((it.atkPct || 0.1) * 100) +
-          "% daño durante " +
-          lotgState.combatBuff.turns +
-          " turnos propios."
-      );
+      const mult = 1 + (it.atkPct || 0.1);
+      const turns = it.turns || 4;
+      if (tk === "protag") {
+        if (!lotgState.combatBuff) lotgState.combatBuff = { atkMult: 1, turns: 0 };
+        lotgState.combatBuff.atkMult = mult;
+        lotgState.combatBuff.turns = turns;
+        logLine(
+          "Usas «" +
+            it.name +
+            "» en " +
+            tName +
+            ": +" +
+            Math.round((it.atkPct || 0.1) * 100) +
+            "% daño (" +
+            turns +
+            " turnos propios del doctor)."
+        );
+      } else {
+        const u = getPartyUnits().find((x) => x.uid === tk);
+        const vitals = lotgState.combatAllyVitals[u.uid];
+        vitals.consumableBuffMult = mult;
+        vitals.consumableBuffTurns = turns;
+        logLine(
+          "Usas «" +
+            it.name +
+            "» en " +
+            tName +
+            ": +" +
+            Math.round((it.atkPct || 0.1) * 100) +
+            "% daño (" +
+            turns +
+            " turnos propios de esa unidad)."
+        );
+      }
+    } else if (it.type === "cleanse") {
+      clearTargetAilments(tk);
+      logLine("Usas «" + it.name + "» en " + tName + ": estados alterados limpiados.");
+    } else if (it.type === "stat") {
+      const mult = 1 + (it.statBuffPct != null ? it.statBuffPct : 0.08);
+      const turns = it.turns != null ? it.turns : 5;
+      if (tk === "protag") {
+        if (!lotgState.combatBuff) lotgState.combatBuff = { atkMult: 1, turns: 0 };
+        lotgState.combatBuff.atkMult = Math.max(lotgState.combatBuff.atkMult || 1, mult);
+        lotgState.combatBuff.turns = Math.max(lotgState.combatBuff.turns || 0, turns);
+        logLine("Usas «" + it.name + "» en " + tName + ": refuerzo temporal de daño.");
+      } else {
+        const u = getPartyUnits().find((x) => x.uid === tk);
+        const vitals = lotgState.combatAllyVitals[u.uid];
+        vitals.consumableBuffMult = mult;
+        vitals.consumableBuffTurns = turns;
+        logLine("Usas «" + it.name + "» en " + tName + ": potencia temporal.");
+      }
     }
     if (!anyEnemyAlive()) {
       endCombat(true);
@@ -3698,7 +5161,73 @@
       if (combatLog.length > 22) combatLog.shift();
     }
 
+    if (typeof action === "string" && action.indexOf("lotgextra:") === 0) {
+      const skillId = action.slice("lotgextra:".length);
+      const sk = getLotgBattleSkill(skillId);
+      if (!sk || !sk.combat || sk.combat.kind === "passive") {
+        logLine("Técnica no disponible o es pasiva (no se usa en combate).");
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      const paX = mergeAilments(lotgState.protagAilments);
+      if ((paX.silence || 0) > 0) {
+        logLine("Silencio: no podés usar técnicas equipadas.");
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      const blX = protagBlockedBySleepPara(action);
+      if (blX) {
+        logLine(blX);
+        tickCombatRoundStart();
+        beginAllyPhaseAfterPlayer();
+        return;
+      }
+      const k = sk.combat.kind;
+      const needsEnemy =
+        k === "dmg_mag_1" || k === "dmg_phys_1" || k === "dot_main" || k === "status_enemy_1";
+      const needsAlly = k === "heal_1" || k === "cleanse_1";
+      if (needsEnemy && aliveDefer > 1) {
+        combatPickMode = { type: "lotg_skill_enemy", who: "protag", skillId };
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      if (needsAlly) {
+        combatPickMode = { type: "lotg_skill_ally", who: "protag", skillId };
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      tickCombatRoundStart();
+      const idx = combatEnemies.findIndex((x) => x.hp > 0);
+      const r = applyLotgEquippedSkill(skillId, "protag", idx >= 0 ? idx : 0, null);
+      if (!r.ok) {
+        logLine(r.log);
+        renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+      logLine(r.log);
+      if (!anyEnemyAlive()) {
+        endCombat(true);
+        return;
+      }
+      beginAllyPhaseAfterPlayer();
+      return;
+    }
+
     if (action === "skill") {
+      const paSk = mergeAilments(lotgState.protagAilments);
+      if ((paSk.silence || 0) > 0) {
+        logLine("Silencio: no podés vocalizar la técnica del doctor.");
+        tickCombatRoundStart();
+        beginAllyPhaseAfterPlayer();
+        return;
+      }
+      const blSk = protagBlockedBySleepPara(action);
+      if (blSk) {
+        logLine(blSk);
+        tickCombatRoundStart();
+        beginAllyPhaseAfterPlayer();
+        return;
+      }
       if (skillCdPro > 0) {
         logLine("Habilidad en enfriamiento (" + skillCdPro + " turno(s)). Elige otra acción — no pierdes el turno.");
         renderLotgGame({ combatBg: combatBgFromWrap() });
@@ -3707,6 +5236,16 @@
       if (p.spCur < 18) {
         logLine("No tienes suficiente SP.");
         renderLotgGame({ combatBg: combatBgFromWrap() });
+        return;
+      }
+    }
+
+    if (action === "atk") {
+      const blAtk0 = protagBlockedBySleepPara(action);
+      if (blAtk0) {
+        logLine(blAtk0);
+        tickCombatRoundStart();
+        beginAllyPhaseAfterPlayer();
         return;
       }
     }
@@ -3738,7 +5277,7 @@
         return;
       }
       if (aliveN <= 1) {
-        const raw = lotgProtagPhysicalRaw(cs, atkMult, buffMult);
+        const raw = lotgProtagPhysicalRaw(cs, atkMult, buffMult * protagFreezeDamageMult());
         let dmg = damageToEnemyPhysical(raw, e);
         dmg = Math.floor(dmg * elementalDamageMult(p.lotgElement || "Neutral", e.element || "Neutral"));
         let crit = false;
@@ -3760,7 +5299,7 @@
       const alive = combatEnemies.filter((en) => en.hp > 0);
       const parts = [];
       alive.forEach((en) => {
-        const raw = lotgProtagMagicalRaw(cs, atkMult, buffMult, 1.32);
+        const raw = lotgProtagMagicalRaw(cs, atkMult, buffMult * protagFreezeDamageMult(), 1.32);
         const spread = alive.length > 1 ? 0.52 : 1;
         let dmg = damageToEnemyMagical(raw * spread, en);
         dmg = Math.floor(dmg * elementalDamageMult(p.lotgElement || "Neutral", en.element || "Neutral"));
@@ -3777,6 +5316,344 @@
       return;
     }
     beginAllyPhaseAfterPlayer();
+  }
+
+  function lotgSocialArchetypeForRosterUnit(u) {
+    if (!u) return "kuudere";
+    let h = 0;
+    const s = String(u.uid || "") + String(u.name || "");
+    for (let i = 0; i < s.length; i++) h = (h + s.charCodeAt(i) * (i + 3)) % 1009;
+    const arcs = ["tsundere", "kuudere", "dandere", "genki"];
+    return arcs[h % arcs.length];
+  }
+
+  function socialLinkTierFromLevel(L) {
+    return L <= 2 ? 0 : L <= 5 ? 1 : L <= 8 ? 2 : 3;
+  }
+
+  function socialVNPage(title, speaker, expression, vnMood, text) {
+    return { title, speaker, expression, vnMood, text };
+  }
+
+  function socialArchetypeIntroPages(arc, tier, linkLv, unitName, doctorName) {
+    const TK = ["primer contacto", "pasos medidos", "terreno compartido", "cruce sin mapa"][tier];
+    const cierre =
+      tier <= 1
+        ? `El vínculo ${linkLv}/10 todavía aprende a caminar; no prometo fuegos artificiales, solo constancia.`
+        : tier === 2
+          ? `En ${linkLv}/10 ya no es casualidad: es hábito peligroso y hermoso a la vez.`
+          : `Si ${linkLv}/10 es techo o piso, lo decidimos con la próxima elección; no con el miedo.`;
+    const lib = {
+      tsundere: [
+        socialVNPage(
+          "Encuentro · " + unitName,
+          unitName,
+          "defensiva elegante",
+          "tension",
+          doctorName +
+            "… no es que te estuviera esperando junto a la máquina expendedora. El hospital suena a zapatillas mojadas y a KPIs inútiles; si vas a quedarte, que sea porque elegís quedarte, no porque el turno lo mande."
+        ),
+        socialVNPage(
+          "Márgenes del relato",
+          doctorName,
+          "voz baja, exacta",
+          "calm",
+          "Guardo el celular. " +
+            unitName +
+            " habla con púas que son también salvavidas. «Puedo escuchar otra versión», ofrezco, y los minutos que prometo no son de cuento: son de tiempo robado al colapso."
+        ),
+        socialVNPage("Vínculo " + linkLv + "/10 · " + TK, unitName, "casi un gesto dulce", "calm", cierre),
+      ],
+      kuudere: [
+        socialVNPage(
+          "Silencio útil",
+          unitName,
+          "mirada fija al vitral",
+          "serious",
+          "El reflejo de las luces de neón se parte en el cristal como una frase incompleta. " +
+            doctorName +
+            ": una sola cosa que no esté en el parte. Si no hay nada, seguimos en silencio; el silencio también es dato."
+        ),
+        socialVNPage(
+          "Lectura lateral",
+          doctorName,
+          "economía de gestos",
+          "calm",
+          "Asiento. " +
+            unitName +
+            " no pide drama; pide coherencia. Leo su postura como un monitor: alertas suaves, no alarmas ruidosas."
+        ),
+        socialVNPage("Nivel " + linkLv + " · " + TK, unitName, "voz plana con peso", "serious", cierre),
+      ],
+      dandere: [
+        socialVNPage(
+          "Palabras pequeñas",
+          unitName,
+          "manos en la manga",
+          "calm",
+          "Perdón… " +
+            doctorName +
+            ". No sé si debo ocupar tu tiempo. Cuando pasás, el ruido del distrito baja un poco, y me da miedo acostumbrarme a ese volumen."
+        ),
+        socialVNPage(
+          "Permiso suave",
+          doctorName,
+          "sonrisa contenida",
+          "calm",
+          "Le devuelvo el espacio con calma. " +
+            unitName +
+            " no necesita performar valentía; necesita que su timidez no sea leída como ausencia. «Seguimos cuando quieras», digo."
+        ),
+        socialVNPage("Vínculo " + linkLv + " · " + TK, unitName, "valentía mínima, sincera", "calm", cierre),
+      ],
+      genki: [
+        socialVNPage(
+          "¡Interceptación!",
+          unitName,
+          "brillo de adrenalina social",
+          "calm",
+          "¡" +
+            doctorName +
+            "! ¡Te agarré antes del ascensor! Tengo tres ideas malas y una buena: la buena es que te quedes aunque sea el tiempo de un café imaginario."
+        ),
+        socialVNPage(
+          "Ritmo compartido",
+          doctorName,
+          "se deja arrastrar un poco",
+          "calm",
+          "Me dejo llevar medio metro. " +
+            unitName +
+            " enciende el pasillo como un neón roto: feo de lejos, hermoso de cerca. «Dale», digo."
+        ),
+        socialVNPage("Nivel " + linkLv + " · " + TK, unitName, "un segundo serio", "tension", cierre + " Si no podés, decime «no puedo»; no desaparezcas en humo de hospital."),
+      ],
+    };
+    const k = lib[arc] ? arc : "kuudere";
+    return lib[k];
+  }
+
+  function buildSocialLinkVNIntro(arc, linkLv, unitName, doctorName) {
+    const tier = socialLinkTierFromLevel(linkLv);
+    return {
+      title: "Vínculo social · " + unitName,
+      bg: 2,
+      vnMood: "calm",
+      pages: socialArchetypeIntroPages(arc, tier, linkLv, unitName, doctorName),
+    };
+  }
+
+  function buildSocialLinkVNOutro(mood, newLv, unitName, partnerGained) {
+    const good = mood >= 2;
+    const bad = mood <= -2;
+    const moodTxt = good ? "La química empuja el vínculo hacia adelante." : bad ? "El aire queda denso; habrá que recomponer otro día." : "Quedó un equilibrio frágil pero honesto.";
+    const p2 =
+      "Cierras la nota mental: vínculo " +
+      newLv +
+      "/10 con " +
+      unitName +
+      "." +
+      (partnerGained ? " Pareja de ruta sellada con palabras simples, no con fanfarrias." : "");
+    return {
+      title: "Después del encuentro",
+      bg: 3,
+      vnMood: good ? "calm" : bad ? "serious" : "calm",
+      pages: [
+        socialVNPage("Eco en el pasillo", unitName, good ? "casi una sonrisa" : bad ? "mirada esquiva" : "neutral", good ? "calm" : "serious", moodTxt),
+        socialVNPage("Doctor", "Tú", "dedos en el llavero del consultorio", "calm", p2),
+      ],
+    };
+  }
+
+  function openSocialLinkChoicesOverlay(arc, linkLv, unitName, doctorName, portraitSrc, sceneTitle, onMoodDone) {
+    const ov = document.getElementById("vnOverlay");
+    const txt = document.getElementById("vnText");
+    const port = document.getElementById("vnPortrait");
+    const choicesEl = document.getElementById("vnChoices");
+    const cont = document.getElementById("vnContinue");
+    if (!ov || !txt || !choicesEl || !cont) {
+      onMoodDone(0);
+      return;
+    }
+    let mood = 0;
+    let step = 0;
+    function baseChrome() {
+      resetVNChrome();
+      const bg = VN_BG[2 % VN_BG.length];
+      ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${bg}")`;
+      port.style.display = "block";
+      port.innerHTML = `<img src="${escapeAttrUrl(portraitSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.style.display='none'"/>`;
+      choicesEl.style.display = "flex";
+      cont.style.display = "none";
+      ov.classList.add("show");
+    }
+    function finishChoices() {
+      choicesEl.style.display = "none";
+      choicesEl.innerHTML = "";
+      ov.classList.remove("show");
+      cont.onclick = null;
+      resetVNChrome();
+      onMoodDone(mood);
+    }
+    function addChoice(label, onPick) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      b.addEventListener("click", onPick);
+      choicesEl.appendChild(b);
+    }
+    function renderStep() {
+      choicesEl.innerHTML = "";
+      baseChrome();
+      playStoryMood(step === 0 ? "tension" : "calm");
+      if (step === 0) {
+        txt.innerHTML = `<strong>${escapeHtml(sceneTitle)}</strong><br/><br/>
+          <strong class="vn-speaker">${escapeHtml(unitName)}</strong> <span class="muted vn-expression">(arquetipo ${escapeHtml(arc)} · vínculo ${linkLv}/10)</span><br/><br/>
+          ${escapeHtml(doctorName)}, elegí el <em>lugar</em> para esta escena social.`;
+        addChoice("Cafetería tranquila del hospital (té, silencio útil).", () => {
+          mood += 1;
+          step++;
+          renderStep();
+        });
+        addChoice("Arcade ruidoso del distrito (luces, ruido blanco).", () => {
+          mood -= 1;
+          step++;
+          renderStep();
+        });
+      } else if (step === 1) {
+        txt.innerHTML = `<strong>${escapeHtml(sceneTitle)}</strong><br/><br/>
+          <strong class="vn-speaker">${escapeHtml(unitName)}</strong><br/><br/>
+          ¿Hablamos del trabajo en el nudo urbano o dejamos que el tema respire con humor?`;
+        addChoice("Serio: riesgos, deber, lo que nadie quiere nombrar.", () => {
+          mood += 1;
+          step++;
+          renderStep();
+        });
+        addChoice("Ligero: broma, anécdota, cambiar de canal emocional.", () => {
+          mood -= 1;
+          step++;
+          renderStep();
+        });
+      } else if (step === 2) {
+        txt.innerHTML = `<strong>${escapeHtml(sceneTitle)}</strong><br/><br/>
+          <strong class="vn-speaker">${escapeHtml(unitName)}</strong><br/><br/>
+          ¿Querés gastar un regalo del inventario (❤) para subir la apuesta simbólica?`;
+        addChoice("Sí — usar un regalo si hay stock.", () => {
+          const gi = lotgState.giftInventory || {};
+          const keys = Object.keys(gi).filter((k) => gi[k] > 0);
+          if (keys.length) {
+            const useK = keys[0];
+            gi[useK]--;
+            mood += 2;
+            lotgState.giftInventory = gi;
+          }
+          finishChoices();
+        });
+        addChoice("No — sin regalo físico esta vez.", () => finishChoices());
+      }
+    }
+    renderStep();
+  }
+
+  function askSocialPartnerVN(unitName, doctorName, portraitSrc, onYesNo) {
+    const ov = document.getElementById("vnOverlay");
+    const txt = document.getElementById("vnText");
+    const port = document.getElementById("vnPortrait");
+    const choicesEl = document.getElementById("vnChoices");
+    const cont = document.getElementById("vnContinue");
+    if (!ov || !txt || !choicesEl) {
+      onYesNo(false);
+      return;
+    }
+    resetVNChrome();
+    const bg = VN_BG[3 % VN_BG.length];
+    ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${bg}")`;
+    port.style.display = "block";
+    port.innerHTML = `<img src="${escapeAttrUrl(portraitSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.style.display='none'"/>`;
+    txt.innerHTML = `<strong>Pareja de ruta</strong><br/><br/>
+      <strong class="vn-speaker">${escapeHtml(unitName)}</strong><br/><br/>
+      El vínculo llegó a 10/10 con buena química. ¿Preguntás si quiere formalizar la relación (×2 stats en combate)?`;
+    choicesEl.style.display = "flex";
+    choicesEl.innerHTML = "";
+    cont.style.display = "none";
+    playStoryMood("tension");
+    ov.classList.add("show");
+    function pick(yes) {
+      choicesEl.style.display = "none";
+      choicesEl.innerHTML = "";
+      ov.classList.remove("show");
+      resetVNChrome();
+      onYesNo(yes);
+    }
+    const b1 = document.createElement("button");
+    b1.type = "button";
+    b1.textContent = "Sí — formalizar pareja de ruta.";
+    b1.addEventListener("click", () => pick(true));
+    const b2 = document.createElement("button");
+    b2.type = "button";
+    b2.textContent = "Mejor dejar la puerta entreabierta.";
+    b2.addEventListener("click", () => pick(false));
+    choicesEl.appendChild(b1);
+    choicesEl.appendChild(b2);
+  }
+
+  function runSocialLinkVNFlow(uid, onDone) {
+    if (!lotgState) {
+      onDone && onDone();
+      return;
+    }
+    migrateLotgState(lotgState);
+    normalizeSoulPointsOnState(lotgState);
+    if (lotgState.soul < 400) {
+      alert("Necesitas 400 Soul Points para un evento social.");
+      onDone && onDone();
+      return;
+    }
+    const u = (lotgState.roster || []).find((x) => x && x.uid === uid);
+    if (!u) {
+      onDone && onDone();
+      return;
+    }
+    lotgState.soul -= 400;
+    if (!lotgState.socialLinks[uid]) lotgState.socialLinks[uid] = { level: 0, partner: false };
+    const sl = lotgState.socialLinks[uid];
+    const L = Math.min(10, Math.max(0, Math.floor(sl.level || 0)));
+    const arc = lotgSocialArchetypeForRosterUnit(u);
+    const doc = (lotgState.protag && lotgState.protag.name) || "Doctor";
+    const imgSrc = u.img || "Char/Lawliet.png";
+    const introBeat = buildSocialLinkVNIntro(arc, L, u.name, doc);
+    playLotgTrack("youthful", "Youthful");
+    showVNSequenceFromBeat(introBeat, () => {
+      openSocialLinkChoicesOverlay(arc, L, u.name, doc, imgSrc, introBeat.title || "Vínculo social", (mood) => {
+        let dLv = 0;
+        if (mood >= 2) dLv = 1;
+        else if (mood <= -2) dLv = L <= 1 ? 0 : -1;
+        sl.level = Math.min(10, Math.max(0, L + dLv));
+        function playOutro(partnerGained) {
+          if (mood >= 2) playLotgTrack("youthful", "Youthful");
+          else if (mood <= -2) playLotgTrack("pinkun", "Pinkun");
+          else playLotgTrack("chill", "Chill out");
+          const outro = buildSocialLinkVNOutro(mood, sl.level, u.name, partnerGained);
+          showVNSequenceFromBeat(outro, () => {
+            playLotgTrack("safe", "Safe Area");
+            resetVnStoryMusicState();
+            lotgSave();
+            onDone && onDone();
+          });
+        }
+        if (sl.level >= 10 && mood >= 2 && !sl.partner) {
+          askSocialPartnerVN(u.name, doc, imgSrc, (yes) => {
+            if (yes) sl.partner = true;
+            lotgState.socialLinks[uid] = sl;
+            lotgSave();
+            playOutro(!!yes);
+          });
+        } else {
+          lotgState.socialLinks[uid] = sl;
+          lotgSave();
+          playOutro(false);
+        }
+      });
+    });
   }
 
   function renderLotgGame(opts) {
@@ -3815,7 +5692,7 @@
       wrap.style.backgroundImage = `linear-gradient(180deg,rgba(6,8,14,.75),rgba(6,8,14,.92)), url("${cbg}")`;
       const allies = getPartyUnits();
       const allyV = lotgState.combatAllyVitals || {};
-      const combatHelpTxt = `<p class="smt-combat-help"><strong>Cómo funciona:</strong> primero el doctor (ataque a un enemigo si hay horda; técnica en área); luego cada aliado; después todos los enemigos. <strong>HP máx.</strong> sube con stats <strong>HP</strong> y <strong>VI</strong> (vitalidad) y con el equipo. <strong>SP</strong> es el maná para técnicas (sube con <strong>SP</strong> y <strong>MA</strong>).</p>`;
+      const combatHelpTxt = `<p class="smt-combat-help"><strong>Cómo funciona:</strong> primero el doctor (ataque a un enemigo si hay horda; técnica en área); luego cada aliado; después todos los enemigos. <strong>Estados alterados</strong> (silencio, sueño, quemadura, congelación, parálisis) duran <strong>rondas enemigas</strong> (3 al aplicar); la quemadura hace DoT al empezar la oleada enemiga. <strong>Neutralizador</strong> o la técnica <em>Lushen EX</em> limpian estados. <strong>HP máx.</strong> sube con <strong>HP</strong> y <strong>VI</strong>; <strong>SP</strong> con <strong>SP</strong> y <strong>MA</strong>.</p>`;
       const alliesCombat =
         allies.length > 0
           ? `<div class="smt-wing-caption">Aliados — un turno por unidad; revisa la descripción de cada habilidad antes de usarla.</div><div class="lotg-ally-combat-row smt-ally-strip">` +
@@ -3828,6 +5705,10 @@
                 const hpPct = stA.hpMax > 0 ? Math.max(0, Math.min(100, (hp / stA.hpMax) * 100)) : 0;
                 const spPct = stA.spMax > 0 ? Math.max(0, Math.min(100, (sp / stA.spMax) * 100)) : 0;
                 const dead = !v || v.hp <= 0;
+                const ailAl =
+                  v && formatAilmentsShort(v.ailments)
+                    ? `<div class="muted" style="font-size:0.55rem;color:#fca5a5;margin-top:0.12rem;line-height:1.2">${escapeHtml(formatAilmentsShort(v.ailments))}</div>`
+                    : "";
                 const passTxt = a.passive ? `<div class="muted" style="font-size:0.6rem;margin-top:0.2rem;line-height:1.25">Pasiva: ${escapeHtml(a.passive.name)}</div>` : "";
                 const ask = a.skill;
                 const skBox =
@@ -3840,6 +5721,7 @@
                   <img class="unit-face lotg-combat-unit-face" src="${escapeHtml(a.img)}" alt="" onerror="this.style.opacity=0.3"/>
                   <div class="lotg-ally-combat-name">${escapeHtml(a.name)}</div>
                   <div class="muted" style="font-size:0.6rem">${escapeHtml(a.element || "Neutral")}</div>
+                  ${ailAl}
                   ${passTxt}
                   ${skBox}
                   <div class="bar-wrap"><div class="bar-fill" style="width:${hpPct}%"></div></div>
@@ -3858,7 +5740,8 @@
       const sk = curAlly && curAlly.skill;
       const skCost = sk && sk.sp != null ? sk.sp : 16;
       const skCd = curV ? curV.skillCd : 0;
-      const skillBlocked = !curV || curV.sp < skCost || skCd > 0;
+      const silAl = curV && (mergeAilments(curV.ailments).silence || 0) > 0;
+      const skillBlocked = !curV || curV.sp < skCost || skCd > 0 || silAl;
       const skBtnText = sk
         ? escapeHtml(sk.name) + " (" + skCost + " SP" + (skCd > 0 ? ", CD " + skCd : "") + ")"
         : "Habilidad";
@@ -3870,11 +5753,13 @@
           : "";
       const docCombat = "Doctor " + escapeHtml(p.name);
       const invBattle = lotgState.inventory || [];
+      const itemPickBlock = combatPickMode && combatPickMode.type === "consumable_target";
       const itemBtns = invBattle
         .map((it, idx) => {
           normalizeInventoryItem(it);
-          if (!["heal", "sp", "buff"].includes(it.type)) return "";
-          return `<button type="button" class="ghost combat-use-item" data-inv-i="${idx}" style="text-align:left;font-size:0.76rem;padding:0.45rem 0.55rem;line-height:1.35">
+          if (!["heal", "sp", "buff", "cleanse", "stat"].includes(it.type)) return "";
+          const dis = combatPickMode && !itemPickBlock ? "disabled" : "";
+          return `<button type="button" class="ghost combat-use-item" data-inv-i="${idx}" ${dis} style="text-align:left;font-size:0.76rem;padding:0.45rem 0.55rem;line-height:1.35">
             <strong>${escapeHtml(it.name)}</strong> <span class="slot-equip-tag">[${escapeHtml(it.type)}]</span><br/><span class="muted">${escapeHtml(
             it.desc || ""
           )}</span>
@@ -3883,14 +5768,36 @@
         .join("");
       const usableCount = invBattle.filter((x) => {
         normalizeInventoryItem(x);
-        return ["heal", "sp", "buff"].includes(x.type);
+        return ["heal", "sp", "buff", "cleanse", "stat"].includes(x.type);
       }).length;
+      let allyBuffBits = "";
+      allies.forEach((a) => {
+        const v = allyV[a.uid];
+        const bt = v && (v.consumableBuffTurns || 0) > 0 && (v.consumableBuffMult || 1) > 1;
+        if (bt) {
+          allyBuffBits +=
+            " · " +
+            escapeHtml(a.name) +
+            " +" +
+            Math.round(((v.consumableBuffMult || 1) - 1) * 100) +
+            "% (" +
+            (v.consumableBuffTurns || 0) +
+            " t.)";
+        }
+      });
       const buffPill =
-        lotgState.combatBuff && lotgState.combatBuff.turns > 0
-          ? `<div class="combat-buff-pill">Estado — Daño equipo +${Math.round(
-              ((lotgState.combatBuff.atkMult || 1) - 1) * 100
-            )}% · ${lotgState.combatBuff.turns} turno(s) propio(s)</div><div class="combat-triangle-hint">Triángulo elemental: <strong>Fuego</strong> → <strong>Hielo</strong> → <strong>Trueno</strong> → Fuego (+22% / −18% daño).</div>`
+        (lotgState.combatBuff && lotgState.combatBuff.turns > 0) || allyBuffBits
+          ? `<div class="combat-buff-pill">Buffs — Doctor: ${
+              lotgState.combatBuff && lotgState.combatBuff.turns > 0
+                ? "+" + Math.round(((lotgState.combatBuff.atkMult || 1) - 1) * 100) + "% (" + lotgState.combatBuff.turns + " t.)"
+                : "—"
+            }${allyBuffBits}</div><div class="combat-triangle-hint">Triángulo elemental: <strong>Fuego</strong> → <strong>Hielo</strong> → <strong>Trueno</strong> → Fuego (+22% / −18% daño).</div>`
           : `<div class="combat-triangle-hint">Triángulo: Fuego &gt; Hielo &gt; Trueno &gt; Fuego · Imaginario/Luz/etc. = neutro.</div>`;
+      const protagAilPill = formatAilmentsShort(lotgState.protagAilments)
+        ? `<div class="combat-buff-pill" style="border-color:rgba(248,113,113,0.45);background:rgba(60,20,20,0.25);margin-top:0.35rem;font-size:0.74rem">Estados (doctor): ${escapeHtml(
+            formatAilmentsShort(lotgState.protagAilments)
+          )}</div>`
+        : "";
       const itemPanel =
         !isAllyPhase && usableCount
           ? `<div class="combat-items-wrap"><p class="muted" style="font-size:0.76rem;margin:0.4rem 0 0.35rem"><strong>Objetos</strong> (elige uno; consume el turno):</p><div class="combat-items-grid">${itemBtns}</div></div>`
@@ -3907,19 +5814,98 @@
             )}</strong> <span class="slot-equip-tag">(área · 18 SP · CD 3)</span><br/>${escapeHtml(p.skillActive.desc || "")}</div>`
           : "";
       const ultName = p.skillActive && p.skillActive.name ? escapeHtml(p.skillActive.name) : "Grúa clínica";
+      if (!lotgState.protagExtraSkillCd || typeof lotgState.protagExtraSkillCd !== "object") lotgState.protagExtraSkillCd = {};
+      const protagActivesHtml = (() => {
+        const ids = (lotgState.equippedSkillsProtag || []).slice(0, 4);
+        const parts = [];
+        ids.forEach((bid) => {
+          const sk = getLotgBattleSkill(bid);
+          if (!sk || !sk.combat || sk.combat.kind === "passive") return;
+          const cd = lotgState.protagExtraSkillCd[bid] || 0;
+          const spc = sk.combat.sp != null ? sk.combat.sp : 0;
+          const cdc = sk.combat.cd != null ? sk.combat.cd : 0;
+          parts.push(
+            `<button type="button" class="ghost" data-act="lotgextra:${escapeHtml(bid)}" style="font-size:0.7rem;max-width:100%;text-align:left;line-height:1.25"${
+              combatPickMode ? " disabled" : ""
+            }>${escapeHtml(sk.name)} · ${spc} SP · CD base ${cdc}${cd > 0 ? " · espera " + cd + "t" : ""}</button>`
+          );
+        });
+        return parts.length
+          ? `<div style="margin:0.45rem 0"><div class="muted" style="font-size:0.7rem;margin-bottom:0.25rem"><strong>Técnicas equipadas</strong> (máx. 4 en perfil)</div><div class="btn-row" style="flex-wrap:wrap;gap:0.35rem;align-items:stretch">${parts.join(
+              ""
+            )}</div></div>`
+          : "";
+      })();
+      const curAllyLotgHtml =
+        isAllyPhase && curAlly && curV
+          ? (() => {
+              if (!curV.extraSkillCd) curV.extraSkillCd = {};
+              const ids = (curAlly.equippedSkills || []).slice(0, 4);
+              const parts = [];
+              ids.forEach((bid) => {
+                const sk = getLotgBattleSkill(bid);
+                if (!sk || !sk.combat || sk.combat.kind === "passive") return;
+                const cd = curV.extraSkillCd[bid] || 0;
+                const spc = sk.combat.sp != null ? sk.combat.sp : 0;
+                const cdc = sk.combat.cd != null ? sk.combat.cd : 0;
+                parts.push(
+                  `<button type="button" class="ghost" data-ally-act="allylotg:${escapeHtml(bid)}" style="font-size:0.68rem;max-width:100%;text-align:left;line-height:1.25"${
+                    combatPickMode ? " disabled" : ""
+                  }>${escapeHtml(sk.name)} · ${spc} SP${cd > 0 ? " · " + cd + "t" : ""} · CD ${cdc}</button>`
+                );
+              });
+              return parts.length
+                ? `<div style="margin:0.35rem 0"><div class="muted" style="font-size:0.65rem">Técnicas de ${escapeHtml(curAlly.name)}</div><div class="btn-row" style="flex-wrap:wrap;gap:0.3rem">${parts.join(
+                    ""
+                  )}</div></div>`
+                : "";
+            })()
+          : "";
       const wantPickEnemy =
         combatPickMode &&
+        combatPickMode.type !== "consumable_target" &&
         (combatPickMode.type === "protag_atk" ||
           combatPickMode.type === "ally_atk" ||
-          combatPickMode.type === "ally_skill_enemy");
+          combatPickMode.type === "ally_skill_enemy" ||
+          combatPickMode.type === "lotg_skill_enemy" ||
+          combatPickMode.type === "lotg_ally_skill_enemy");
+      const invPick = combatPickMode && combatPickMode.type === "consumable_target" ? combatPickMode.invIdx : -1;
+      const invPickIt =
+        invPick >= 0 && invPick < invBattle.length ? invBattle[invPick] : null;
+      if (invPickIt) normalizeInventoryItem(invPickIt);
+      const consumableTargetRow =
+        combatPickMode && combatPickMode.type === "consumable_target" && invPickIt
+          ? `<div class="combat-consumable-target-box" style="margin:0.5rem 0;padding:0.5rem;border-radius:10px;border:1px solid rgba(250,204,21,0.45);background:rgba(60,50,10,0.35);font-size:0.8rem;line-height:1.45">
+          <strong>¿Quién recibe «${escapeHtml(invPickIt.name)}»?</strong>
+          <div class="btn-row" style="margin-top:0.45rem;flex-wrap:wrap">
+            <button type="button" class="primary combat-consume-target" data-consume-target="protag">${docCombat}</button>
+            ${allies
+              .map((a) => {
+                const v = allyV[a.uid];
+                const dead = !v || v.hp <= 0;
+                return `<button type="button" class="ghost combat-consume-target" ${dead ? "disabled" : ""} data-consume-target="${escapeHtml(a.uid)}">${escapeHtml(a.name)}</button>`;
+              })
+              .join("")}
+            <button type="button" class="ghost combat-cancel-pick" style="font-size:0.78rem">Cancelar</button>
+          </div>
+        </div>`
+          : "";
       const pickBanner = combatPickMode
         ? `<div class="combat-pick-banner" style="margin:0.5rem 0;padding:0.55rem 0.7rem;border-radius:10px;border:1px solid rgba(96,165,250,0.45);background:rgba(59,130,246,0.12);font-size:0.82rem;line-height:1.45">
           ${
-            combatPickMode.type === "ally_skill_ally"
-              ? "<strong>Elige aliado o doctor</strong> para aplicar la habilidad."
-              : "<strong>Elige enemigo</strong> en la horda (clic en su tarjeta)."
+            combatPickMode.type === "consumable_target"
+              ? "<strong>Elige objetivo</strong> del consumible (abajo)."
+              : combatPickMode.type === "ally_skill_ally" ||
+                  combatPickMode.type === "lotg_skill_ally" ||
+                  combatPickMode.type === "lotg_ally_skill_ally"
+                ? "<strong>Elige aliado o doctor</strong> para aplicar la habilidad."
+                : "<strong>Elige enemigo</strong> en la horda (clic en su tarjeta)."
           }
-          <button type="button" class="ghost combat-cancel-pick" style="margin-left:0.5rem;font-size:0.78rem">Cancelar</button>
+          ${
+            combatPickMode.type === "consumable_target"
+              ? ""
+              : '<button type="button" class="ghost combat-cancel-pick" style="margin-left:0.5rem;font-size:0.78rem">Cancelar</button>'
+          }
         </div>`
         : "";
       const enemiesCol = `<div class="lotg-enemy-hord-wrap smt-enemy-stack"><p class="smt-enemy-sub">${combatEnemies.filter((x) => x.hp > 0).length} enemigo(s) activo(s)</p>${combatEnemies
@@ -3929,9 +5915,11 @@
           const pct = en.hpMax > 0 ? Math.max(0, Math.min(100, (en.hp / en.hpMax) * 100)) : 0;
           const pickCls = wantPickEnemy && !down ? " combat-pickable-enemy" : "";
           const pickAttr = wantPickEnemy && !down ? ` data-combat-pick-enemy="${ei}"` : "";
+          const enAil = formatAilmentsShort(en.ailments);
           return `<div class="lotg-enemy-card${down ? " enemy-down" : ""}${pickCls}"${pickAttr} style="${wantPickEnemy && !down ? "cursor:pointer;box-shadow:0 0 0 1px rgba(96,165,250,0.35)" : ""}">
             <strong>${escapeHtml(en.name)}</strong> <span class="muted">(${escapeHtml(en.tag)})</span> · <span class="lotg-elem-tag">${escapeHtml(en.element || "Neutral")}</span>
             ${en.boss ? ' <span class="rarity-SSS">JEFE</span>' : ""}${en.miniboss ? ' <span class="rarity-S">MINI</span>' : ""}
+            ${enAil ? `<div class="muted" style="font-size:0.65rem;color:#93c5fd;margin-top:0.2rem">${escapeHtml(enAil)}</div>` : ""}
             <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
             <div class="muted" style="font-size:0.72rem">HP ${Math.max(0, Math.floor(en.hp))}/${en.hpMax} · Nv.${en.level}</div>
             <div class="muted" style="font-size:0.68rem;line-height:1.3;margin-top:0.25rem">STG ${es.STG} · DX ${es.DX} · MA ${es.MA} · EN ${es.EN} · AG ${es.AG}</div>
@@ -3939,7 +5927,10 @@
         })
         .join("")}</div>`;
       const allyPickRow =
-        combatPickMode && combatPickMode.type === "ally_skill_ally"
+        combatPickMode &&
+        (combatPickMode.type === "ally_skill_ally" ||
+          combatPickMode.type === "lotg_skill_ally" ||
+          combatPickMode.type === "lotg_ally_skill_ally")
           ? `<div class="combat-ally-pick-row" style="margin:0.5rem 0"><p class="muted" style="font-size:0.78rem;margin:0 0 0.35rem">Objetivo de apoyo / curación:</p><div class="btn-row" style="flex-wrap:wrap">
           <button type="button" class="primary" data-combat-pick-ally="protag">${docCombat}</button>
           ${allies
@@ -3959,10 +5950,13 @@
           <button type="button" class="primary" data-ally-act="atk" ${combatPickMode ? "disabled" : ""}>Atacar</button>
           <button type="button" class="ghost" data-ally-act="skill" ${skillBlocked || combatPickMode ? "disabled" : ""}>${skBtnText}</button>
           <button type="button" class="ghost" data-ally-act="pass" ${combatPickMode ? "disabled" : ""}>Esperar</button>
-        </div>`
+        </div>
+        ${curAllyLotgHtml}`
         : `<div class="combat-phase-banner protag-turn"><strong>Turno de ${docCombat}</strong> — luego aliados; cada enemigo actúa en la horda.</div>
         ${pickBanner}
+        ${consumableTargetRow}
         ${buffPill}
+        ${protagAilPill}
         ${protagPassive}
         <div class="btn-row">
           <button type="button" class="primary" data-act="atk" ${combatPickMode ? "disabled" : ""}>Ataque físico (elige enemigo si hay horda)</button>
@@ -3970,6 +5964,7 @@
           <button type="button" class="ghost danger" data-act="flee" ${combatPickMode ? "disabled" : ""}>Huir</button>
         </div>
         ${protagSkillTip}
+        ${protagActivesHtml}
         ${itemPanel}`;
       wrap.classList.add("lotg-combat-active");
       wrap.innerHTML = `
@@ -3981,6 +5976,7 @@
             </div>
             ${combatHelpTxt}
           </header>
+          <div class="smt-action-deck-floating smt-action-deck">${actionBlock}</div>
           <div class="smt-combat-grid">
             <aside class="smt-wing smt-wing--allies">
               <h3 class="smt-wing-title smt-wing-title--cyan">ALIADOS</h3>
@@ -4006,13 +6002,18 @@
           <footer class="smt-combat-footer">
             <div class="combat-log smt-combat-log">${escapeHtml(combatLog.join("\n"))}</div>
             ${allyPickRow}
-            <div class="smt-action-deck">${actionBlock}</div>
           </footer>
         </div>`;
       wrap.querySelectorAll(".combat-cancel-pick").forEach((b) => {
         b.addEventListener("click", () => {
           if (combatPhase === "player") combatTurn("cancel-pick");
           else allyCombatTurn("cancel-pick");
+        });
+      });
+      wrap.querySelectorAll(".combat-consume-target").forEach((b) => {
+        b.addEventListener("click", () => {
+          if (b.disabled) return;
+          handleCombatConsumableTarget(b.getAttribute("data-consume-target"));
         });
       });
       wrap.querySelectorAll("[data-combat-pick-enemy]").forEach((el) => {
@@ -4061,6 +6062,8 @@
       return `<nav class="lotg-subnav">
         <button type="button" data-lotg-tab="hub" class="${v === "hub" ? "on" : ""}">Exploración</button>
         <button type="button" data-lotg-tab="gacha" class="${v === "gacha" ? "on" : ""}">Reclutamiento</button>
+        <button type="button" data-lotg-tab="abilities" class="${v === "abilities" ? "on" : ""}">Habilidades</button>
+        <button type="button" data-lotg-tab="social_links" class="${v === "social_links" ? "on" : ""}">Vínculos</button>
         <button type="button" data-lotg-tab="story" class="${v === "story" ? "on" : ""}">Historia</button>
       </nav>`;
     }
@@ -4188,7 +6191,22 @@
           if (inLotgCombat()) return;
           const idx = parseInt(btn.getAttribute("data-inv-use"), 10);
           if (Number.isNaN(idx)) return;
-          useConsumableOutsideCombat(idx);
+          lotgState._consumablePickIdx = idx;
+          renderLotgGame();
+        });
+      });
+      wrap.querySelectorAll(".lotg-hub-consumable-target").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = parseInt(btn.getAttribute("data-hub-inv"), 10);
+          const tgt = btn.getAttribute("data-hub-target");
+          if (Number.isNaN(idx) || !tgt) return;
+          useConsumableOutsideCombat(idx, tgt);
+        });
+      });
+      wrap.querySelectorAll(".lotg-hub-consumable-cancel").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          lotgState._consumablePickIdx = null;
+          renderLotgGame();
         });
       });
     }
@@ -4246,6 +6264,198 @@
       if (gr) gr.textContent = lines.join(" · ");
       lotgSave();
       renderLotgGame();
+    }
+
+    function runAbilityGacha(times) {
+      const gr = document.getElementById("gachaResult");
+      const cost1 = 900;
+      const cost10 = 3000;
+      const cost = times === 10 ? cost10 : cost1 * times;
+      normalizeSoulPointsOnState(lotgState);
+      const have = getSoulPoints();
+      if (have < cost) {
+        if (gr) gr.textContent = "Necesitas " + cost + " SP para técnicas ×" + times + ". Tienes " + have + ".";
+        return;
+      }
+      lotgState.soul = have - cost;
+      if (!Array.isArray(lotgState.ownedSkillIds)) lotgState.ownedSkillIds = [];
+      if (!Array.isArray(lotgState.gachaLog)) lotgState.gachaLog = [];
+      const stamp = new Date().toLocaleString();
+      const lines = [];
+      const logBlock = ["── " + stamp + " · Gacha técnicas ×" + times + " ──"];
+      for (let t = 0; t < times; t++) {
+        const sk = pickRandomAbilityFromGacha();
+        if (!sk) break;
+        if (!lotgState.ownedSkillIds.includes(sk.id)) lotgState.ownedSkillIds.push(sk.id);
+        const ln = "Técnica: " + sk.name + " [" + sk.rarity + "]";
+        lines.push(ln);
+        logBlock.push("  · " + ln);
+      }
+      lotgState.gachaLog = logBlock.concat(lotgState.gachaLog);
+      if (lotgState.gachaLog.length > 100) lotgState.gachaLog.length = 100;
+      if (gr) gr.textContent = lines.join(" · ");
+      lotgSave();
+      renderLotgGame();
+    }
+
+    function refreshSideQuestFloorProg() {
+      if (!lotgState || !Array.isArray(lotgState.activeSideQuests)) return;
+      const f = lotgState.floor || 1;
+      lotgState.activeSideQuests.forEach((q) => {
+        if (q.kind === "floor" && f >= (q.need || 99)) q.prog = q.need;
+      });
+    }
+
+    function runSocialLinkSession(uid) {
+      runSocialLinkVNFlow(uid, () => renderLotgGame());
+    }
+
+    if (tab === "abilities") {
+      migrateLotgState(lotgState);
+      const owned = (lotgState.ownedSkillIds || []).filter((id) => getLotgBattleSkill(id));
+      const eqP = (lotgState.equippedSkillsProtag || []).slice(0, 4);
+      const ownedOpts =
+        owned.length === 0
+          ? "<p class='muted'>Sin técnicas en colección. Gacha de habilidades o tienda ◆ en el mapa.</p>"
+          : owned
+              .map((id) => {
+                const sk = getLotgBattleSkill(id);
+                if (!sk) return "";
+                const onP = eqP.includes(id);
+                return `<label style="display:block;margin:0.45rem 0;font-size:0.82rem;line-height:1.45">
+          <input type="checkbox" class="lotg-eq-pro" value="${escapeHtml(id)}" ${onP ? "checked" : ""} />
+          <strong>${escapeHtml(sk.name)}</strong> <span class="slot-equip-tag">${escapeHtml(sk.rarity)}</span><br/><span class="muted">${escapeHtml(sk.desc)}</span>
+        </label>`;
+              })
+              .join("");
+      const rosterEq = (lotgState.roster || [])
+        .map((unit) => {
+          const eq = (unit.equippedSkills || []).slice(0, 4);
+          const opts =
+            owned.length === 0
+              ? "<span class='muted'>Sin técnicas para equipar.</span>"
+              : owned
+                  .map((id) => {
+                    const sk = getLotgBattleSkill(id);
+                    if (!sk) return "";
+                    const on = eq.includes(id);
+                    return `<label style="display:inline-flex;align-items:flex-start;gap:0.35rem;margin:0.25rem 0.6rem 0 0;font-size:0.76rem;line-height:1.35;max-width:100%">
+              <input type="checkbox" class="lotg-eq-unit" data-uid="${escapeHtml(unit.uid)}" value="${escapeHtml(id)}" ${on ? "checked" : ""} />
+              <span>${escapeHtml(sk.name)} <span class="slot-equip-tag">${escapeHtml(sk.rarity)}</span></span>
+            </label>`;
+                  })
+                  .join("");
+          return `<div style="margin:0.85rem 0;padding:0.55rem;border-radius:10px;border:1px solid rgba(255,255,255,0.08)"><strong>${escapeHtml(
+            unit.name
+          )}</strong> — máx. 4 técnicas activas/pasivas combinadas<div style="margin-top:0.4rem;display:flex;flex-wrap:wrap;align-items:flex-start">${opts}</div></div>`;
+        })
+        .join("");
+      wrap.innerHTML =
+        subnavHtml() +
+        currencyBar +
+        `<h2 style="margin-top:0">Habilidades equipables</h2>
+        <p class="muted">Activa hasta <strong>4</strong> por personaje. Las pasivas modifican stats; las activas aparecen en combate con su coste de SP.</p>
+        <h3>Doctor</h3>
+        <div class="card" style="padding:0.75rem;margin:0.5rem 0">${ownedOpts}</div>
+        <h3>Reclutas</h3>
+        ${rosterEq || "<p class='muted'>Sin reclutas.</p>"}
+        <div class="btn-row" style="margin-top:1rem">
+          <button type="button" class="primary" id="lotgSaveEquipSkills">Guardar equipamiento</button>
+        </div>`;
+      attachHubCommon();
+      const btnS = document.getElementById("lotgSaveEquipSkills");
+      if (btnS) {
+        btnS.addEventListener("click", () => {
+          const proIds = [];
+          wrap.querySelectorAll(".lotg-eq-pro:checked").forEach((x) => {
+            if (proIds.length < 4) proIds.push(x.value);
+          });
+          lotgState.equippedSkillsProtag = proIds;
+          (lotgState.roster || []).forEach((unit) => {
+            const nu = [];
+            wrap.querySelectorAll(".lotg-eq-unit:checked").forEach((x) => {
+              if (x.getAttribute("data-uid") !== unit.uid) return;
+              if (nu.length < 4) nu.push(x.value);
+            });
+            unit.equippedSkills = nu;
+          });
+          lotgSave();
+          alert("Equipamiento guardado.");
+          renderLotgGame();
+        });
+      }
+      return;
+    }
+
+    if (tab === "social_links") {
+      refreshSideQuestFloorProg();
+      migrateLotgState(lotgState);
+      const quests = (lotgState.activeSideQuests || [])
+        .map((q, qi) => {
+          const done = (q.prog || 0) >= (q.need || 1);
+          return `<li style="margin:0.5rem 0;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.08)">
+            <strong>${escapeHtml(q.title || q.tid)}</strong> — ${q.prog || 0}/${q.need || 0}
+            ${done ? `<button type="button" class="primary lotg-quest-turn" data-qi="${qi}" style="margin-left:0.5rem;font-size:0.8rem">Entregar</button>` : ""}
+          </li>`;
+        })
+        .join("");
+      const rosterOpts = (lotgState.roster || [])
+        .map(
+          (unit) =>
+            `<option value="${escapeHtml(unit.uid)}">${escapeHtml(unit.name)} — vínculo ${Math.min(
+              10,
+              (lotgState.socialLinks[unit.uid] && lotgState.socialLinks[unit.uid].level) || 0
+            )}/10</option>`
+        )
+        .join("");
+      wrap.innerHTML =
+        subnavHtml() +
+        currencyBar +
+        `<h2 style="margin-top:0">Vínculos sociales y misiones</h2>
+        <p class="muted">Evento social: <strong>400 SP</strong>. Se abre el <strong>overlay visual novel</strong> con texto largo según nivel de vínculo y arquetipo (tsundere / kuudere / dandere / genki). Música: Youthful / Chill / Pinkun. Regalos en ❤ del mapa.</p>
+        <div class="card" style="padding:0.75rem;margin:0.75rem 0">
+          <label class="muted" style="font-size:0.85rem">Unidad</label><br/>
+          <select id="lotgSocialUnit" style="min-width:12rem;margin:0.35rem 0">${rosterOpts || "<option value=''>—</option>"}</select>
+          <div class="btn-row" style="margin-top:0.5rem">
+            <button type="button" class="primary" id="lotgSocialGo" ${rosterOpts ? "" : "disabled"}>Iniciar evento (400 SP)</button>
+          </div>
+        </div>
+        <h3>Misiones secundarias activas</h3>
+        <ul style="list-style:none;padding:0;margin:0">${quests || "<li class='muted'>No hay misiones. Visita 📜 en el mapa.</li>"}</ul>`;
+      attachHubCommon();
+      const go = document.getElementById("lotgSocialGo");
+      const sel = document.getElementById("lotgSocialUnit");
+      if (go && sel) {
+        go.addEventListener("click", () => {
+          const uid = sel.value;
+          if (!uid) return;
+          runSocialLinkSession(uid);
+        });
+      }
+      wrap.querySelectorAll(".lotg-quest-turn").forEach((b) => {
+        b.addEventListener("click", () => {
+          const qi = parseInt(b.getAttribute("data-qi"), 10);
+          const q = (lotgState.activeSideQuests || [])[qi];
+          if (!q || (q.prog || 0) < (q.need || 1)) return;
+          const rew = q.reward || {};
+          if (rew.zen) lotgState.zen += rew.zen;
+          if (rew.soul) {
+            normalizeSoulPointsOnState(lotgState);
+            lotgState.soul += rew.soul;
+          }
+          if (!Array.isArray(lotgState.completedQuestIds)) lotgState.completedQuestIds = [];
+          lotgState.completedQuestIds.push(q.tid);
+          lotgState.activeSideQuests.splice(qi, 1);
+          lotgSave();
+          alert(
+            "Misión completada.\n\nEl NPC te agradece por la ayuda.\nRecompensa: " +
+              (rew.zen ? "+" + rew.zen + " Zen " : "") +
+              (rew.soul ? "+" + rew.soul + " Soul" : "")
+          );
+          renderLotgGame();
+        });
+      });
+      return;
     }
 
     if (tab === "gacha") {
@@ -4309,6 +6519,14 @@
             </div>
           </div>
         </div>
+        <div class="gacha-panel" style="margin-top:1.25rem;border-color:rgba(147,197,253,0.5);background:rgba(25,40,60,0.25)">
+          <h3>Gacha de técnicas (A–SSS)</h3>
+          <p class="muted" style="margin-top:0">Solo <strong>técnicas equipables</strong> para combate (inventario de habilidades). ×1: <strong>900</strong> SP · ×10: <strong>3000</strong> SP.</p>
+          <div class="btn-row">
+            <button type="button" class="primary" id="gachaA1">Técnicas ×1 (900)</button>
+            <button type="button" class="primary" id="gachaA10">Técnicas ×10 (3000)</button>
+          </div>
+        </div>
         <p class="muted" id="gachaResult" style="margin-top:1rem"></p>
         <h3 style="margin-top:1.25rem;font-size:1rem">Registro de tiradas</h3>
         <div class="gacha-pull-log" id="gachaPullLog"></div>`;
@@ -4328,6 +6546,10 @@
       if (gachaP1) gachaP1.addEventListener("click", () => runGacha(true, 1));
       const gachaP10 = document.getElementById("gachaP10");
       if (gachaP10) gachaP10.addEventListener("click", () => runGacha(true, 10));
+      const gachaA1 = document.getElementById("gachaA1");
+      if (gachaA1) gachaA1.addEventListener("click", () => runAbilityGacha(1));
+      const gachaA10 = document.getElementById("gachaA10");
+      if (gachaA10) gachaA10.addEventListener("click", () => runAbilityGacha(10));
       bindGachaCatalogUi(wrap.querySelector(".gacha-recruit-showcase"));
       return;
     }
@@ -4388,6 +6610,7 @@
       return;
     }
 
+    refreshSideQuestFloorProg();
     const fr = lotgState.floorAdvanceRule || "free";
     const floorExitHint =
       fr === "boss"
@@ -4401,7 +6624,7 @@
       <h3>Exploración — mini mapa</h3>
       <p class="muted">Avanza a celdas <strong>adyacentes</strong>. <strong>Cada piso</strong> el sector se <strong>reordena al azar</strong> (combates, tiendas, eventos y salida). Las celdas <strong class="lotg-done-inline">moradas</strong> ya se completaron. <strong>Salida ⇊</strong> no se marca en morado. Jefe cada <strong>3 pisos</strong> (💀). Combate en <strong>horda</strong>.</p>
       ${floorExitHint}
-      <p class="muted" style="font-size:0.8rem">⚔ combate normal · 💀 jefe de piso · mini-jefe (casilla violeta) · ? evento · ¤ tienda · ♥ descanso (HP+SP) · ⇊ salida</p>
+      <p class="muted" style="font-size:0.8rem">⚔ combate · 💀 jefe · ? evento · ¤ tienda · ◆ tienda habilidades (Soul) · ❤ regalos · 📜 misión NPC · ♥ descanso · ⇊ salida</p>
       <div class="lotg-map" id="lotgMap"></div>`;
 
     const rosterUnits = Array.isArray(lotgState.roster) ? lotgState.roster : [];
@@ -4469,14 +6692,40 @@
 
     const stash = lotgState.gearStash || [];
     const docHub = "Doctor " + escapeHtml(p.name);
+    const pickIdx0 = lotgState._consumablePickIdx;
+    const pickIt0 =
+      pickIdx0 != null && pickIdx0 >= 0 && pickIdx0 < (lotgState.inventory || []).length
+        ? (lotgState.inventory || [])[pickIdx0]
+        : null;
+    let hubConsumablePick = "";
+    if (pickIt0) {
+      normalizeInventoryItem(pickIt0);
+      if (!["heal", "sp", "buff", "cleanse", "stat"].includes(pickIt0.type)) {
+        lotgState._consumablePickIdx = null;
+      } else {
+        hubConsumablePick =
+          `<div class="card" style="padding:0.75rem;margin:0.75rem 0;border-color:rgba(34,211,238,0.35)"><p style="margin:0 0 0.5rem;font-size:0.88rem"><strong>¿Quién recibe «${escapeHtml(
+            pickIt0.name
+          )}»?</strong></p><div class="btn-row" style="flex-wrap:wrap">
+          <button type="button" class="primary lotg-hub-consumable-target" data-hub-inv="${pickIdx0}" data-hub-target="protag">${docHub}</button>
+          ${(lotgState.roster || [])
+            .map(
+              (u) =>
+                `<button type="button" class="ghost lotg-hub-consumable-target" data-hub-inv="${pickIdx0}" data-hub-target="${escapeHtml(u.uid)}">${escapeHtml(u.name)}</button>`
+            )
+            .join("")}
+          <button type="button" class="ghost lotg-hub-consumable-cancel">Cancelar</button>
+        </div></div>`;
+      }
+    }
     const invHtml =
       `<h3>Inventario — consumibles</h3>
-      <p class="muted" style="font-size:0.82rem">Puedes <strong>usar</strong> curas, SP y buffs aquí (exploración) o en combate desde el panel de objetos.</p>
+      <p class="muted" style="font-size:0.82rem">Puedes <strong>usar</strong> curas, SP y buffs aquí (exploración) o en combate desde el panel de objetos. Primero pulsa <strong>Usar</strong> y luego elige doctor o recluta.</p>
       <ul id="lotgInvConsumables" style="margin:0;padding-left:0;list-style:none;font-size:0.88rem;line-height:1.45">` +
       (lotgState.inventory || [])
         .map((i, idx) => {
           normalizeInventoryItem(i);
-          const usable = ["heal", "sp", "buff"].includes(i.type);
+          const usable = ["heal", "sp", "buff", "cleanse", "stat"].includes(i.type);
           const useBtn = usable
             ? ` <button type="button" class="ghost lotg-use-consumable" data-inv-use="${idx}" style="font-size:0.75rem;padding:0.2rem 0.45rem;vertical-align:middle">Usar</button>`
             : "";
@@ -4484,7 +6733,8 @@
         })
         .join("") +
       (!(lotgState.inventory || []).length ? "<li class='muted'>Vacío</li>" : "") +
-      `</ul>`;
+      `</ul>` +
+      hubConsumablePick;
 
     const stashHtml =
       `<h3>Inventario — piezas de equipo</h3>
@@ -4867,8 +7117,11 @@
     const contentKeys = shuffleArrayLotg(allKeys.filter((k) => k !== lotgState.mapExitCoord));
     const typesList = [];
     for (let i = 0; i < 6; i++) typesList.push("enemy");
-    for (let i = 0; i < 8; i++) typesList.push("event");
-    for (let i = 0; i < 4; i++) typesList.push("shop");
+    for (let i = 0; i < 5; i++) typesList.push("event");
+    for (let i = 0; i < 3; i++) typesList.push("shop");
+    for (let i = 0; i < 2; i++) typesList.push("skillshop");
+    for (let i = 0; i < 1; i++) typesList.push("giftshop");
+    for (let i = 0; i < 1; i++) typesList.push("quest");
     for (let i = 0; i < 6; i++) typesList.push("rest");
     const typesShuffled = shuffleArrayLotg(typesList);
     lotgState.mapCellTypes = {};
@@ -4964,9 +7217,15 @@
                 ? "?"
                 : cell.dataset.type === "shop"
                   ? "¤"
-                  : cell.dataset.type === "exit"
-                    ? "⇊"
-                    : "♥";
+                  : cell.dataset.type === "skillshop"
+                    ? "◆"
+                    : cell.dataset.type === "giftshop"
+                      ? "❤"
+                      : cell.dataset.type === "quest"
+                        ? "📜"
+                        : cell.dataset.type === "exit"
+                          ? "⇊"
+                          : "♥";
           cell.textContent = glyph;
         } else cell.textContent = "·";
         if (x === px && y === py) {
@@ -5012,7 +7271,20 @@
             lotgSave();
             renderLotgGame();
           } else if (t === "shop") {
-            openAnomalyShop(key);
+            openItemShop(key);
+            lotgSave();
+            renderLotgGame();
+          } else if (t === "skillshop") {
+            openSkillSoulShop(key);
+            lotgSave();
+            renderLotgGame();
+          } else if (t === "giftshop") {
+            openGiftShop(key);
+            lotgSave();
+            renderLotgGame();
+          } else if (t === "quest") {
+            const qm = runQuestNpcCell(key);
+            if (qm) alert("Misión secundaria\n\n" + qm);
             lotgSave();
             renderLotgGame();
           } else if (t === "rest") {
