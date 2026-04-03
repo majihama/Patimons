@@ -1067,16 +1067,16 @@
       background: linear-gradient(90deg, #6366f1, #22d3ee) !important;
       box-shadow: 0 0 8px rgba(34, 211, 238, 0.35);
     }
-    /* Panel de acciones / habilidades arriba-derecha (menos scroll con 3 aliados) */
+    /* Panel de acciones / habilidades: más abajo para no tapar la tarjeta COMANDANTE (columna derecha) */
     .smt-action-deck-floating {
       position: absolute;
-      top: 0.45rem;
-      right: 0.45rem;
-      width: min(360px, calc(100% - 0.9rem));
-      max-height: min(72vh, 520px);
+      top: clamp(9.25rem, 20vh, 13.5rem);
+      right: 0.55rem;
+      width: min(340px, calc(100% - 1.1rem));
+      max-height: min(52vh, 400px);
       overflow-y: auto;
-      z-index: 12;
-      padding: 0.55rem 0.65rem;
+      z-index: 11;
+      padding: 0.5rem 0.6rem;
       border-radius: 10px;
       border: 1px solid rgba(34, 211, 238, 0.35);
       background: linear-gradient(165deg, rgba(8, 14, 28, 0.96), rgba(12, 8, 22, 0.94));
