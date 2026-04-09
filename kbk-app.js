@@ -1567,6 +1567,101 @@
       combat: { kind: "dmg_mag_aoe", sp: 26, cd: 4, coef: 0.64 },
       element: "Fuego",
     },
+    {
+      id: "bs_bunker_breaker",
+      name: "Rompibúnker — impacto pesado",
+      rarity: "S",
+      desc: "Físico severo (~1,95× STG). 26 SP, CD 4.",
+      shopSoul: 1080,
+      combat: { kind: "dmg_phys_1", sp: 26, cd: 4, coef: 1.95 },
+    },
+    {
+      id: "bs_two_stage_press",
+      name: "Prensa de dos etapas",
+      rarity: "S",
+      desc: "Combo físico de 2 golpes fuertes. 24 SP, CD 4.",
+      shopSoul: 1020,
+      combat: { kind: "phys_double_1", sp: 24, cd: 4, coef1: 0.96, coef2: 0.86 },
+    },
+    {
+      id: "bs_rifle_pulse",
+      name: "Pulso de rifle — línea roja",
+      rarity: "S",
+      desc: "Disparo táctico (escala DX + arma). 25 SP, CD 4.",
+      shopSoul: 1045,
+      combat: { kind: "dmg_firearm_1", sp: 25, cd: 4, coef: 1.62 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_sniper_clock",
+      name: "Reloj de francotirador",
+      rarity: "SS",
+      desc: "Disparo crítico de precisión (DX). 30 SP, CD 5.",
+      shopSoul: 1760,
+      combat: { kind: "dmg_firearm_1", sp: 30, cd: 5, coef: 1.92 },
+      element: "Trueno",
+    },
+    {
+      id: "bs_bullet_chain",
+      name: "Cadena balística",
+      rarity: "A",
+      desc: "Disparo rápido a un objetivo (DX). 18 SP, CD 3.",
+      shopSoul: 735,
+      combat: { kind: "dmg_firearm_1", sp: 18, cd: 3, coef: 1.38 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_rotary_breach",
+      name: "Brecha rotatoria",
+      rarity: "SS",
+      desc: "Físico demoledor + vulnerabilidad 16% (3 r.). 29 SP, CD 5.",
+      shopSoul: 1720,
+      combat: { kind: "debuff_vuln_1", sp: 29, cd: 5, coef: 0.66, vulnPct: 0.16, vulnTurns: 3 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_bayonet_cross",
+      name: "Cruz de bayoneta",
+      rarity: "A",
+      desc: "Dos tajos + disparo corto (híbrido físico). 19 SP, CD 3.",
+      shopSoul: 760,
+      combat: { kind: "phys_double_1", sp: 19, cd: 3, coef1: 0.7, coef2: 0.66 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_locomotive_kick",
+      name: "Patada locomotora",
+      rarity: "A",
+      desc: "Golpe físico puro (~1,72× STG). 18 SP, CD 3.",
+      shopSoul: 705,
+      combat: { kind: "dmg_phys_1", sp: 18, cd: 3, coef: 1.72 },
+    },
+    {
+      id: "bs_afterburn_shot",
+      name: "Tiro de postcombustión",
+      rarity: "A",
+      desc: "Disparo ígneo con DX alto. 20 SP, CD 3.",
+      shopSoul: 790,
+      combat: { kind: "dmg_firearm_1", sp: 20, cd: 3, coef: 1.5 },
+      element: "Fuego",
+    },
+    {
+      id: "bs_hollow_walker",
+      name: "Marcha del hollow walker",
+      rarity: "B",
+      desc: "Disparo simple de arma de fuego (DX). 14 SP, CD 2.",
+      shopSoul: 470,
+      combat: { kind: "dmg_firearm_1", sp: 14, cd: 2, coef: 1.2 },
+      element: "Neutral",
+    },
+    {
+      id: "bs_boxing_frame",
+      name: "Frame de boxeo",
+      rarity: "B",
+      desc: "Gancho físico rápido (~1,34× STG). 13 SP, CD 2.",
+      shopSoul: 455,
+      combat: { kind: "dmg_phys_1", sp: 13, cd: 2, coef: 1.34 },
+    },
   ];
 
   function getLotgBattleSkill(id) {
@@ -1858,7 +1953,57 @@
       if (v == null || v === 0) return null;
       return k + " +" + v;
     }).filter(Boolean);
+    if (eq.specialAffix && eq.specialAffix.label) parts.push(eq.specialAffix.label);
     return parts.length ? parts.join(" · ") : "";
+  }
+
+  function lotgAccessoryAffixFromSlots(slots) {
+    if (!slots || !slots.Accesorio) return null;
+    const ac = slots.Accesorio;
+    return ac && ac.specialAffix ? ac.specialAffix : null;
+  }
+
+  /** Bonos económicos por accesorios de doctor + aliados activos en party. */
+  function lotgEconomyBonusFromAccessories() {
+    if (!lotgState) return { soulPct: 0, zenPct: 0, xpPct: 0 };
+    let soulPct = 0;
+    let zenPct = 0;
+    let xpPct = 0;
+    const consume = (aff) => {
+      if (!aff || !aff.type) return;
+      if (aff.type === "soul_gain") soulPct += Number(aff.pct) || 0;
+      else if (aff.type === "zen_gain") zenPct += Number(aff.pct) || 0;
+      else if (aff.type === "xp_gain") xpPct += Number(aff.pct) || 0;
+    };
+    consume(lotgAccessoryAffixFromSlots(lotgState.equipSlots || {}));
+    getPartyUnits().forEach((u) => consume(lotgAccessoryAffixFromSlots(u.equipSlots || {})));
+    return {
+      soulPct: Math.min(0.65, soulPct),
+      zenPct: Math.min(0.65, zenPct),
+      xpPct: Math.min(0.55, xpPct),
+    };
+  }
+
+  /** Sinergia de accesorios: daño extra si alcanzas umbral de stat. */
+  function lotgAccessorySynergyPct(slots, mergedStats, wantedScope) {
+    const aff = lotgAccessoryAffixFromSlots(slots);
+    if (!aff || aff.type !== "stat_synergy") return 0;
+    if (aff.scope && aff.scope !== "all" && aff.scope !== wantedScope) return 0;
+    const st = String(aff.stat || "");
+    const th = Number(aff.threshold) || 9999;
+    const val = mergedStats && Number(mergedStats[st]);
+    if (!Number.isFinite(val) || val < th) return 0;
+    return Math.max(0, Number(aff.pct) || 0);
+  }
+
+  function getWeaponDamageStatBonusFromSlots(slots, key) {
+    if (!slots || !slots.Arma) return 0;
+    const w = slots.Arma;
+    const b = w && w.bonus ? w.bonus : {};
+    const fp = w && w.forgePlus != null ? Math.min(10, Math.max(0, Math.floor(Number(w.forgePlus) || 0))) : 0;
+    const base = Number(b[key]) || 0;
+    const forgeBoost = base * fp * 0.11;
+    return base + forgeBoost;
   }
   let combatLog = [];
   let skillCdPro = 0;
@@ -2656,23 +2801,23 @@
     if (!p || !p.stats) {
       const z = emptyStats();
       return {
-        hpMax: Math.floor(40 + z.HP * 12 + z.VI * 7.5 + z.EN * 4),
-        spMax: Math.floor(22 + z.SP * 9 + z.MA * 2.2),
-        atkP: Math.floor(8 + z.STG * 2.2 + z.DX * 0.8),
-        atkM: Math.floor(6 + z.MA * 2.4 + z.SP * 0.3),
-        def: Math.floor(4 + z.VI + z.EN * 0.8 + z.DX * 0.3),
-        agi: Math.floor(z.AG * 1.2 + z.LUK * 0.5 + z.DX * 0.4),
+        hpMax: Math.floor(44 + z.HP * 11 + z.VI * 5 + z.EN * 4.8),
+        spMax: Math.floor(24 + z.SP * 8 + z.MA * 3),
+        atkP: Math.floor(8 + z.STG * 2.55 + z.DX * 0.62),
+        atkM: Math.floor(6 + z.MA * 2.55 + z.SP * 0.28),
+        def: Math.floor(4 + z.VI * 0.72 + z.EN * 1.08 + z.DX * 0.2),
+        agi: Math.floor(z.AG * 1.28 + z.LUK * 0.45 + z.DX * 0.34),
       };
     }
     const s = p.stats;
     const lv = p.level != null && p.level >= 1 ? p.level : 1;
     const mult = 1 + (lv - 1) * 0.04;
-    const hpMax = Math.floor((40 + s.HP * 12 + s.VI * 7.5 + s.EN * 4) * mult);
-    const spMax = Math.floor((22 + s.SP * 9 + s.MA * 2.2) * mult);
-    const atkP = Math.floor((8 + s.STG * 2.2 + s.DX * 0.8) * mult);
-    const atkM = Math.floor((6 + s.MA * 2.4 + s.SP * 0.3) * mult);
-    const def = Math.floor((4 + s.VI + s.EN * 0.8 + s.DX * 0.3) * mult);
-    const agi = Math.floor((s.AG * 1.2 + s.LUK * 0.5 + s.DX * 0.4) * mult);
+    const hpMax = Math.floor((44 + s.HP * 11 + s.VI * 5 + s.EN * 4.8) * mult);
+    const spMax = Math.floor((24 + s.SP * 8 + s.MA * 3) * mult);
+    const atkP = Math.floor((8 + s.STG * 2.55 + s.DX * 0.62) * mult);
+    const atkM = Math.floor((6 + s.MA * 2.55 + s.SP * 0.28) * mult);
+    const def = Math.floor((4 + s.VI * 0.72 + s.EN * 1.08 + s.DX * 0.2) * mult);
+    const agi = Math.floor((s.AG * 1.28 + s.LUK * 0.45 + s.DX * 0.34) * mult);
     return { hpMax, spMax, atkP, atkM, def, agi };
   }
 
@@ -2734,7 +2879,9 @@
     const ma = Number(b.MA) || 0;
     const n = stg + dx + ma;
     let m = 1.18 + stg * 0.0065 + dx * 0.0042 + ma * 0.0036 + n * 0.008;
-    if (w.qual === "S" || w.qual === "SS" || w.qual === "SSS") m += 0.072;
+    if (w.qual === "S") m += 0.072;
+    else if (w.qual === "SS") m += 0.115;
+    else if (w.qual === "SSS") m += 0.16;
     return Math.min(1.88, Math.min(1.62, m) * forgeMul * bondMul);
   }
 
@@ -2832,22 +2979,51 @@
    * físico ≈ atkP × mult × variación; mágico ≈ atkM × mult × variación (ligeramente más alto en coef).
    */
   function lotgProtagPhysicalRaw(cs, atkMult, buffMult) {
+    const merged = mergeStatsWithEquipSlots((lotgState && lotgState.protag && lotgState.protag.stats) || emptyStats(), (lotgState && lotgState.equipSlots) || {});
+    const wStat = getWeaponDamageStatBonusFromSlots((lotgState && lotgState.equipSlots) || {}, "STG");
+    const accSyn = lotgAccessorySynergyPct((lotgState && lotgState.equipSlots) || {}, merged, "phys");
     let stance = 1;
     if (lotgState && lotgState.protagBattleMods && (lotgState.protagBattleMods.turns || 0) > 0) {
       stance += lotgState.protagBattleMods.physPct || 0;
     }
-    const m = (atkMult || 1) * (buffMult || 1) * 1.07 * stance;
-    return cs.atkP * m * (0.94 + Math.random() * 0.3);
+    const m = (atkMult || 1) * (buffMult || 1) * 1.07 * stance * (1 + wStat * 0.006 + accSyn);
+    return cs.atkP * m * (0.95 + Math.random() * 0.31);
   }
 
   function lotgProtagMagicalRaw(cs, atkMult, buffMult, skillCoef) {
     const c = skillCoef != null ? skillCoef : 1.35;
+    const merged = mergeStatsWithEquipSlots((lotgState && lotgState.protag && lotgState.protag.stats) || emptyStats(), (lotgState && lotgState.equipSlots) || {});
+    const wStat = getWeaponDamageStatBonusFromSlots((lotgState && lotgState.equipSlots) || {}, "MA");
+    const accSyn = lotgAccessorySynergyPct((lotgState && lotgState.equipSlots) || {}, merged, "mag");
     let stance = 1;
     if (lotgState && lotgState.protagBattleMods && (lotgState.protagBattleMods.turns || 0) > 0) {
       stance += lotgState.protagBattleMods.magPct || 0;
     }
-    const m = (atkMult || 1) * (buffMult || 1) * 1.07 * stance;
+    const m = (atkMult || 1) * (buffMult || 1) * 1.07 * stance * (1 + wStat * 0.0058 + accSyn);
     return cs.atkM * c * m * (1.08 + Math.random() * 0.32);
+  }
+
+  function lotgProtagFirearmRaw(cs, atkMult, buffMult, skillCoef) {
+    const c = skillCoef != null ? skillCoef : 1.2;
+    const slots = (lotgState && lotgState.equipSlots) || {};
+    const merged = mergeStatsWithEquipSlots((lotgState && lotgState.protag && lotgState.protag.stats) || emptyStats(), slots);
+    const dxBoost = getWeaponDamageStatBonusFromSlots(slots, "DX");
+    const st = merged || emptyStats();
+    const firearmCore = (st.DX || 0) * 2.8 + (st.STG || 0) * 0.85 + dxBoost * 3.4;
+    const accSyn = lotgAccessorySynergyPct(slots, merged, "firearm");
+    const m = (atkMult || 1) * (buffMult || 1) * (1 + accSyn) * (1.02 + Math.random() * 0.26);
+    return (cs.atkP * 0.56 + firearmCore) * c * m;
+  }
+
+  function allyFirearmRaw(u, vitals, atkMult, skillCoef) {
+    const c = skillCoef != null ? skillCoef : 1.12;
+    const st = allyCombatStats(u);
+    const merged = mergeStatsWithEquipSlots(u.stats || {}, u.equipSlots || {});
+    const dxBoost = getWeaponDamageStatBonusFromSlots(u.equipSlots || {}, "DX");
+    const firearmCore = ((merged.DX || 0) * 2.62 + (merged.STG || 0) * 0.78 + dxBoost * 3.1) * c;
+    const syn = lotgAccessorySynergyPct(u.equipSlots || {}, merged, "firearm");
+    const stance = allyBattleStancePhys(vitals);
+    return (st.atkP * 0.45 + firearmCore) * (atkMult || 1) * (1 + syn) * stance * (0.96 + Math.random() * 0.24);
   }
 
   function rollEnemyAttackDamage(enemy, target, damageMult) {
@@ -2902,11 +3078,11 @@
     const lv = u.level != null && u.level >= 1 ? u.level : 1;
     const mult = 1 + (lv - 1) * 0.038;
     const mrg = 1 + Math.min(MAX_MERGE_RANK, u.mergeRank || 0) * 0.04;
-    const baseHp = 28 + (st.HP || 0) * 9 + (st.VI || 0) * 6.8 + (st.EN || 0) * 3.2;
-    const baseSp = 14 + (st.SP || 0) * 7.5 + (st.MA || 0) * 2;
-    const baseAtkP = 7 + (st.STG || 0) * 2.15 + (st.DX || 0) * 0.78;
-    const baseAtkM = 5 + (st.MA || 0) * 2.35 + (st.SP || 0) * 0.38;
-    const baseDef = 3 + (st.VI || 0) + (st.EN || 0) * 0.75 + (st.DX || 0) * 0.25;
+    const baseHp = 32 + (st.HP || 0) * 9.6 + (st.VI || 0) * 5 + (st.EN || 0) * 3.9;
+    const baseSp = 16 + (st.SP || 0) * 7.2 + (st.MA || 0) * 3;
+    const baseAtkP = 7 + (st.STG || 0) * 2.4 + (st.DX || 0) * 0.56;
+    const baseAtkM = 5 + (st.MA || 0) * 2.45 + (st.SP || 0) * 0.26;
+    const baseDef = 3 + (st.VI || 0) * 0.66 + (st.EN || 0) * 1.02 + (st.DX || 0) * 0.2;
     const rareAmp =
       u.rarity === "SSS" ? 1.1 : u.rarity === "SS" ? 1.078 : u.rarity === "S" ? 1.058 : u.rarity === "A" ? 1.04 : 1.025;
     const wpn = equipWeaponDamageMultiplier(u.equipSlots || {}, u);
@@ -2946,9 +3122,12 @@
     const em = (extraMult || 1) * 1.06;
     const st = allyCombatStats(u);
     const v = lotgState && lotgState.combatAllyVitals && lotgState.combatAllyVitals[u.uid];
+    const merged = mergeStatsWithEquipSlots(u.stats || {}, u.equipSlots || {});
+    const wStg = getWeaponDamageStatBonusFromSlots(u.equipSlots || {}, "STG");
+    const syn = lotgAccessorySynergyPct(u.equipSlots || {}, merged, "phys");
     let stance = 1;
     if (v && v.battleMods && (v.battleMods.turns || 0) > 0) stance += v.battleMods.physPct || 0;
-    const raw = st.atkP * (0.96 + Math.random() * 0.28) * 1.1 * em * stance;
+    const raw = st.atkP * (0.96 + Math.random() * 0.28) * 1.1 * em * stance * (1 + wStg * 0.0054 + syn);
     let dmg = damageToEnemyPhysical(raw, e);
     dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", e.element || "Neutral"));
     return Math.max(1, dmg);
@@ -3315,7 +3494,7 @@
       name: "Cañón de fotones — carril 7",
       equipSlot: "Arma",
       qual: "SS",
-      bonus: { STG: 14, MA: 12, DX: 6, SP: 5 },
+      bonus: { STG: 32, MA: 24, DX: 18, SP: 12 },
       urbanTag: true,
       uniqueBond: { match: "Kiyama", dmgBonus: 0.14 },
       bondDesc: "Si el portador lleva «Kiyama» en el nombre: +14% daño con armas y técnicas; aliados Fuego reciben +6% curación cuando curás desde el mapa.",
@@ -3325,7 +3504,7 @@
       name: "Aguja estelar — sutura orbital",
       equipSlot: "Arma",
       qual: "SS",
-      bonus: { MA: 18, SP: 10, HP: 6, VI: 4 },
+      bonus: { MA: 36, SP: 20, HP: 14, VI: 12, DX: 10 },
       urbanTag: true,
       uniqueBond: { match: "Hanazawa", dmgBonus: 0.12 },
       bondDesc: "Si el portador lleva «Hanazawa» en el nombre: +12% daño mágico; tus DoT aplican +1 ronda en combate LOTG.",
@@ -3335,7 +3514,7 @@
       name: "Riél trueno — metro fantasma",
       equipSlot: "Arma",
       qual: "S",
-      bonus: { STG: 16, DX: 10, AG: 8 },
+      bonus: { STG: 26, DX: 34, AG: 16, LUK: 8 },
       urbanTag: true,
       uniqueBond: { match: "Akamine", dmgBonus: 0.11 },
       bondDesc: "Si el portador lleva «Akamine» en el nombre: +11% daño físico; +4% probabilidad de crítico en ataques básicos.",
@@ -3345,15 +3524,21 @@
       name: "Módulo Aónix — grúa clínica (firma)",
       equipSlot: "Arma",
       qual: "SSS",
-      bonus: { STG: 10, MA: 20, SP: 14, LUK: 5 },
+      bonus: { STG: 24, MA: 44, SP: 28, LUK: 14, DX: 12 },
       urbanTag: true,
       uniqueBond: { match: "Ceci", dmgBonus: 0.1 },
       bondDesc: "Pensado para el doctor protagonista si su nombre contiene «Ceci»: +10% daño mágico del técnica en área y +5% SP máx. efectivo en combate.",
     },
   ];
 
-  function randomEquipItem() {
-    const qual = Math.random() < 0.32 ? "S" : "A";
+  function randomEquipItem(premium) {
+    const r = Math.random();
+    let qual;
+    if (premium) {
+      qual = r < 0.04 ? "SSS" : r < 0.22 ? "SS" : r < 0.66 ? "S" : "A";
+    } else {
+      qual = r < 0.02 ? "SS" : r < 0.35 ? "S" : "A";
+    }
     const urban = {
       Cabeza: [
         "Visor de interferencia (Bangboo mod.)",
@@ -3383,16 +3568,65 @@
     const equipSlot = EQUIP_SLOTS[Math.floor(Math.random() * EQUIP_SLOTS.length)];
     const pool = urban[equipSlot];
     const baseName = pool[Math.floor(Math.random() * pool.length)];
-    const bonus =
-      qual === "S"
-        ? { HP: 9, STG: 3, MA: 3, VI: 5, EN: 4, DX: 2 }
-        : { HP: 5, STG: 2, MA: 2, VI: 3, EN: 3, AG: 1 };
+    const qMul = qual === "SSS" ? 3.6 : qual === "SS" ? 2.65 : qual === "S" ? 1.78 : 1.18;
+    const rr = Math.random();
+    let weaponArchetype = "phys";
+    if (rr < 0.33) weaponArchetype = "phys";
+    else if (rr < 0.66) weaponArchetype = "firearm";
+    else weaponArchetype = "mag";
+    const roll = (v) => Math.max(1, Math.floor(v * qMul * (0.92 + Math.random() * 0.22)));
+    let bonus;
+    if (equipSlot === "Arma") {
+      if (weaponArchetype === "phys") {
+        bonus = { STG: roll(14), DX: roll(6), MA: roll(4), AG: roll(3), LUK: roll(2) };
+      } else if (weaponArchetype === "firearm") {
+        bonus = { DX: roll(14), STG: roll(7), MA: roll(4), AG: roll(4), LUK: roll(3) };
+      } else {
+        bonus = { MA: roll(14), SP: roll(8), DX: roll(5), STG: roll(4), LUK: roll(3) };
+      }
+    } else if (equipSlot === "Cuerpo") {
+      bonus = { HP: roll(16), VI: roll(12), EN: roll(11), STG: roll(4), MA: roll(4), SP: roll(4) };
+    } else if (equipSlot === "Cabeza") {
+      bonus = { HP: roll(11), VI: roll(9), EN: roll(8), AG: roll(4), LUK: roll(4), SP: roll(3) };
+    } else {
+      bonus = { AG: roll(10), LUK: roll(10), MA: roll(5), STG: roll(5), SP: roll(4), DX: roll(4) };
+    }
+    let specialAffix = null;
+    if (equipSlot === "Accesorio") {
+      const af = Math.random();
+      if (af < 0.22) specialAffix = { type: "soul_gain", pct: 0.14, label: "Afinidad álmica: +14% Soul al ganar combate" };
+      else if (af < 0.42) specialAffix = { type: "zen_gain", pct: 0.14, label: "Mercado gris: +14% Zen al ganar combate" };
+      else if (af < 0.58) specialAffix = { type: "xp_gain", pct: 0.12, label: "Tutor holográfico: +12% EXP de combate" };
+      else if (af < 0.76) {
+        const st = Math.random() < 0.5 ? "STG" : "DX";
+        specialAffix = {
+          type: "stat_synergy",
+          stat: st,
+          threshold: 155,
+          pct: 0.12,
+          scope: st === "DX" ? "firearm" : "phys",
+          label: "Sinergia " + st + " 155+: +12% daño " + (st === "DX" ? "de armas de fuego" : "físico"),
+        };
+      } else {
+        specialAffix = {
+          type: "stat_synergy",
+          stat: "MA",
+          threshold: 150,
+          pct: 0.12,
+          scope: "mag",
+          label: "Sinergia MA 150+: +12% daño mágico",
+        };
+      }
+    }
+    const archetypeTag = equipSlot === "Arma" ? (weaponArchetype === "mag" ? "arcano" : weaponArchetype === "firearm" ? "fuego" : "físico") : null;
     return {
       eid: "eq-" + Date.now(),
       name: baseName + " [" + qual + "]",
       equipSlot,
       qual,
       bonus,
+      weaponArchetype: archetypeTag,
+      specialAffix,
       urbanTag: true,
     };
   }
@@ -3772,7 +4006,9 @@
   }
 
   function gearSellPrice(eq) {
-    return 60 + (eq && eq.qual === "S" ? 50 : 25);
+    const q = eq && eq.qual;
+    const add = q === "SSS" ? 320 : q === "SS" ? 180 : q === "S" ? 80 : 35;
+    return 60 + add;
   }
 
   function applyEquipPieceFromStashToTarget(stashIdx, destKey) {
@@ -4427,13 +4663,17 @@
         lotgState._pendingMapCellKey = null;
       }
       const streak = lotgState.combatsCleared || 0;
-      const zen = randomZenReward(lotgState.floor, streak, wasBoss || wasMiniboss);
+      const econ = lotgEconomyBonusFromAccessories();
+      const zenBase = randomZenReward(lotgState.floor, streak, wasBoss || wasMiniboss);
+      const zen = Math.floor(zenBase * (1 + (econ.zenPct || 0)));
       lotgState.zen += zen;
-      const soul = soulRewardForVictory(lotgState.floor, streak, wasBoss, wasMiniboss);
+      const soulBase = soulRewardForVictory(lotgState.floor, streak, wasBoss, wasMiniboss);
+      const soul = Math.floor(soulBase * (1 + (econ.soulPct || 0)));
       normalizeSoulPointsOnState(lotgState);
       lotgState.soul += soul;
-      combatLog.push("Victoria: +" + zen + " Zen, +" + soul + " Soul Points.");
-      const xpGain = 48 + lotgState.floor * 14 + Math.floor(streak * 1.1);
+      const xpBase = 48 + lotgState.floor * 14 + Math.floor(streak * 1.1);
+      const xpGain = Math.floor(xpBase * (1 + (econ.xpPct || 0)));
+      combatLog.push("Victoria: +" + zen + " Zen, +" + soul + " Soul Points, +" + xpGain + " EXP.");
       gainXpProtagonist(xpGain);
       getPartyUnits().forEach((u) => gainXpUnit(u, Math.floor(xpGain * 0.72)));
       if (wasBoss) lotgState.floorBossCleared = true;
@@ -4675,6 +4915,24 @@
       dmg = Math.max(1, dmg);
       en.hp -= dmg;
       return { ok: true, log: (isPro ? p.name : u.name) + ": «" + sk.name + "» — " + en.name + " −" + dmg + "." + cdNote() };
+    }
+    if (c.kind === "dmg_firearm_1") {
+      const en = combatEnemies[enemyIdx];
+      if (!en || en.hp <= 0) return { ok: false, log: "Sin objetivo." };
+      payCost();
+      const coef = c.coef || 1.45;
+      const raw = isPro
+        ? lotgProtagFirearmRaw(cs, atkZone, cb, coef)
+        : allyFirearmRaw(u, vitals, allyM, coef);
+      let dmg = damageToEnemyPhysical(raw, en);
+      const el = sk.element || (isPro ? p.lotgElement : u.element) || "Neutral";
+      dmg = Math.floor(dmg * elementalDamageMult(el, en.element || "Neutral"));
+      if (Math.random() < (isPro ? pd.crit : critChanceFromStats(mergeStatsWithEquipSlots((u && u.stats) || {}, (u && u.equipSlots) || {}))) * 0.86) {
+        dmg = Math.floor(dmg * 1.46);
+      }
+      dmg = Math.max(1, dmg);
+      en.hp -= dmg;
+      return { ok: true, log: (isPro ? p.name : u.name) + ": «" + sk.name + "» — disparo a " + en.name + " por " + dmg + "." + cdNote() };
     }
     if (c.kind === "heal_all") {
       payCost();
@@ -4942,12 +5200,14 @@
       return { kind: "buff", aoe: /equipo|grupo|área|area|todos/i.test(dmg) };
     const aoe = /área|area|horda|todos|todas/i.test(dl);
     const magical = /\bMA\b|mágico|mágica|cu[aá]ntico/i.test(dmg) || /\d+%\s*MA/i.test(dmg);
-    return { kind: "damage", aoe, magical };
+    const firearm = /\bDX\b|\barma de fuego\b|pistola|rifle|disparo|bal[aí]stic|sniper|francotirador/i.test(dmg);
+    return { kind: "damage", aoe, magical, firearm };
   }
 
   function allySkillCoefFromDmg(sk, profile) {
     const m = String((sk && sk.dmg) || "").match(/(\d+)%/);
     if (m) return parseInt(m[1], 10) / 100;
+    if (profile.firearm) return 1.68;
     return profile.magical ? 1.72 : 1.58;
   }
 
@@ -5027,9 +5287,14 @@
     const spread = hordeN > 1 ? (profile.aoe ? 0.52 : 1) : 1;
     if (profile.aoe) {
       const parts = [];
+      const firearmRaw = allyFirearmRaw(u, lotgState.combatAllyVitals && lotgState.combatAllyVitals[u.uid], am, coef);
       const rawBase =
-        (profile.magical ? st.atkM * coef * 0.98 + st.atkP * 0.34 : st.atkP * coef * 1.04 + st.atkM * 0.28) *
-        am *
+        (profile.firearm
+          ? firearmRaw
+          : profile.magical
+            ? st.atkM * coef * 0.98 + st.atkP * 0.34
+            : st.atkP * coef * 1.04 + st.atkM * 0.28) *
+        (profile.firearm ? 1 : am) *
         (1.02 + Math.random() * 0.28);
       combatEnemies.forEach((en) => {
         if (en.hp <= 0) return;
@@ -5044,9 +5309,14 @@
     }
     const en = combatEnemies[enemyIdx];
     if (!en || en.hp <= 0) return { log: "Sin objetivo." };
+    const firearmOne = allyFirearmRaw(u, lotgState.combatAllyVitals && lotgState.combatAllyVitals[u.uid], am, coef);
     const rawOne =
-      (profile.magical ? st.atkM * coef * 1.08 + st.atkP * 0.36 : st.atkP * coef * 1.1 + st.atkM * 0.3) *
-      am *
+      (profile.firearm
+        ? firearmOne
+        : profile.magical
+          ? st.atkM * coef * 1.08 + st.atkP * 0.36
+          : st.atkP * coef * 1.1 + st.atkM * 0.3) *
+      (profile.firearm ? 1 : am) *
       (1.02 + Math.random() * 0.3);
     let dmg = profile.magical ? damageToEnemyMagical(rawOne, en) : damageToEnemyPhysical(rawOne, en);
     dmg = Math.floor(dmg * elementalDamageMult(u.element || "Neutral", en.element || "Neutral"));
@@ -5640,6 +5910,7 @@
         if (
           (k === "dmg_mag_1" ||
             k === "dmg_phys_1" ||
+            k === "dmg_firearm_1" ||
             k === "dot_main" ||
             k === "status_enemy_1" ||
             k === "phys_double_1" ||
@@ -5939,6 +6210,7 @@
       const needsEnemy =
         k === "dmg_mag_1" ||
         k === "dmg_phys_1" ||
+        k === "dmg_firearm_1" ||
         k === "dot_main" ||
         k === "status_enemy_1" ||
         k === "phys_double_1" ||
@@ -6998,7 +7270,7 @@
       const logBlock = ["── " + stamp + " · " + banner + " ──"];
       for (let t = 0; t < times; t++) {
         if (Math.random() < (premium ? 0.78 : 0.72)) {
-          const eq = randomEquipItem();
+          const eq = randomEquipItem(premium);
           if (!lotgState.gearStash) lotgState.gearStash = [];
           lotgState.gearStash.push(eq);
           const bEq = formatEquipBonusLine(eq);
