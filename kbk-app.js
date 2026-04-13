@@ -22,6 +22,7 @@
     chill: ["Music/Chill out.mp3", "music/Chill out.mp3", "music/Chill%20out.mp3"],
     pinkun: ["Music/Pinkun.mp3", "music/Pinkun.mp3", "music/pinkun.mp3"],
     omen: ["Music/Omen.mp3", "music/Omen.mp3"],
+    happydays: ["Music/happydays.mp3", "music/happydays.mp3"],
   };
   const BG_PAGE = ["Fondo/Fondo.png", "Fondo/fondo.png", "Fondo/fondo.jpg", "Fondo/bg.jpg"];
   const VN_BG = [
@@ -55,6 +56,59 @@
     "Backgrounds/Ciudad.webp",
     "Backgrounds/Hospital.webp",
   ];
+
+  const LOTG_FEMALE_NAME_HINTS = new Set([
+    "Kiyama Reika",
+    "Hanazawa Yui",
+    "Mizuno Sora",
+    "Shirase Mio",
+    "Fujita Anna",
+    "Aozora Lin",
+    "Kisaragi Eve",
+    "Ventura Aoi",
+    "Kiyama Non",
+    "Kokonota Mie",
+    "Kaname Mio",
+    "Soka Miri",
+    "Sori Lune",
+    "Toa Mira",
+    "Ylilea Nox",
+    "Amane Grace",
+    "Amane Grace — Despertar",
+    "Hayasaka Mirei",
+    "Shirakawa Miko",
+    "Youli Chen",
+  ]);
+
+  const LOTG_TRAINING_MOODS = [
+    { id: "deprimido", label: "Deprimido", mod: -0.12 },
+    { id: "desanimado", label: "Desanimado", mod: -0.05 },
+    { id: "comodo", label: "Cómodo", mod: 0.04 },
+    { id: "alegre", label: "Alegre", mod: 0.11 },
+  ];
+
+  const LOTG_UNIT_TRAINING_ACTIONS = [
+    { id: "HP", name: "Cardio anómalo", stat: "HP", min: 10, max: 50, fail: -4 },
+    { id: "SP", name: "Concentración de pulso", stat: "SP", min: 3, max: 6, fail: -4 },
+    { id: "STG", name: "Fuerza absoluta", stat: "STG", min: 10, max: 15, fail: -4 },
+    { id: "MA", name: "Ritual arcano prismático", stat: "MA", min: 10, max: 15, fail: -4 },
+    { id: "DX", name: "Péndulo vectorial", stat: "DX", min: 10, max: 15, fail: -4 },
+    { id: "VI", name: "Bastión de titanio", stat: "VI", min: 10, max: 15, fail: -4 },
+    { id: "LUK", name: "Cábala de fortuna", stat: "LUK", min: 10, max: 15, fail: -4 },
+    { id: "EN", name: "Núcleo de resistencia", stat: "EN", min: 10, max: 15, fail: -4 },
+    { id: "AG", name: "Sprint fantasma", stat: "AG", min: 10, max: 15, fail: -4 },
+  ];
+
+  function inferLotgUnitGender(name) {
+    if (!name) return "No definido";
+    if (LOTG_FEMALE_NAME_HINTS.has(name)) return "Mujer";
+    return "Hombre";
+  }
+
+  function lotgMoodLabel(idx) {
+    const i = Math.max(0, Math.min(LOTG_TRAINING_MOODS.length - 1, Math.floor(Number(idx) || 0)));
+    return LOTG_TRAINING_MOODS[i].label;
+  }
 
   /** Triángulo: Fuego > Hielo > Trueno > Fuego. Resto = Neutral (×1). */
   const LOTG_TRIANGLE = { Fuego: "Hielo", Hielo: "Trueno", Trueno: "Fuego" };
@@ -1025,6 +1079,9 @@
       skill: { name: "Punto cero — ciudad dormida", sp: 23, cd: 5, dmg: "248% MA cuántico área", desc: "Resetea narrativamente debuffs leves propios a cambio de daño masivo." },
     },
   ];
+  GACHA_UNITS.forEach((u) => {
+    if (!u.gender) u.gender = inferLotgUnitGender(u.name);
+  });
 
   const ENEMY_TEMPLATES = [
     { name: "Vitrina sin juicio", tag: "Nexo Δ-11", element: "Hielo" },
@@ -2465,7 +2522,7 @@
             </div>
             <div class="gacha-cat-card-meta">
               <strong class="gacha-cat-card-name">${escapeHtml(u.name)}</strong>
-              <span class="gacha-cat-card-sub">${escapeHtml(u.element)} · ${escapeHtml(u.role)}</span>
+              <span class="gacha-cat-card-sub">${escapeHtml(u.element)} · ${escapeHtml(u.role)} · ${escapeHtml(u.gender || inferLotgUnitGender(u.name))}</span>
             </div>
           </article>`;
         });
@@ -2485,7 +2542,7 @@
           </div>
           <div class="gacha-cat-card-meta">
             <strong class="gacha-cat-card-name">${escapeHtml(u.name)}</strong>
-            <span class="gacha-cat-card-sub">${escapeHtml(u.element)} · ${escapeHtml(u.role)}</span>
+            <span class="gacha-cat-card-sub">${escapeHtml(u.element)} · ${escapeHtml(u.role)} · ${escapeHtml(u.gender || inferLotgUnitGender(u.name))}</span>
           </div>
         </article>`;
       });
@@ -2629,6 +2686,7 @@
       if (!u.uid || typeof u.uid !== "string") u.uid = "u-mig-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
       if (u.mergeRank == null) u.mergeRank = 0;
       if (!u.dupeKey) u.dupeKey = u.name;
+      if (!u.gender) u.gender = inferLotgUnitGender(u.name);
       if (u.level == null || u.level < 1) u.level = 1;
       if (u.xp == null || u.xp < 0 || !Number.isFinite(u.xp)) u.xp = 0;
       if (!u.stats || typeof u.stats !== "object") u.stats = emptyStats();
@@ -2645,6 +2703,7 @@
       const tmpl = GACHA_UNITS.find((g) => g.name === u.name);
       if (tmpl && tmpl.passive && !u.passive) u.passive = { name: tmpl.passive.name, desc: tmpl.passive.desc };
       if (tmpl && tmpl.passiveHook && !u.passiveHook) u.passiveHook = tmpl.passiveHook;
+      if (tmpl && !u.gender) u.gender = tmpl.gender || inferLotgUnitGender(u.name);
     });
     if (!Array.isArray(s.inventory)) s.inventory = [];
     s.inventory.forEach(normalizeInventoryItem);
@@ -2664,6 +2723,10 @@
     Object.keys(s.partyVitalsPersist || {}).forEach((uid) => {
       if (!ruids.has(uid)) delete s.partyVitalsPersist[uid];
     });
+    if (s.training && s.training.unit && s.training.unit.unitUid && !ruids.has(s.training.unit.unitUid)) {
+      s.training.unit.active = false;
+      s.training.unit.paused = false;
+    }
     if (s.mapLayoutFloor == null && Object.keys(s.mapCellTypes || {}).length > 0) {
       s.mapLayoutFloor = s.floor || 1;
     }
@@ -2675,6 +2738,11 @@
     if (!Array.isArray(s.completedQuestIds)) s.completedQuestIds = [];
     if (typeof s.shopSoulPurchases !== "number" || !Number.isFinite(s.shopSoulPurchases)) s.shopSoulPurchases = 0;
     if (!s.giftInventory || typeof s.giftInventory !== "object") s.giftInventory = {};
+    if (!s.training || typeof s.training !== "object") s.training = {};
+    if (!s.training.expedition || typeof s.training.expedition !== "object") s.training.expedition = {};
+    if (!s.training.unit || typeof s.training.unit !== "object") s.training.unit = {};
+    if (!Array.isArray(s.training.groupEvents)) s.training.groupEvents = [];
+    if (s.training.groupEvents.length > 20) s.training.groupEvents = s.training.groupEvents.slice(-20);
     (s.roster || []).forEach((u) => {
       if (!Array.isArray(u.equippedSkills)) u.equippedSkills = [];
       u.equippedSkills = u.equippedSkills.filter((id) => typeof id === "string").slice(0, 4);
@@ -3927,6 +3995,7 @@
     return {
       uid: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
       name: template.name,
+      gender: template.gender || inferLotgUnitGender(template.name),
       dupeKey: template.name,
       img: template.img,
       rarity: template.rarity,
@@ -4258,6 +4327,7 @@
           completedQuestIds: [],
           shopSoulPurchases: 0,
           giftInventory: {},
+          training: { expedition: {}, unit: {}, groupEvents: [] },
         };
         const cs = protagCombatStats(lotgState.protag);
         lotgState.protag.hpCur = cs.hpMax;
@@ -5052,13 +5122,17 @@
     combatPickMode = null;
     combatEnemies = [];
     let spawnedZahurt = false;
+    const trainingMode = lotgState && lotgState._trainingCombatMode;
     const isBoss = !!(lotgState && lotgState._combatIsBoss);
     const isMini = !!(lotgState && lotgState._combatIsMiniboss);
     if (lotgState) {
       lotgState._combatIsBoss = false;
       lotgState._combatIsMiniboss = false;
     }
-    if (isBoss) {
+    if (trainingMode === "expedition") {
+      const difficulty = Math.max(1, Math.min(50, Math.floor(Number(lotgState && lotgState._expeditionDifficulty) || 1)));
+      for (let i = 0; i < 3; i++) combatEnemies.push(lotgExpeditionEnemy(difficulty));
+    } else if (isBoss) {
       if ((lotgState && lotgState.floor) === 20) {
         const zahurt = scaleEnemy(lotgState.floor, true, { finalBoss: true });
         zahurt.name = "Zahurt";
@@ -5087,6 +5161,10 @@
     }
     combatLog = [];
     if (spawnedZahurt) combatLog.push("¡Aparece Zahurt, la anomalía definitiva del piso 20!");
+    if (trainingMode === "expedition") {
+      const difficulty = Math.max(1, Math.min(50, Math.floor(Number(lotgState && lotgState._expeditionDifficulty) || 1)));
+      combatLog.push("Zona de expedición: horda de 3 enemigos (dificultad nivel " + difficulty + ").");
+    }
     skillCdPro = 0;
     combatPhase = "player";
     combatAllyIndex = 0;
@@ -5138,7 +5216,9 @@
         combatLog.push("Pasiva — " + u.name + ": +15 SP al doctor.");
       }
     });
-    if (isBoss) {
+    if (trainingMode === "expedition") {
+      playLotgTrack("dungeonV1", "Expedición");
+    } else if (isBoss) {
       playLotgTrack("boss", "Battle of OTA");
     } else if (isMini) {
       playLotgTrack("miniboss", "Dungeon Lv4");
@@ -5152,6 +5232,8 @@
   }
 
   function endCombat(win) {
+    const trainingMode = lotgState && lotgState._trainingCombatMode;
+    const isExpedition = trainingMode === "expedition";
     const nKilled = combatEnemies.filter((e) => e).length;
     const wasBoss = combatEnemies.some((e) => e && e.boss);
     const wasMiniboss = combatEnemies.some((e) => e && e.miniboss);
@@ -5162,6 +5244,56 @@
     combatAllyIndex = 0;
     combatEnemies = [];
     if (win) {
+      if (isExpedition) {
+        const tr = ensureLotgTrainingState();
+        const ex = tr.expedition || {};
+        const diff = Math.max(1, Math.min(50, Math.floor(Number(ex.difficulty || lotgState._expeditionDifficulty) || 1)));
+        const streak = Math.max(0, Math.floor(Number(ex.wins) || 0));
+        const zen = Math.floor(190 + diff * 27 + streak * 12 + Math.random() * 70);
+        const soul = Math.floor(58 + diff * 11 + Math.random() * 55);
+        const xpGain = Math.floor(380 + diff * 94 + streak * 18);
+        lotgState.zen += zen;
+        normalizeSoulPointsOnState(lotgState);
+        lotgState.soul += soul;
+        gainXpProtagonist(xpGain);
+        (lotgState.roster || []).forEach((u) => gainXpUnit(u, Math.floor(xpGain * 1.06)));
+        const trTargets = [lotgState.protag].concat(getPartyUnits());
+        const picked = trTargets[Math.floor(Math.random() * trTargets.length)];
+        const statPool = ["STG", "MA", "DX", "EN", "AG", "LUK", "VI"];
+        const stK = statPool[Math.floor(Math.random() * statPool.length)];
+        const stGain = lotgTrainingRollInt(2, 6);
+        if (picked && picked.stats) picked.stats[stK] = Math.max(0, (picked.stats[stK] || 0) + stGain);
+        ex.completed = Math.min(ex.planned || 1, (ex.completed || 0) + 1);
+        ex.wins = (ex.wins || 0) + 1;
+        ex.lastOutcome =
+          "Horda superada: +" +
+          zen +
+          " Zen, +" +
+          soul +
+          " Soul, +" +
+          xpGain +
+          " EXP y mejora +" +
+          stGain +
+          " " +
+          stK +
+          (picked && picked.name ? " para " + picked.name : "") +
+          ".";
+        if (!Array.isArray(ex.logs)) ex.logs = [];
+        ex.logs.push(ex.lastOutcome);
+        if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
+        ex.paused = (ex.completed || 0) < (ex.planned || 1);
+        ex.active = (ex.completed || 0) < (ex.planned || 1);
+        tr.expedition = ex;
+        lotgState.training = tr;
+        lotgState.lotgView = "training";
+        lotgState._pendingMapCellKey = null;
+        lotgState._trainingCombatMode = null;
+        lotgState._expeditionDifficulty = null;
+        playLotgTrack("safe", "Safe Area");
+        lotgSave();
+        renderLotgGame();
+        return;
+      }
       if (lotgState._pendingMapCellKey) {
         if (!lotgState.mapCellDone) lotgState.mapCellDone = {};
         lotgState.mapCellDone[lotgState._pendingMapCellKey] = true;
@@ -5195,6 +5327,31 @@
         });
       }
     } else {
+      if (isExpedition && lotgState) {
+        const tr = ensureLotgTrainingState();
+        const ex = tr.expedition || {};
+        ex.completed = Math.min(ex.planned || 1, (ex.completed || 0) + 1);
+        ex.losses = (ex.losses || 0) + 1;
+        ex.lastOutcome = "Derrota en horda: no pierdes la run. Puedes pausar o seguir entrenando.";
+        if (!Array.isArray(ex.logs)) ex.logs = [];
+        ex.logs.push(ex.lastOutcome);
+        if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
+        ex.paused = true;
+        ex.active = (ex.completed || 0) < (ex.planned || 1);
+        tr.expedition = ex;
+        lotgState.training = tr;
+        lotgState.lotgView = "training";
+        const cs = applyEquipToProtag();
+        lotgState.protag.hpCur = Math.max(1, Math.floor(cs.hpMax * 0.55));
+        lotgState.protag.spCur = Math.max(0, Math.floor(cs.spMax * 0.5));
+        lotgState._pendingMapCellKey = null;
+        lotgState._trainingCombatMode = null;
+        lotgState._expeditionDifficulty = null;
+        playLotgTrack("safe", "Safe Area");
+        lotgSave();
+        renderLotgGame();
+        return;
+      }
       if (lotgState) {
         lotgState._pendingMapCellKey = null;
         const p = lotgState.protag || {};
@@ -5241,6 +5398,8 @@
     if (lotgState) {
       lotgState.combatBuff = { atkMult: 1, turns: 0 };
       lotgState.combatGuardBuff = { pct: 0, turns: 0 };
+      lotgState._trainingCombatMode = null;
+      lotgState._expeditionDifficulty = null;
     }
     playLotgTrack("safe", "Safe Area");
     renderLotgGame();
@@ -7399,6 +7558,430 @@
     });
   }
 
+  function ensureLotgTrainingState() {
+    if (!lotgState) return { expedition: {}, unit: {}, groupEvents: [] };
+    if (!lotgState.training || typeof lotgState.training !== "object") lotgState.training = {};
+    if (!lotgState.training.expedition || typeof lotgState.training.expedition !== "object") lotgState.training.expedition = {};
+    if (!lotgState.training.unit || typeof lotgState.training.unit !== "object") lotgState.training.unit = {};
+    if (!Array.isArray(lotgState.training.groupEvents)) lotgState.training.groupEvents = [];
+    return lotgState.training;
+  }
+
+  function lotgTrainingMoodIdx(v) {
+    const n = Math.floor(Number(v) || 0);
+    return Math.max(0, Math.min(LOTG_TRAINING_MOODS.length - 1, n));
+  }
+
+  function lotgTrainingRollInt(min, max) {
+    const a = Math.floor(Math.min(min, max));
+    const b = Math.floor(Math.max(min, max));
+    return a + Math.floor(Math.random() * (b - a + 1));
+  }
+
+  function lotgExpeditionEnemy(level) {
+    const lv = Math.max(1, Math.min(50, Math.floor(Number(level) || 1)));
+    const baseFloor = Math.max(1, Math.min(20, Math.floor(lv * 0.4 + 1)));
+    const e = scaleEnemy(baseFloor, false);
+    const mult = 1 + (lv - 1) * 0.07;
+    e.level = lv;
+    STAT_KEYS.forEach((k) => {
+      e.stats[k] = Math.max(1, Math.floor((Number(e.stats[k]) || 1) * mult));
+    });
+    e.hpMax = Math.max(24, Math.floor((Number(e.hpMax) || 24) * (1 + (lv - 1) * 0.095)));
+    e.hp = e.hpMax;
+    e.floor = baseFloor;
+    e.tag = "Horda de expedición · Dif. " + lv;
+    return e;
+  }
+
+  function lotgStartExpeditionCombat() {
+    if (!lotgState || inLotgCombat()) return false;
+    const tr = ensureLotgTrainingState();
+    const ex = tr.expedition || {};
+    if (!ex.active || ex.paused) return false;
+    if ((ex.completed || 0) >= (ex.planned || 1)) return false;
+    lotgState._trainingCombatMode = "expedition";
+    lotgState._expeditionDifficulty = Math.max(1, Math.min(50, Math.floor(Number(ex.difficulty) || 1)));
+    lotgState._pendingMapCellKey = null;
+    lotgState._combatIsBoss = false;
+    lotgState._combatIsMiniboss = false;
+    startCombat();
+    return true;
+  }
+
+  function lotgApplyTrainingAction(session, unit, actionDef) {
+    if (!session || !unit || !actionDef) return "No se pudo ejecutar el entrenamiento.";
+    if (!unit.stats || typeof unit.stats !== "object") unit.stats = emptyStats();
+    const moodI = lotgTrainingMoodIdx(session.mood);
+    const moodMod = LOTG_TRAINING_MOODS[moodI].mod;
+    const sanity = Math.max(0, Math.min(100, Math.floor(Number(session.sanity) || 0)));
+    const baseSuccess = 0.28 + sanity * 0.006 + moodMod;
+    const successP = Math.max(0.08, Math.min(0.96, baseSuccess));
+    const success = Math.random() < successP;
+    session.day = Math.max(0, Math.floor(Number(session.day) || 0)) + 1;
+    session.sanity = Math.max(0, sanity - lotgTrainingRollInt(9, 14));
+    let delta = 0;
+    if (success) {
+      const raw = lotgTrainingRollInt(actionDef.min, actionDef.max);
+      const boost = 1 + Math.max(-0.08, moodMod);
+      delta = Math.max(1, Math.floor(raw * boost));
+      unit.stats[actionDef.stat] = Math.max(0, (unit.stats[actionDef.stat] || 0) + delta);
+      if (moodI >= 2 && Math.random() < 0.18) session.sanity = Math.min(100, session.sanity + 4);
+      return actionDef.name + ": éxito — " + unit.name + " gana +" + delta + " " + actionDef.stat + ".";
+    }
+    delta = Math.abs(actionDef.fail || -4);
+    unit.stats[actionDef.stat] = Math.max(0, (unit.stats[actionDef.stat] || 0) - delta);
+    session.mood = Math.max(0, moodI - 1);
+    return actionDef.name + ": fallo — " + unit.name + " pierde " + delta + " " + actionDef.stat + ".";
+  }
+
+  function lotgTrainingCheckpointEvent(unit, session, onDone) {
+    const ov = document.getElementById("vnOverlay");
+    const txt = document.getElementById("vnText");
+    const choicesEl = document.getElementById("vnChoices");
+    const cont = document.getElementById("vnContinue");
+    const port = document.getElementById("vnPortrait");
+    if (!ov || !txt || !choicesEl || !cont || !port) {
+      onDone && onDone();
+      return;
+    }
+    resetVNChrome();
+    ov.style.backgroundImage =
+      'linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("Misc/Backgrounds/Cavidad.png")';
+    port.style.display = "block";
+    port.innerHTML = `<img src="${escapeAttrUrl(unit.img || "Char/Lawliet.png")}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.style.display='none'"/>`;
+    txt.innerHTML = `<strong>Informe de práctica — Día ${session.day}</strong><br/><br/>
+      <strong class="vn-speaker">${escapeHtml(unit.name)}</strong><br/><br/>
+      El equipo se reúne a comentar el ritmo de entrenamiento y la exploración en cavidades. La moral actual es <strong>${escapeHtml(
+        lotgMoodLabel(session.mood)
+      )}</strong> y la cordura ronda <strong>${Math.max(0, Math.min(100, Math.floor(session.sanity || 0)))}</strong>.`;
+    choicesEl.style.display = "none";
+    cont.style.display = "";
+    playLotgTrack("chill", "Chill out");
+    ov.classList.add("show");
+    cont.onclick = () => {
+      ov.classList.remove("show");
+      cont.onclick = null;
+      resetVNChrome();
+      onDone && onDone();
+    };
+  }
+
+  function lotgStringHash(src) {
+    const s = String(src || "");
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return h >>> 0;
+  }
+
+  function lotgUnitPersonaFlavor(unit) {
+    const role = String((unit && unit.role) || "").toLowerCase();
+    if (role.indexOf("healer") >= 0 || role.indexOf("sanador") >= 0) {
+      return {
+        style: "terapeuta del grupo",
+        focus: "cuidar al equipo aunque se rompa",
+        motivation: "proteger a todos durante las anomalías",
+      };
+    }
+    if (role.indexOf("soporte") >= 0 || role.indexOf("support") >= 0) {
+      return {
+        style: "ancla táctica",
+        focus: "coordinar y sostener el ritmo",
+        motivation: "hacer que cada pelea tenga orden",
+      };
+    }
+    if (role.indexOf("mág") >= 0 || role.indexOf("ma") >= 0) {
+      return {
+        style: "especialista arcano",
+        focus: "entender patrones anómalos",
+        motivation: "dominar el caos sin perderse",
+      };
+    }
+    return {
+      style: "punta de lanza",
+      focus: "romper la primera línea enemiga",
+      motivation: "demostrar fuerza en campo abierto",
+    };
+  }
+
+  function lotgPersonalConvivenciaScenes(unit, session) {
+    const h = lotgStringHash(unit && unit.name);
+    const flavor = lotgUnitPersonaFlavor(unit);
+    const element = (unit && unit.element) || "Neutral";
+    const role = (unit && unit.role) || "Recluta";
+    const bgs = [
+      "Misc/Backgrounds/Parqueacuatico.png",
+      "Misc/Backgrounds/Viajepeatonal.png",
+      "Misc/Backgrounds/Departamento.png",
+      "Misc/Backgrounds/Ciudad.webp",
+      "Misc/Backgrounds/Nudopermanencia.png",
+    ];
+    const tracks = ["youthful", "chill", "happydays", "pinkun", "omen"];
+    const sceneSeed = (idx) => (h + idx * 97 + (session && session.day ? session.day : 1)) % 1000;
+    return [
+      {
+        place: "Parque acuático",
+        bg: bgs[(sceneSeed(0) + 0) % bgs.length],
+        moodTrack: tracks[(sceneSeed(0) + 0) % tracks.length],
+        text:
+          unit.name +
+          " te confiesa que, como " +
+          flavor.style +
+          ", le pesa " +
+          flavor.focus +
+          ". Entre risas y agua fría, intenta recordar por qué decidió seguir en el escuadrón.",
+        opts: [
+          {
+            label: "Escucharle con calma y validar su esfuerzo",
+            sanity: 11,
+            mood: 2,
+            stat: element === "Fuego" ? "STG" : "EN",
+            statGain: 4,
+            log: unit.name + " recupera confianza con la conversación.",
+          },
+          {
+            label: "Hablar solo de resultados y números",
+            sanity: 5,
+            mood: -1,
+            stat: "LUK",
+            statGain: -2,
+            log: unit.name + " siente la charla demasiado fría.",
+          },
+          {
+            label: "Bromear para descomprimir",
+            sanity: 9,
+            mood: 1,
+            stat: "AG",
+            statGain: 2,
+            log: unit.name + " termina riéndose y baja tensión.",
+          },
+        ],
+      },
+      {
+        place: "Viaje peatonal",
+        bg: bgs[(sceneSeed(1) + 1) % bgs.length],
+        moodTrack: tracks[(sceneSeed(1) + 1) % tracks.length],
+        text:
+          "Mientras caminan, " +
+          unit.name +
+          " analiza el último combate de " +
+          role +
+          ". Te pregunta si su camino de " +
+          flavor.motivation +
+          " sigue siendo viable.",
+        opts: [
+          {
+            label: "Diseñar juntos un plan para el próximo piso",
+            sanity: 10,
+            mood: 2,
+            stat: "DX",
+            statGain: 4,
+            log: "El plan compartido mejora la coordinación de " + unit.name + ".",
+          },
+          {
+            label: "Exigirle más sin dar contexto",
+            sanity: 3,
+            mood: -2,
+            stat: "SP",
+            statGain: -2,
+            log: unit.name + " queda desanimado/a por la presión.",
+          },
+          {
+            label: "Preguntarle qué necesita para rendir mejor",
+            sanity: 8,
+            mood: 1,
+            stat: "MA",
+            statGain: 3,
+            log: unit.name + " define mejor su enfoque de combate.",
+          },
+        ],
+      },
+      {
+        place: "Departamento",
+        bg: bgs[(sceneSeed(2) + 2) % bgs.length],
+        moodTrack: tracks[(sceneSeed(2) + 2) % tracks.length],
+        text:
+          "En el departamento, " +
+          unit.name +
+          " habla de su miedo a fallar cuando el equipo dependa de su elemento " +
+          element +
+          ". La conversación se vuelve íntima.",
+        opts: [
+          {
+            label: "Responder con honestidad sobre tus propios miedos",
+            sanity: 12,
+            mood: 2,
+            stat: "VI",
+            statGain: 4,
+            log: "La sinceridad fortalece el vínculo con " + unit.name + ".",
+          },
+          {
+            label: "Cortar el tema para volver al entrenamiento",
+            sanity: 2,
+            mood: -2,
+            stat: "AG",
+            statGain: -3,
+            log: "La charla termina seca y " + unit.name + " se retrae.",
+          },
+          {
+            label: "Prometer respaldo en el próximo despliegue",
+            sanity: 8,
+            mood: 1,
+            stat: "HP",
+            statGain: 5,
+            log: unit.name + " vuelve a enfocarse con más estabilidad.",
+          },
+        ],
+      },
+      {
+        place: "Pasillo de cavidad",
+        bg: bgs[(sceneSeed(3) + 3) % bgs.length],
+        moodTrack: tracks[(sceneSeed(3) + 3) % tracks.length],
+        text:
+          unit.name +
+          " repasa anomalías del piso y propone ajustes para su rol de " +
+          role +
+          ". Hay tensión, pero también ganas de mejorar.",
+        opts: [
+          {
+            label: "Aceptar su propuesta táctica",
+            sanity: 9,
+            mood: 1,
+            stat: "EN",
+            statGain: 4,
+            log: "El nuevo enfoque de " + unit.name + " se siente más sólido.",
+          },
+          {
+            label: "Discutirle cada decisión",
+            sanity: 4,
+            mood: -1,
+            stat: "STG",
+            statGain: -2,
+            log: "La fricción desgasta la moral de " + unit.name + ".",
+          },
+          {
+            label: "Convertir la discusión en práctica conjunta",
+            sanity: 10,
+            mood: 2,
+            stat: "LUK",
+            statGain: 3,
+            log: "La discusión termina en aprendizaje mutuo.",
+          },
+        ],
+      },
+      {
+        place: "Sala común",
+        bg: bgs[(sceneSeed(4) + 4) % bgs.length],
+        moodTrack: tracks[(sceneSeed(4) + 4) % tracks.length],
+        text:
+          "Tras la jornada, " +
+          unit.name +
+          " se queda contigo comentando cómo cambió desde que se unió al roster. El ambiente oscila entre humor y melancolía.",
+        opts: [
+          {
+            label: "Reconocer su crecimiento en voz alta",
+            sanity: 10,
+            mood: 2,
+            stat: "MA",
+            statGain: 4,
+            log: unit.name + " se motiva al ver su progreso reconocido.",
+          },
+          {
+            label: "Minimizar el tema para evitar drama",
+            sanity: 3,
+            mood: -1,
+            stat: "LUK",
+            statGain: -2,
+            log: unit.name + " siente que no fue escuchado/a.",
+          },
+          {
+            label: "Proponer meta conjunta para la próxima salida",
+            sanity: 8,
+            mood: 1,
+            stat: "DX",
+            statGain: 3,
+            log: "Cierra la noche con un objetivo claro para ambos.",
+          },
+        ],
+      },
+    ];
+  }
+
+  function lotgRunConvivenciaEvent(unit, session, onDone) {
+    const ov = document.getElementById("vnOverlay");
+    const txt = document.getElementById("vnText");
+    const choicesEl = document.getElementById("vnChoices");
+    const cont = document.getElementById("vnContinue");
+    const port = document.getElementById("vnPortrait");
+    if (!ov || !txt || !choicesEl || !cont || !port) {
+      onDone && onDone({ log: "No se pudo abrir la convivencia.", sanity: 6, mood: 1 });
+      return;
+    }
+    const protagGender = ((lotgState && lotgState.protag && lotgState.protag.gender) || "none").toLowerCase();
+    const unitGender = ((unit && unit.gender) || inferLotgUnitGender(unit.name)).toLowerCase();
+    const normGender = (g) => {
+      if (/muj|fem|girl|woman/.test(g)) return "f";
+      if (/hom|masc|boy|man/.test(g)) return "m";
+      return "x";
+    };
+    const gp = normGender(protagGender);
+    const gu = normGender(unitGender);
+    const sameGender = gp !== "x" && gu !== "x" && gp === gu;
+    const relationTone = sameGender ? "colega" : "con cierta tensión afectiva";
+    const scenePool = lotgPersonalConvivenciaScenes(unit, session).map((sc) => ({
+      ...sc,
+      text: sc.text + " Tu trato se siente " + relationTone + ".",
+    }));
+    if (!session._seenSceneIdx || typeof session._seenSceneIdx !== "object") session._seenSceneIdx = {};
+    const seen = session._seenSceneIdx[unit.uid] || [];
+    const available = [];
+    for (let i = 0; i < scenePool.length; i++) {
+      if (seen.indexOf(i) < 0) available.push(i);
+    }
+    const pickFrom = available.length ? available : scenePool.map((_, i) => i);
+    const sceneIdx = pickFrom[Math.floor(Math.random() * pickFrom.length)];
+    const scene = scenePool[sceneIdx];
+    if (available.length === 1) session._seenSceneIdx[unit.uid] = [];
+    else {
+      const nextSeen = seen.slice(-8);
+      nextSeen.push(sceneIdx);
+      session._seenSceneIdx[unit.uid] = nextSeen;
+    }
+    resetVNChrome();
+    ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${scene.bg}")`;
+    port.style.display = "block";
+    port.innerHTML = `<img src="${escapeAttrUrl(unit.img || "Char/Lawliet.png")}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.style.display='none'"/>`;
+    txt.innerHTML = `<strong>Convivencia — ${escapeHtml(scene.place)}</strong><br/><br/>
+      <strong class="vn-speaker">${escapeHtml(unit.name)}</strong> <span class="muted vn-expression">(${escapeHtml(relationTone)})</span><br/><br/>
+      ${escapeHtml(scene.text)}`;
+    choicesEl.style.display = "flex";
+    choicesEl.innerHTML = "";
+    cont.style.display = "none";
+    playLotgTrack(scene.moodTrack, "Convivencia");
+    ov.classList.add("show");
+    const finish = (opt) => {
+      choicesEl.style.display = "none";
+      choicesEl.innerHTML = "";
+      ov.classList.remove("show");
+      resetVNChrome();
+      onDone &&
+        onDone({
+          sanity: opt.sanity || 0,
+          mood: opt.mood || 0,
+          stat: opt.stat || null,
+          statGain: opt.statGain || 0,
+          log: opt.log || "Compartieron tiempo de convivencia.",
+        });
+    };
+    scene.opts.forEach((opt) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = opt.label;
+      b.addEventListener("click", () => finish(opt));
+      choicesEl.appendChild(b);
+    });
+  }
+
   function renderLotgGame(opts) {
     const wrap = document.getElementById("lotgGameWrap");
     if (!lotgState) {
@@ -7808,6 +8391,7 @@
       const v = tab;
       return `<nav class="lotg-subnav">
         <button type="button" data-lotg-tab="hub" class="${v === "hub" ? "on" : ""}">Exploración</button>
+        <button type="button" data-lotg-tab="training" class="${v === "training" ? "on" : ""}">Entrenamiento</button>
         <button type="button" data-lotg-tab="gacha" class="${v === "gacha" ? "on" : ""}">Reclutamiento</button>
         <button type="button" data-lotg-tab="abilities" class="${v === "abilities" ? "on" : ""}">Habilidades</button>
         <button type="button" data-lotg-tab="social_links" class="${v === "social_links" ? "on" : ""}">Vínculos</button>
@@ -8055,6 +8639,278 @@
 
     function runSocialLinkSession(uid) {
       runSocialLinkVNFlow(uid, () => renderLotgGame());
+    }
+
+    if (tab === "training") {
+      migrateLotgState(lotgState);
+      const tr = ensureLotgTrainingState();
+      const ex = tr.expedition || {};
+      const ut = tr.unit || {};
+      const rosterOptions = (lotgState.roster || [])
+        .map((u) => `<option value="${escapeHtml(u.uid)}">${escapeHtml(u.name)} (${escapeHtml(u.gender || inferLotgUnitGender(u.name))})</option>`)
+        .join("");
+      const utUnit = (lotgState.roster || []).find((u) => u.uid === ut.unitUid);
+      const exStatus = ex.active
+        ? `<p class="muted" style="font-size:0.82rem;margin:0.4rem 0 0">Dificultad ${ex.difficulty || 1} · Hordas ${ex.completed || 0}/${
+            ex.planned || 1
+          } · Victorias ${ex.wins || 0} · Derrotas ${ex.losses || 0} · ${
+            ex.paused ? "Pausado" : "Listo para continuar"
+          }</p>`
+        : "<p class='muted' style='font-size:0.82rem;margin:0.4rem 0 0'>Sin expedición activa.</p>";
+      const utStatus = ut.active
+        ? `<p class="muted" style="font-size:0.82rem;margin:0.4rem 0 0">Unidad: <strong>${escapeHtml(
+            (utUnit && utUnit.name) || "—"
+          )}</strong> · Día ${ut.day || 1}/10 · Cordura ${Math.max(0, Math.min(100, Math.floor(ut.sanity || 0)))} · Ánimo ${escapeHtml(
+            lotgMoodLabel(ut.mood || 0)
+          )} · ${ut.paused ? "Pausado" : "Activo"}</p>`
+        : "<p class='muted' style='font-size:0.82rem;margin:0.4rem 0 0'>Sin simulación de entrenamiento activa.</p>";
+      const actionBtns = LOTG_UNIT_TRAINING_ACTIONS.map(
+        (a) =>
+          `<button type="button" class="ghost lotg-ut-act" data-ut-act="${escapeHtml(a.id)}">${escapeHtml(a.name)} (${escapeHtml(
+            a.stat
+          )})</button>`
+      ).join("");
+      const unitLogs = Array.isArray(ut.logs) ? ut.logs.slice(-8).reverse() : [];
+      const exLogs = Array.isArray(ex.logs) ? ex.logs.slice(-8).reverse() : [];
+      wrap.innerHTML =
+        subnavHtml() +
+        currencyBar +
+        `<h2 style="margin-top:0">Entrenamiento</h2>
+        <p class="muted">Dos modos: <strong>Zona de expedición</strong> (farmeo sin perder la run) y <strong>entrenamiento de unidades</strong> (simulador de 10 días con cordura, ánimo y convivencia VN).</p>
+        <div class="card" style="padding:0.8rem;margin:0.65rem 0">
+          <h3 style="margin-top:0">Zona de expedición</h3>
+          <p class="muted" style="font-size:0.82rem">Entrada: <strong>1500 Zen</strong>. Elige dificultad (1-50), cantidad de hordas (1-20) y enfrenta <strong>3 enemigos por horda</strong>. Derrotar da Zen, Soul, EXP y mejoras; perder no borra la partida.</p>
+          <div class="btn-row" style="flex-wrap:wrap;align-items:center">
+            <label>Nivel <input id="lotgExpDifficulty" type="number" min="1" max="50" value="${Math.max(
+              1,
+              Math.min(50, ex.difficulty || 1)
+            )}" style="width:6rem;margin-left:0.3rem"/></label>
+            <label>Hordas <input id="lotgExpRepeats" type="number" min="1" max="20" value="${Math.max(
+              1,
+              Math.min(20, ex.planned || 1)
+            )}" style="width:6rem;margin-left:0.3rem"/></label>
+            <button type="button" class="primary" id="lotgExpStart" ${ex.active ? "disabled" : ""}>Iniciar (1500 Zen)</button>
+            <button type="button" class="ghost" id="lotgExpFight" ${ex.active && !inLotgCombat() ? "" : "disabled"}>Pelear siguiente horda</button>
+            <button type="button" class="ghost" id="lotgExpPause" ${ex.active ? "" : "disabled"}>${ex.paused ? "Reanudar" : "Pausar"}</button>
+            <button type="button" class="ghost danger" id="lotgExpEnd" ${ex.active ? "" : "disabled"}>Finalizar expedición</button>
+          </div>
+          ${exStatus}
+          <div class="muted" style="margin-top:0.45rem;font-size:0.78rem">${escapeHtml(ex.lastOutcome || "")}</div>
+          <ul style="list-style:none;padding-left:0;margin:0.45rem 0 0;font-size:0.78rem;line-height:1.35">${
+            exLogs.map((l) => `<li>• ${escapeHtml(l)}</li>`).join("") || "<li class='muted'>Sin registros de expedición.</li>"
+          }</ul>
+        </div>
+        <div class="card" style="padding:0.8rem;margin:0.75rem 0">
+          <h3 style="margin-top:0">Entrenamiento de unidades</h3>
+          <p class="muted" style="font-size:0.82rem">Entrada: <strong>200 Soul Points</strong>. Simulación de 10 días: entrenar stats, descansar o convivir. Cordura baja aumenta fallos; ánimo alto mejora resultados.</p>
+          <div class="btn-row" style="flex-wrap:wrap;align-items:center">
+            <select id="lotgUtUnit" style="min-width:14rem">${rosterOptions || "<option value=''>Sin unidades</option>"}</select>
+            <button type="button" class="primary" id="lotgUtStart" ${ut.active || !rosterOptions ? "disabled" : ""}>Iniciar (200 Soul)</button>
+            <button type="button" class="ghost" id="lotgUtRest" ${ut.active && !ut.paused ? "" : "disabled"}>Descansar (+cordura, -1 día)</button>
+            <button type="button" class="ghost" id="lotgUtBond" ${ut.active && !ut.paused ? "" : "disabled"}>Convivencia VN</button>
+            <button type="button" class="ghost" id="lotgUtPause" ${ut.active ? "" : "disabled"}>${ut.paused ? "Reanudar" : "Pausar"}</button>
+            <button type="button" class="ghost danger" id="lotgUtEnd" ${ut.active ? "" : "disabled"}>Finalizar entrenamiento</button>
+          </div>
+          <div class="btn-row" style="margin-top:0.55rem;flex-wrap:wrap">${actionBtns}</div>
+          ${utStatus}
+          <ul style="list-style:none;padding-left:0;margin:0.45rem 0 0;font-size:0.78rem;line-height:1.35">${
+            unitLogs.map((l) => `<li>• ${escapeHtml(l)}</li>`).join("") || "<li class='muted'>Sin registros de entrenamiento.</li>"
+          }</ul>
+        </div>`;
+      attachHubCommon();
+      const pushExpLog = (msg) => {
+        if (!Array.isArray(ex.logs)) ex.logs = [];
+        ex.logs.push(msg);
+        if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
+      };
+      const pushUtLog = (msg) => {
+        if (!Array.isArray(ut.logs)) ut.logs = [];
+        ut.logs.push(msg);
+        if (ut.logs.length > 36) ut.logs = ut.logs.slice(-36);
+      };
+      const expStart = document.getElementById("lotgExpStart");
+      if (expStart) {
+        expStart.addEventListener("click", () => {
+          if (inLotgCombat()) return;
+          const dInp = document.getElementById("lotgExpDifficulty");
+          const rInp = document.getElementById("lotgExpRepeats");
+          const difficulty = Math.max(1, Math.min(50, Math.floor(Number(dInp && dInp.value) || 1)));
+          const planned = Math.max(1, Math.min(20, Math.floor(Number(rInp && rInp.value) || 1)));
+          if (lotgState.zen < 1500) {
+            alert("Necesitas 1500 Zen para iniciar expedición.");
+            return;
+          }
+          lotgState.zen -= 1500;
+          tr.expedition = {
+            active: true,
+            paused: false,
+            difficulty,
+            planned,
+            completed: 0,
+            wins: 0,
+            losses: 0,
+            logs: ["Inicio de expedición: dificultad " + difficulty + ", hordas objetivo " + planned + "."],
+            lastOutcome: "Expedición lista. Pulsa «Pelear siguiente horda».",
+          };
+          lotgState.training = tr;
+          lotgState.lotgView = "training";
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      const expFight = document.getElementById("lotgExpFight");
+      if (expFight) {
+        expFight.addEventListener("click", () => {
+          if (!tr.expedition || !tr.expedition.active) return;
+          tr.expedition.paused = false;
+          lotgState.training = tr;
+          lotgState.lotgView = "training";
+          lotgSave();
+          lotgStartExpeditionCombat();
+        });
+      }
+      const expPause = document.getElementById("lotgExpPause");
+      if (expPause) {
+        expPause.addEventListener("click", () => {
+          if (!tr.expedition || !tr.expedition.active || inLotgCombat()) return;
+          tr.expedition.paused = !tr.expedition.paused;
+          tr.expedition.lastOutcome = tr.expedition.paused ? "Expedición pausada." : "Expedición reanudada.";
+          lotgState.training = tr;
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      const expEnd = document.getElementById("lotgExpEnd");
+      if (expEnd) {
+        expEnd.addEventListener("click", () => {
+          if (!tr.expedition || !tr.expedition.active || inLotgCombat()) return;
+          tr.expedition.active = false;
+          tr.expedition.paused = false;
+          pushExpLog("Expedición cerrada manualmente.");
+          tr.expedition.lastOutcome = "Expedición finalizada.";
+          lotgState.training = tr;
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      const utStart = document.getElementById("lotgUtStart");
+      if (utStart) {
+        utStart.addEventListener("click", () => {
+          if (inLotgCombat()) return;
+          normalizeSoulPointsOnState(lotgState);
+          if (lotgState.soul < 200) {
+            alert("Necesitas 200 Soul Points para entrenar una unidad.");
+            return;
+          }
+          const sel = document.getElementById("lotgUtUnit");
+          const uid = sel && sel.value;
+          const u = (lotgState.roster || []).find((x) => x.uid === uid);
+          if (!u) return;
+          lotgState.soul -= 200;
+          tr.unit = {
+            active: true,
+            paused: false,
+            unitUid: uid,
+            day: 1,
+            maxDays: 10,
+            sanity: 100,
+            mood: 2,
+            logs: ["Inicio de simulador de entrenamiento para " + u.name + "."],
+            eventCount: 0,
+          };
+          lotgState.training = tr;
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      const runUtDayAdvance = (line) => {
+        pushUtLog(line);
+        const uState = tr.unit || {};
+        if ((uState.day || 1) > (uState.maxDays || 10)) {
+          uState.active = false;
+          uState.paused = false;
+          pushUtLog("Entrenamiento completado: se consumieron 10 días.");
+          lotgState.training = tr;
+          lotgSave();
+          renderLotgGame();
+          return;
+        }
+        if ((uState.day || 1) > 1 && (uState.day - 1) % 3 === 0) {
+          const u0 = (lotgState.roster || []).find((x) => x.uid === uState.unitUid);
+          if (u0) {
+            lotgTrainingCheckpointEvent(u0, uState, () => {
+              lotgState.training = tr;
+              lotgSave();
+              renderLotgGame();
+            });
+            return;
+          }
+        }
+        lotgState.training = tr;
+        lotgSave();
+        renderLotgGame();
+      };
+      wrap.querySelectorAll(".lotg-ut-act").forEach((b) => {
+        b.addEventListener("click", () => {
+          if (!tr.unit || !tr.unit.active || tr.unit.paused || inLotgCombat()) return;
+          const act = LOTG_UNIT_TRAINING_ACTIONS.find((x) => x.id === b.getAttribute("data-ut-act"));
+          const u = (lotgState.roster || []).find((x) => x.uid === tr.unit.unitUid);
+          if (!act || !u) return;
+          const line = lotgApplyTrainingAction(tr.unit, u, act);
+          runUtDayAdvance(line);
+        });
+      });
+      const utRest = document.getElementById("lotgUtRest");
+      if (utRest) {
+        utRest.addEventListener("click", () => {
+          if (!tr.unit || !tr.unit.active || tr.unit.paused || inLotgCombat()) return;
+          tr.unit.day = Math.max(1, Math.floor(tr.unit.day || 1)) + 1;
+          tr.unit.sanity = Math.min(100, Math.floor((tr.unit.sanity || 0) + lotgTrainingRollInt(24, 34)));
+          tr.unit.mood = Math.min(3, lotgTrainingMoodIdx(tr.unit.mood) + 1);
+          runUtDayAdvance("Descanso: recuperas cordura y sube el ánimo.");
+        });
+      }
+      const utBond = document.getElementById("lotgUtBond");
+      if (utBond) {
+        utBond.addEventListener("click", () => {
+          if (!tr.unit || !tr.unit.active || tr.unit.paused || inLotgCombat()) return;
+          const u = (lotgState.roster || []).find((x) => x.uid === tr.unit.unitUid);
+          if (!u) return;
+          lotgRunConvivenciaEvent(u, tr.unit, (res) => {
+            tr.unit.day = Math.max(1, Math.floor(tr.unit.day || 1)) + 1;
+            tr.unit.sanity = Math.max(0, Math.min(100, Math.floor((tr.unit.sanity || 0) + (res.sanity || 0))));
+            tr.unit.mood = lotgTrainingMoodIdx((tr.unit.mood || 0) + (res.mood || 0));
+            if (res.stat && u.stats) {
+              u.stats[res.stat] = Math.max(0, (u.stats[res.stat] || 0) + Math.floor(res.statGain || 0));
+            }
+            runUtDayAdvance("Convivencia: " + (res.log || "interacción completada."));
+          });
+        });
+      }
+      const utPause = document.getElementById("lotgUtPause");
+      if (utPause) {
+        utPause.addEventListener("click", () => {
+          if (!tr.unit || !tr.unit.active || inLotgCombat()) return;
+          tr.unit.paused = !tr.unit.paused;
+          pushUtLog(tr.unit.paused ? "Entrenamiento pausado." : "Entrenamiento reanudado.");
+          lotgState.training = tr;
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      const utEnd = document.getElementById("lotgUtEnd");
+      if (utEnd) {
+        utEnd.addEventListener("click", () => {
+          if (!tr.unit || !tr.unit.active || inLotgCombat()) return;
+          tr.unit.active = false;
+          tr.unit.paused = false;
+          pushUtLog("Entrenamiento finalizado manualmente.");
+          lotgState.training = tr;
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      return;
     }
 
     if (tab === "abilities") {
@@ -8432,7 +9288,9 @@
         <div class="lotg-roster-card">
           <img class="unit-face" src="${escapeHtml(u.img)}" alt="" onerror="this.style.background='#333'"/>
           <div style="font-size:0.8rem"><span class="rarity-${u.rarity}">${escapeHtml(u.rarity)}</span> ${escapeHtml(u.name)}${mergeB}</div>
-          <div class="muted" style="font-size:0.72rem">${escapeHtml(u.element)} · ${escapeHtml(u.role)} · Lv.${u.level} · EXP ${ux}/${uxNeed}</div>
+          <div class="muted" style="font-size:0.72rem">${escapeHtml(u.element)} · ${escapeHtml(u.role)} · ${escapeHtml(
+            u.gender || inferLotgUnitGender(u.name)
+          )} · Lv.${u.level} · EXP ${ux}/${uxNeed}</div>
           <div class="lotg-roster-stats muted">${statMini}</div>
           <div class="muted" style="font-size:0.68rem;line-height:1.35;margin-top:0.25rem">Máx. combate (stats + equipo): <strong>HP ${stFight.hpMax}</strong> · <strong>SP ${stFight.spMax}</strong> · ATK ${stFight.atkP}/${stFight.atkM}</div>
           ${
@@ -8854,7 +9712,38 @@
     }
     if (!lotgState.mapCellDone) lotgState.mapCellDone = {};
     lotgState.mapCellDone[cellKey] = true;
+    const forcedUnlockMsg = lotgForceUnlockIfNoEventsLeft();
+    if (forcedUnlockMsg) msg = (msg ? msg + "\n\n" : "") + forcedUnlockMsg;
     return msg;
+  }
+
+  function lotgRemainingUnclearedEventCells() {
+    if (!lotgState) return 0;
+    const types = lotgState.mapCellTypes || {};
+    const done = lotgState.mapCellDone || {};
+    let n = 0;
+    Object.keys(types).forEach((k) => {
+      if (types[k] !== "event") return;
+      if (done[k]) return;
+      n++;
+    });
+    return n;
+  }
+
+  function lotgForceUnlockIfNoEventsLeft() {
+    if (!lotgState) return "";
+    const rule = lotgState.floorAdvanceRule || "free";
+    const remainingEvents = lotgRemainingUnclearedEventCells();
+    if (remainingEvents > 0) return "";
+    if (rule === "key" && !lotgState.floorExitKey) {
+      lotgState.floorExitKey = true;
+      return "No quedan eventos sin explorar: el sistema fuerza la llave maestra para evitar bloqueo del piso.";
+    }
+    if (rule === "relic" && !lotgState.floorRelicFound) {
+      lotgState.floorRelicFound = true;
+      return "No quedan eventos sin explorar: recuperas automáticamente la reliquia de registro.";
+    }
+    return "";
   }
 
   function shuffleArrayLotg(arr) {
@@ -9085,6 +9974,8 @@
             );
             if (advance) {
               const rule = lotgState.floorAdvanceRule || "free";
+              const antiLockMsg = lotgForceUnlockIfNoEventsLeft();
+              if (antiLockMsg) alert(antiLockMsg);
               if (rule === "boss" && !lotgState.floorBossCleared) {
                 lotgState.mapPos = px + "," + py;
                 alert("El nudo no afloja: derrota al jefe de piso (casilla 💀) antes de avanzar.");
