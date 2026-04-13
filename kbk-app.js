@@ -5265,6 +5265,9 @@
         if (picked && picked.stats) picked.stats[stK] = Math.max(0, (picked.stats[stK] || 0) + stGain);
         ex.completed = Math.min(ex.planned || 1, (ex.completed || 0) + 1);
         ex.wins = (ex.wins || 0) + 1;
+        ex.totalZen = (ex.totalZen || 0) + zen;
+        ex.totalSoul = (ex.totalSoul || 0) + soul;
+        ex.totalXp = (ex.totalXp || 0) + xpGain;
         ex.lastOutcome =
           "Horda superada: +" +
           zen +
@@ -5283,6 +5286,22 @@
         if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
         ex.paused = (ex.completed || 0) < (ex.planned || 1);
         ex.active = (ex.completed || 0) < (ex.planned || 1);
+        ex.accessPaid = !!ex.active;
+        if (!ex.active) {
+          ex.lastOutcome =
+            "Expedición completada: +" +
+            (ex.totalZen || 0) +
+            " Zen, +" +
+            (ex.totalSoul || 0) +
+            " Soul, +" +
+            (ex.totalXp || 0) +
+            " EXP total en " +
+            (ex.completed || 0) +
+            " horda(s).";
+          if (!Array.isArray(ex.logs)) ex.logs = [];
+          ex.logs.push(ex.lastOutcome);
+          if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
+        }
         tr.expedition = ex;
         lotgState.training = tr;
         lotgState.lotgView = "training";
@@ -5338,6 +5357,7 @@
         if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
         ex.paused = true;
         ex.active = (ex.completed || 0) < (ex.planned || 1);
+        if (!ex.active) ex.accessPaid = false;
         tr.expedition = ex;
         lotgState.training = tr;
         lotgState.lotgView = "training";
@@ -7635,6 +7655,121 @@
     return actionDef.name + ": fallo — " + unit.name + " pierde " + delta + " " + actionDef.stat + ".";
   }
 
+  function lotgShowTrainingResultVN(unit, title, body, bgUrl, moodTrack, onDone) {
+    const ov = document.getElementById("vnOverlay");
+    const txt = document.getElementById("vnText");
+    const choicesEl = document.getElementById("vnChoices");
+    const cont = document.getElementById("vnContinue");
+    const port = document.getElementById("vnPortrait");
+    if (!ov || !txt || !choicesEl || !cont || !port) {
+      onDone && onDone();
+      return;
+    }
+    resetVNChrome();
+    ov.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("${bgUrl}")`;
+    port.style.display = "block";
+    port.innerHTML = `<img src="${escapeAttrUrl(unit.img || "Char/Lawliet.png")}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.style.display='none'"/>`;
+    txt.innerHTML = `<strong>${escapeHtml(title)}</strong><br/><br/>
+      <strong class="vn-speaker">${escapeHtml(unit.name)}</strong><br/><br/>
+      ${escapeHtml(body)}`;
+    choicesEl.style.display = "none";
+    cont.style.display = "";
+    playLotgTrack(moodTrack || "chill", "Entrenamiento");
+    ov.classList.add("show");
+    cont.onclick = () => {
+      ov.classList.remove("show");
+      cont.onclick = null;
+      resetVNChrome();
+      playLotgTrack("safe", "Safe Area");
+      onDone && onDone();
+    };
+  }
+
+  function lotgOpenTrainingChoiceVN(unit, session, onPick) {
+    const ov = document.getElementById("vnOverlay");
+    const txt = document.getElementById("vnText");
+    const choicesEl = document.getElementById("vnChoices");
+    const cont = document.getElementById("vnContinue");
+    const port = document.getElementById("vnPortrait");
+    if (!ov || !txt || !choicesEl || !cont || !port) {
+      onPick && onPick(null);
+      return;
+    }
+    resetVNChrome();
+    ov.style.backgroundImage =
+      'linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.85)), url("Misc/Backgrounds/Cavidad.png")';
+    port.style.display = "block";
+    port.innerHTML = `<img src="${escapeAttrUrl(unit.img || "Char/Lawliet.png")}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.parentElement.style.display='none'"/>`;
+    txt.innerHTML = `<strong>Simulador de entrenamiento</strong><br/><br/>
+      <strong class="vn-speaker">${escapeHtml(unit.name)}</strong><br/><br/>
+      Día ${(session && session.day) || 1} · Cordura ${Math.max(0, Math.min(100, Math.floor((session && session.sanity) || 0)))} · Ánimo ${escapeHtml(
+        lotgMoodLabel((session && session.mood) || 0)
+      )}<br/><br/>
+      Elige una rutina para esta jornada.`;
+    choicesEl.style.display = "flex";
+    choicesEl.innerHTML = "";
+    cont.style.display = "none";
+    playLotgTrack("chill", "Entrenamiento");
+    ov.classList.add("show");
+    const closePick = (picked) => {
+      ov.classList.remove("show");
+      resetVNChrome();
+      playLotgTrack("safe", "Safe Area");
+      onPick && onPick(picked);
+    };
+    LOTG_UNIT_TRAINING_ACTIONS.forEach((a) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = a.name + " (" + a.stat + ")";
+      b.addEventListener("click", () => closePick(a.id));
+      choicesEl.appendChild(b);
+    });
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.textContent = "Cancelar";
+    cancel.addEventListener("click", () => closePick(null));
+    choicesEl.appendChild(cancel);
+  }
+
+  function lotgControlExpeditionDuringCombat(endNow) {
+    if (!lotgState) return;
+    const tr = ensureLotgTrainingState();
+    const ex = tr.expedition || {};
+    if (!ex.active) return;
+    if (endNow) {
+      ex.active = false;
+      ex.paused = false;
+      ex.accessPaid = false;
+      ex.lastOutcome =
+        "Expedición finalizada manualmente: +" +
+        (ex.totalZen || 0) +
+        " Zen, +" +
+        (ex.totalSoul || 0) +
+        " Soul, +" +
+        (ex.totalXp || 0) +
+        " EXP acumulado.";
+      if (!Array.isArray(ex.logs)) ex.logs = [];
+      ex.logs.push(ex.lastOutcome);
+      if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
+    } else {
+      ex.paused = true;
+      ex.lastOutcome = "Expedición pausada durante la horda actual. Puedes continuar luego.";
+      if (!Array.isArray(ex.logs)) ex.logs = [];
+      ex.logs.push(ex.lastOutcome);
+      if (ex.logs.length > 36) ex.logs = ex.logs.slice(-36);
+    }
+    tr.expedition = ex;
+    lotgState.training = tr;
+    lotgState.lotgView = "training";
+    lotgState._trainingCombatMode = null;
+    lotgState._expeditionDifficulty = null;
+    lotgState._pendingMapCellKey = null;
+    clearCombatScene();
+    lotgSave();
+    playLotgTrack("safe", "Safe Area");
+    renderLotgGame();
+  }
+
   function lotgTrainingCheckpointEvent(unit, session, onDone) {
     const ov = document.getElementById("vnOverlay");
     const txt = document.getElementById("vnText");
@@ -7663,6 +7798,7 @@
       ov.classList.remove("show");
       cont.onclick = null;
       resetVNChrome();
+      playLotgTrack("safe", "Safe Area");
       onDone && onDone();
     };
   }
@@ -7964,6 +8100,7 @@
       choicesEl.innerHTML = "";
       ov.classList.remove("show");
       resetVNChrome();
+      playLotgTrack("safe", "Safe Area");
       onDone &&
         onDone({
           sanity: opt.sanity || 0,
@@ -8020,6 +8157,7 @@
       wrap.style.backgroundImage = `linear-gradient(180deg,rgba(6,8,14,.75),rgba(6,8,14,.92)), url("${cbg}")`;
       const allies = getPartyUnits();
       const allyV = lotgState.combatAllyVitals || {};
+      const expeditionCombatMode = lotgState && lotgState._trainingCombatMode === "expedition";
       const combatHelpTxt = `<p class="smt-combat-help"><strong>Cómo funciona:</strong> primero el doctor (ataque a un enemigo si hay horda; técnica en área); luego cada aliado; después todos los enemigos. <strong>CD</strong> = rondas enemigas: cada vez que <strong>toda la horda</strong> termina de actuar, bajan 1 los enfriamientos y los buffs de equipo/consumibles. <strong>Estados alterados</strong> (silencio, sueño, quemadura, congelación, parálisis) duran <strong>rondas enemigas</strong>; la quemadura hace DoT al empezar la oleada enemiga. <strong>Neutralizador</strong> o <em>Lushen EX</em> limpian estados. <strong>HP máx.</strong> con <strong>HP</strong> y <strong>VI</strong>; <strong>SP</strong> con <strong>SP</strong> y <strong>MA</strong>.</p>`;
       const alliesCombat =
         allies.length > 0
@@ -8272,6 +8410,15 @@
             .join("")}
         </div></div>`
           : "";
+      const expeditionCombatControls = expeditionCombatMode
+        ? `<div class="card" style="padding:0.45rem;margin-top:0.45rem;border-color:rgba(250,204,21,0.45);background:rgba(80,60,10,0.25)">
+          <div class="muted" style="font-size:0.72rem;margin-bottom:0.3rem"><strong>Expedición en curso</strong> — control rápido durante combate</div>
+          <div class="btn-row" style="flex-wrap:wrap">
+            <button type="button" class="ghost" data-exp-combat="pause">Pausar expedición</button>
+            <button type="button" class="ghost danger" data-exp-combat="end">Finalizar expedición</button>
+          </div>
+        </div>`
+        : "";
       const actionBlock = isAllyPhase
         ? `<div class="combat-phase-banner ally-turn"><strong>Turno de aliado:</strong> ${escapeHtml(curAlly.name)}</div>
         ${pickBanner}
@@ -8281,7 +8428,8 @@
           <button type="button" class="ghost" data-ally-act="skill" ${skillBlocked || combatPickMode ? "disabled" : ""}>${skBtnText}</button>
           <button type="button" class="ghost" data-ally-act="pass" ${combatPickMode ? "disabled" : ""}>Esperar</button>
         </div>
-        ${curAllyLotgHtml}`
+        ${curAllyLotgHtml}
+        ${expeditionCombatControls}`
         : `<div class="combat-phase-banner protag-turn"><strong>Turno de ${docCombat}</strong> — luego aliados; cada enemigo actúa en la horda.</div>
         ${pickBanner}
         ${consumableTargetRow}
@@ -8295,7 +8443,8 @@
         </div>
         ${protagSkillTip}
         ${protagActivesHtml}
-        ${itemPanel}`;
+        ${itemPanel}
+        ${expeditionCombatControls}`;
       wrap.classList.add("lotg-combat-active");
       wrap.innerHTML = `
         <div class="smt-combat-shell">
@@ -8367,6 +8516,12 @@
       });
       wrap.querySelectorAll("[data-ally-act]").forEach((b) => {
         b.addEventListener("click", () => allyCombatTurn(b.getAttribute("data-ally-act")));
+      });
+      wrap.querySelectorAll("[data-exp-combat]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const mode = b.getAttribute("data-exp-combat");
+          lotgControlExpeditionDuringCombat(mode === "end");
+        });
       });
       const combatPortrait = wrap.querySelector("img[data-lotg-combat-portrait]");
       if (combatPortrait) {
@@ -8646,6 +8801,8 @@
       const tr = ensureLotgTrainingState();
       const ex = tr.expedition || {};
       const ut = tr.unit || {};
+      const exAccessPaid = !!ex.accessPaid || !!ex.active;
+      const exCanConfigure = exAccessPaid && !ex.active;
       const rosterOptions = (lotgState.roster || [])
         .map((u) => `<option value="${escapeHtml(u.uid)}">${escapeHtml(u.name)} (${escapeHtml(u.gender || inferLotgUnitGender(u.name))})</option>`)
         .join("");
@@ -8664,58 +8821,81 @@
             lotgMoodLabel(ut.mood || 0)
           )} · ${ut.paused ? "Pausado" : "Activo"}</p>`
         : "<p class='muted' style='font-size:0.82rem;margin:0.4rem 0 0'>Sin simulación de entrenamiento activa.</p>";
-      const actionBtns = LOTG_UNIT_TRAINING_ACTIONS.map(
-        (a) =>
-          `<button type="button" class="ghost lotg-ut-act" data-ut-act="${escapeHtml(a.id)}">${escapeHtml(a.name)} (${escapeHtml(
-            a.stat
-          )})</button>`
-      ).join("");
       const unitLogs = Array.isArray(ut.logs) ? ut.logs.slice(-8).reverse() : [];
       const exLogs = Array.isArray(ex.logs) ? ex.logs.slice(-8).reverse() : [];
       wrap.innerHTML =
         subnavHtml() +
         currencyBar +
         `<h2 style="margin-top:0">Entrenamiento</h2>
-        <p class="muted">Dos modos: <strong>Zona de expedición</strong> (farmeo sin perder la run) y <strong>entrenamiento de unidades</strong> (simulador de 10 días con cordura, ánimo y convivencia VN).</p>
-        <div class="card" style="padding:0.8rem;margin:0.65rem 0">
-          <h3 style="margin-top:0">Zona de expedición</h3>
-          <p class="muted" style="font-size:0.82rem">Entrada: <strong>1500 Zen</strong>. Elige dificultad (1-50), cantidad de hordas (1-20) y enfrenta <strong>3 enemigos por horda</strong>. Derrotar da Zen, Soul, EXP y mejoras; perder no borra la partida.</p>
-          <div class="btn-row" style="flex-wrap:wrap;align-items:center">
-            <label>Nivel <input id="lotgExpDifficulty" type="number" min="1" max="50" value="${Math.max(
-              1,
-              Math.min(50, ex.difficulty || 1)
-            )}" style="width:6rem;margin-left:0.3rem"/></label>
-            <label>Hordas <input id="lotgExpRepeats" type="number" min="1" max="20" value="${Math.max(
-              1,
-              Math.min(20, ex.planned || 1)
-            )}" style="width:6rem;margin-left:0.3rem"/></label>
-            <button type="button" class="primary" id="lotgExpStart" ${ex.active ? "disabled" : ""}>Iniciar (1500 Zen)</button>
-            <button type="button" class="ghost" id="lotgExpFight" ${ex.active && !inLotgCombat() ? "" : "disabled"}>Pelear siguiente horda</button>
-            <button type="button" class="ghost" id="lotgExpPause" ${ex.active ? "" : "disabled"}>${ex.paused ? "Reanudar" : "Pausar"}</button>
-            <button type="button" class="ghost danger" id="lotgExpEnd" ${ex.active ? "" : "disabled"}>Finalizar expedición</button>
+        <p class="muted">Menú de comando RPG. Selecciona un módulo, confirma la orden y ejecuta la sesión.</p>
+        <div class="card" style="padding:0.9rem;margin:0.65rem 0;border-color:rgba(250,204,21,0.32);background:linear-gradient(180deg,rgba(20,26,42,0.72),rgba(13,18,30,0.78))">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap">
+            <h3 style="margin:0;color:#facc15;letter-spacing:0.03em">Comando I — Zona de expedición</h3>
+            <span class="slot-equip-tag">FARMEO</span>
           </div>
+          <p class="muted" style="font-size:0.82rem;margin-top:0.45rem">Ruta táctica: <strong>pagar acceso</strong> → <strong>planificar horda</strong> → <strong>entrar en combate</strong>. El nivel enemigo escala dificultad y recompensa real.</p>
+          ${
+            !exAccessPaid
+              ? `<div class="card" style="padding:0.55rem;margin:0.45rem 0;border-color:rgba(255,255,255,0.16);background:rgba(7,11,19,0.5)">
+                  <div class="muted" style="font-size:0.77rem;margin-bottom:0.35rem">Orden disponible</div>
+                  <div class="btn-row"><button type="button" class="primary" id="lotgExpPay">Confirmar pago de entrada — 1500 Zen</button></div>
+                </div>`
+              : exCanConfigure
+                ? `<div class="card" style="padding:0.6rem;margin:0.45rem 0;border-color:rgba(59,130,246,0.4)">
+                  <p class="muted" style="font-size:0.78rem;margin:0 0 0.35rem"><strong>Sala de planificación</strong> — acceso pagado. Define la misión antes de entrar.</p>
+                  <div class="btn-row" style="flex-wrap:wrap;align-items:center">
+                    <label>Nivel enemigo <input id="lotgExpDifficulty" type="number" min="1" max="50" value="${Math.max(
+                      1,
+                      Math.min(50, ex.difficulty || 1)
+                    )}" style="width:6rem;margin-left:0.3rem"/></label>
+                    <label>Hordas objetivo <input id="lotgExpRepeats" type="number" min="1" max="20" value="${Math.max(
+                      1,
+                      Math.min(20, ex.planned || 1)
+                    )}" style="width:6rem;margin-left:0.3rem"/></label>
+                    <button type="button" class="primary" id="lotgExpPlan">Confirmar planificación</button>
+                    <button type="button" class="ghost danger" id="lotgExpCancelPay">Cancelar acceso</button>
+                  </div>
+                </div>`
+                : `<div class="card" style="padding:0.6rem;margin:0.45rem 0;border-color:rgba(250,204,21,0.4)">
+                  <p class="muted" style="font-size:0.78rem;margin:0 0 0.35rem"><strong>Expedición en curso</strong> — comando activo. Puedes continuar, pausar o finalizar.</p>
+                  <div class="btn-row" style="flex-wrap:wrap">
+                    <button type="button" class="primary" id="lotgExpFight" ${ex.active && !inLotgCombat() ? "" : "disabled"}>Continuar expedición</button>
+                    <button type="button" class="ghost" id="lotgExpPause" ${ex.active ? "" : "disabled"}>${ex.paused ? "Reanudar preparación" : "Pausar (fuera de combate)"}</button>
+                    <button type="button" class="ghost danger" id="lotgExpEnd" ${ex.active ? "" : "disabled"}>Finalizar expedición</button>
+                  </div>
+                </div>`
+          }
           ${exStatus}
-          <div class="muted" style="margin-top:0.45rem;font-size:0.78rem">${escapeHtml(ex.lastOutcome || "")}</div>
-          <ul style="list-style:none;padding-left:0;margin:0.45rem 0 0;font-size:0.78rem;line-height:1.35">${
-            exLogs.map((l) => `<li>• ${escapeHtml(l)}</li>`).join("") || "<li class='muted'>Sin registros de expedición.</li>"
-          }</ul>
+          <div class="card" style="padding:0.55rem;margin-top:0.5rem;border-color:rgba(255,255,255,0.12);background:rgba(6,9,16,0.45)">
+            <div class="muted" style="font-size:0.7rem;letter-spacing:0.04em">BITÁCORA DE MISIÓN</div>
+            <div class="muted" style="margin-top:0.35rem;font-size:0.78rem">${escapeHtml(ex.lastOutcome || "")}</div>
+            <ul style="list-style:none;padding-left:0;margin:0.45rem 0 0;font-size:0.78rem;line-height:1.35">${
+              exLogs.map((l) => `<li>• ${escapeHtml(l)}</li>`).join("") || "<li class='muted'>Sin registros de expedición.</li>"
+            }</ul>
+          </div>
         </div>
-        <div class="card" style="padding:0.8rem;margin:0.75rem 0">
-          <h3 style="margin-top:0">Entrenamiento de unidades</h3>
-          <p class="muted" style="font-size:0.82rem">Entrada: <strong>200 Soul Points</strong>. Simulación de 10 días: entrenar stats, descansar o convivir. Cordura baja aumenta fallos; ánimo alto mejora resultados.</p>
+        <div class="card" style="padding:0.9rem;margin:0.75rem 0;border-color:rgba(147,197,253,0.32);background:linear-gradient(180deg,rgba(20,30,46,0.72),rgba(10,16,27,0.8))">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap">
+            <h3 style="margin:0;color:#93c5fd;letter-spacing:0.03em">Comando II — Entrenamiento de unidades</h3>
+            <span class="slot-equip-tag">SIMULADOR</span>
+          </div>
+          <p class="muted" style="font-size:0.82rem;margin-top:0.45rem">Paga acceso, abre menú VN de rutina y resuelve la escena diaria. Cada orden consume un día de práctica.</p>
           <div class="btn-row" style="flex-wrap:wrap;align-items:center">
             <select id="lotgUtUnit" style="min-width:14rem">${rosterOptions || "<option value=''>Sin unidades</option>"}</select>
             <button type="button" class="primary" id="lotgUtStart" ${ut.active || !rosterOptions ? "disabled" : ""}>Iniciar (200 Soul)</button>
+            <button type="button" class="ghost" id="lotgUtPick" ${ut.active && !ut.paused ? "" : "disabled"}>Elegir entrenamiento (VN)</button>
             <button type="button" class="ghost" id="lotgUtRest" ${ut.active && !ut.paused ? "" : "disabled"}>Descansar (+cordura, -1 día)</button>
             <button type="button" class="ghost" id="lotgUtBond" ${ut.active && !ut.paused ? "" : "disabled"}>Convivencia VN</button>
             <button type="button" class="ghost" id="lotgUtPause" ${ut.active ? "" : "disabled"}>${ut.paused ? "Reanudar" : "Pausar"}</button>
             <button type="button" class="ghost danger" id="lotgUtEnd" ${ut.active ? "" : "disabled"}>Finalizar entrenamiento</button>
           </div>
-          <div class="btn-row" style="margin-top:0.55rem;flex-wrap:wrap">${actionBtns}</div>
           ${utStatus}
-          <ul style="list-style:none;padding-left:0;margin:0.45rem 0 0;font-size:0.78rem;line-height:1.35">${
-            unitLogs.map((l) => `<li>• ${escapeHtml(l)}</li>`).join("") || "<li class='muted'>Sin registros de entrenamiento.</li>"
-          }</ul>
+          <div class="card" style="padding:0.55rem;margin-top:0.5rem;border-color:rgba(255,255,255,0.12);background:rgba(6,9,16,0.45)">
+            <div class="muted" style="font-size:0.7rem;letter-spacing:0.04em">DIARIO DE PRÁCTICA</div>
+            <ul style="list-style:none;padding-left:0;margin:0.45rem 0 0;font-size:0.78rem;line-height:1.35">${
+              unitLogs.map((l) => `<li>• ${escapeHtml(l)}</li>`).join("") || "<li class='muted'>Sin registros de entrenamiento.</li>"
+            }</ul>
+          </div>
         </div>`;
       attachHubCommon();
       const pushExpLog = (msg) => {
@@ -8728,32 +8908,67 @@
         ut.logs.push(msg);
         if (ut.logs.length > 36) ut.logs = ut.logs.slice(-36);
       };
-      const expStart = document.getElementById("lotgExpStart");
-      if (expStart) {
-        expStart.addEventListener("click", () => {
+      const expPay = document.getElementById("lotgExpPay");
+      if (expPay) {
+        expPay.addEventListener("click", () => {
           if (inLotgCombat()) return;
-          const dInp = document.getElementById("lotgExpDifficulty");
-          const rInp = document.getElementById("lotgExpRepeats");
-          const difficulty = Math.max(1, Math.min(50, Math.floor(Number(dInp && dInp.value) || 1)));
-          const planned = Math.max(1, Math.min(20, Math.floor(Number(rInp && rInp.value) || 1)));
           if (lotgState.zen < 1500) {
-            alert("Necesitas 1500 Zen para iniciar expedición.");
+            alert("Necesitas 1500 Zen para pagar el acceso a expedición.");
             return;
           }
           lotgState.zen -= 1500;
           tr.expedition = {
-            active: true,
-            paused: false,
-            difficulty,
-            planned,
+            active: false,
+            paused: true,
+            accessPaid: true,
+            difficulty: Math.max(1, Math.min(50, ex.difficulty || 1)),
+            planned: Math.max(1, Math.min(20, ex.planned || 1)),
             completed: 0,
             wins: 0,
             losses: 0,
-            logs: ["Inicio de expedición: dificultad " + difficulty + ", hordas objetivo " + planned + "."],
-            lastOutcome: "Expedición lista. Pulsa «Pelear siguiente horda».",
+            totalZen: 0,
+            totalSoul: 0,
+            totalXp: 0,
+            logs: ["Acceso de expedición pagado (1500 Zen)."],
+            lastOutcome: "Configura nivel y hordas antes de empezar.",
           };
           lotgState.training = tr;
           lotgState.lotgView = "training";
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      const expPlan = document.getElementById("lotgExpPlan");
+      if (expPlan) {
+        expPlan.addEventListener("click", () => {
+          if (!tr.expedition || !tr.expedition.accessPaid || tr.expedition.active || inLotgCombat()) return;
+          const dInp = document.getElementById("lotgExpDifficulty");
+          const rInp = document.getElementById("lotgExpRepeats");
+          const difficulty = Math.max(1, Math.min(50, Math.floor(Number(dInp && dInp.value) || 1)));
+          const planned = Math.max(1, Math.min(20, Math.floor(Number(rInp && rInp.value) || 1)));
+          tr.expedition.difficulty = difficulty;
+          tr.expedition.planned = planned;
+          tr.expedition.active = true;
+          tr.expedition.paused = true;
+          tr.expedition.completed = 0;
+          tr.expedition.wins = 0;
+          tr.expedition.losses = 0;
+          tr.expedition.totalZen = 0;
+          tr.expedition.totalSoul = 0;
+          tr.expedition.totalXp = 0;
+          pushExpLog("Plan de expedición confirmado: dificultad " + difficulty + " · hordas " + planned + ".");
+          tr.expedition.lastOutcome = "Expedición en curso. Pulsa continuar para entrar a combate.";
+          lotgState.training = tr;
+          lotgSave();
+          renderLotgGame();
+        });
+      }
+      const expCancelPay = document.getElementById("lotgExpCancelPay");
+      if (expCancelPay) {
+        expCancelPay.addEventListener("click", () => {
+          if (!tr.expedition || tr.expedition.active || inLotgCombat()) return;
+          tr.expedition = {};
+          lotgState.training = tr;
           lotgSave();
           renderLotgGame();
         });
@@ -8762,6 +8977,23 @@
       if (expFight) {
         expFight.addEventListener("click", () => {
           if (!tr.expedition || !tr.expedition.active) return;
+          if ((tr.expedition.completed || 0) >= (tr.expedition.planned || 1)) {
+            tr.expedition.active = false;
+            tr.expedition.paused = false;
+            tr.expedition.accessPaid = false;
+            tr.expedition.lastOutcome =
+              "Expedición completada: +" +
+              (tr.expedition.totalZen || 0) +
+              " Zen, +" +
+              (tr.expedition.totalSoul || 0) +
+              " Soul, +" +
+              (tr.expedition.totalXp || 0) +
+              " EXP total.";
+            lotgState.training = tr;
+            lotgSave();
+            renderLotgGame();
+            return;
+          }
           tr.expedition.paused = false;
           lotgState.training = tr;
           lotgState.lotgView = "training";
@@ -8786,8 +9018,16 @@
           if (!tr.expedition || !tr.expedition.active || inLotgCombat()) return;
           tr.expedition.active = false;
           tr.expedition.paused = false;
+          tr.expedition.accessPaid = false;
           pushExpLog("Expedición cerrada manualmente.");
-          tr.expedition.lastOutcome = "Expedición finalizada.";
+          tr.expedition.lastOutcome =
+            "Expedición finalizada: +" +
+            (tr.expedition.totalZen || 0) +
+            " Zen, +" +
+            (tr.expedition.totalSoul || 0) +
+            " Soul, +" +
+            (tr.expedition.totalXp || 0) +
+            " EXP acumulado.";
           lotgState.training = tr;
           lotgSave();
           renderLotgGame();
@@ -8850,16 +9090,44 @@
         lotgSave();
         renderLotgGame();
       };
-      wrap.querySelectorAll(".lotg-ut-act").forEach((b) => {
-        b.addEventListener("click", () => {
+      const utPick = document.getElementById("lotgUtPick");
+      if (utPick) {
+        utPick.addEventListener("click", () => {
           if (!tr.unit || !tr.unit.active || tr.unit.paused || inLotgCombat()) return;
-          const act = LOTG_UNIT_TRAINING_ACTIONS.find((x) => x.id === b.getAttribute("data-ut-act"));
           const u = (lotgState.roster || []).find((x) => x.uid === tr.unit.unitUid);
-          if (!act || !u) return;
-          const line = lotgApplyTrainingAction(tr.unit, u, act);
-          runUtDayAdvance(line);
+          if (!u) return;
+          lotgOpenTrainingChoiceVN(u, tr.unit, (actId) => {
+            if (!actId) {
+              playLotgTrack("safe", "Safe Area");
+              renderLotgGame();
+              return;
+            }
+            const act = LOTG_UNIT_TRAINING_ACTIONS.find((x) => x.id === actId);
+            if (!act) return;
+            const line = lotgApplyTrainingAction(tr.unit, u, act);
+            const themes = {
+              HP: { bg: "Misc/Backgrounds/Cavidad.png", mood: "omen" },
+              SP: { bg: "Misc/Backgrounds/Departamento.png", mood: "happydays" },
+              STG: { bg: "Misc/Backgrounds/Ciudad.webp", mood: "chill" },
+              DX: { bg: "Misc/Backgrounds/Viajepeatonal.png", mood: "youthful" },
+              VI: { bg: "Misc/Backgrounds/Cavidad.png", mood: "chill" },
+              MA: { bg: "Misc/Backgrounds/Nudopermanencia.png", mood: "omen" },
+              EN: { bg: "Misc/Backgrounds/Viajepeatonal.png", mood: "chill" },
+              AG: { bg: "Misc/Backgrounds/Parqueacuatico.png", mood: "pinkun" },
+              LUK: { bg: "Misc/Backgrounds/Ciudad.webp", mood: "pinkun" },
+            };
+            const th = themes[act.stat] || { bg: "Misc/Backgrounds/Cavidad.png", mood: "chill" };
+            lotgShowTrainingResultVN(
+              u,
+              "Resultado del entrenamiento — " + act.name,
+              line,
+              th.bg,
+              th.mood,
+              () => runUtDayAdvance(line)
+            );
+          });
         });
-      });
+      }
       const utRest = document.getElementById("lotgUtRest");
       if (utRest) {
         utRest.addEventListener("click", () => {
